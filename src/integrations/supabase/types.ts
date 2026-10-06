@@ -106,7 +106,17 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      available_barber_slots: {
+        Row: {
+          id: string
+          barber_id: string
+          slot_date: string
+          start_time: string
+          end_time: string
+          status: "AVAILABLE"
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never
