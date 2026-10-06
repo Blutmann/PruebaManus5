@@ -35,6 +35,105 @@ export type Database = {
         }
         Relationships: []
       }
+      services: {
+        Row: {
+          id: string
+          name: string
+          duration_minutes: number
+          price_ars: number
+          active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          duration_minutes: number
+          price_ars: number
+          active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          duration_minutes?: number
+          price_ars?: number
+          active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      clients: {
+        Row: {
+          id: string
+          name: string
+          phone: string
+          email: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          phone: string
+          email: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          phone?: string
+          email?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      appointments: {
+        Row: {
+          id: string
+          client_id: string
+          barber_id: string
+          service_id: string
+          booking_date: string
+          start_time: string
+          end_time: string
+          status: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED"
+          notes: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          client_id: string
+          barber_id: string
+          service_id: string
+          booking_date: string
+          start_time: string
+          end_time: string
+          status?: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED"
+          notes?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          client_id?: string
+          barber_id?: string
+          service_id?: string
+          booking_date?: string
+          start_time?: string
+          end_time?: string
+          status?: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED"
+          notes?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       barber_availability_slots: {
         Row: {
           id: string
@@ -119,7 +218,32 @@ export type Database = {
       }
     }
     Functions: {
-      [_ in never]: never
+      request_appointment: {
+        Args: {
+          p_barber_name: string
+          p_service_name: string
+          p_booking_date: string
+          p_start_time: string
+          p_client_name: string
+          p_client_phone: string
+          p_client_email: string
+          p_notes?: string | null
+        }
+        Returns: {
+          appointment_id: string
+          appointment_status: "PENDING"
+          booking_date: string
+          start_time: string
+          end_time: string
+        }[]
+      }
+      update_appointment_status: {
+        Args: {
+          p_appointment_id: string
+          p_status: "CONFIRMED" | "CANCELLED" | "COMPLETED"
+        }
+        Returns: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED"
+      }
     }
     Enums: {
       [_ in never]: never
