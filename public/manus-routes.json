@@ -1,0 +1,9 @@
+{
+  "routes": [
+    { "path": "/", "title": "KANI Barber Studio" },
+    { "path": "/reservar", "title": "Reservar turno · KANI Barber Studio" },
+    { "path": "/admin", "title": "Administración · KANI Barber Studio" },
+    { "path": "/admin/pendientes", "title": "Turnos pendientes · KANI Barber Studio" },
+    { "path": "/admin/disponibilidad", "title": "Disponibilidad · KANI Barber Studio" }
+  ]
+}
