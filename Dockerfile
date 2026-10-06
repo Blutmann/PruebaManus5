@@ -3,12 +3,15 @@ FROM node:22-alpine
 WORKDIR /app
 
 COPY package.json pnpm-lock.yaml* ./
-RUN corepack enable && pnpm install --no-frozen-lockfile
+RUN corepack enable && pnpm install --frozen-lockfile
 
 COPY . .
+
+ENV NITRO_PRESET=node-server
 RUN pnpm run build
 
 ENV NODE_ENV=production
+ENV HOST=0.0.0.0
 ENV PORT=3000
 EXPOSE 3000
 
