@@ -157,7 +157,8 @@
 }
 
 .site-container { width: min(1184px, calc(100% - 80px)); margin-inline: auto; }
-.site-header { height: 98px; display: flex; align-items: center; border-bottom: 1px solid var(--border); background: var(--background); }
+.site-header { height: 98px; display: flex; align-items: center; border-bottom: 1px solid var(--border); background: #010302; }
+.site-container.site-footer { background-color: #010302; }
 .site-header > div { width: min(1184px, calc(100% - 80px)); }
 .wordmark-img { display: block; width: auto; height: 54px; filter: drop-shadow(0 1px 8px rgb(0 0 0 / 0.35)); }
 .eyebrow { font-size: 10px; font-weight: 600; letter-spacing: 2px; color: var(--gold); }
