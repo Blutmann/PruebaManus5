@@ -173,6 +173,69 @@ export type Database = {
         }
         Relationships: []
       }
+      appointment_notification_events: {
+        Row: {
+          id: string
+          appointment_id: string
+          notification_type: "NEW_REQUEST" | "CONFIRMED" | "CANCELLED"
+          recipient_email: string
+          client_name: string
+          barber_name: string
+          service_name: string
+          booking_date: string
+          start_time: string
+          end_time: string
+          claim_token_digest: string
+          status: "PENDING" | "SENDING" | "SENT" | "FAILED"
+          attempts: number
+          provider_message_id: string | null
+          last_error: string | null
+          sent_at: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          appointment_id: string
+          notification_type: "NEW_REQUEST" | "CONFIRMED" | "CANCELLED"
+          recipient_email: string
+          client_name: string
+          barber_name: string
+          service_name: string
+          booking_date: string
+          start_time: string
+          end_time: string
+          claim_token_digest: string
+          status?: "PENDING" | "SENDING" | "SENT" | "FAILED"
+          attempts?: number
+          provider_message_id?: string | null
+          last_error?: string | null
+          sent_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          appointment_id?: string
+          notification_type?: "NEW_REQUEST" | "CONFIRMED" | "CANCELLED"
+          recipient_email?: string
+          client_name?: string
+          barber_name?: string
+          service_name?: string
+          booking_date?: string
+          start_time?: string
+          end_time?: string
+          claim_token_digest?: string
+          status?: "PENDING" | "SENDING" | "SENT" | "FAILED"
+          attempts?: number
+          provider_message_id?: string | null
+          last_error?: string | null
+          sent_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       staff_profiles: {
         Row: {
           user_id: string
@@ -235,6 +298,7 @@ export type Database = {
           booking_date: string
           start_time: string
           end_time: string
+          notification_claim_token: string | null
         }[]
       }
       update_appointment_status: {
@@ -242,11 +306,51 @@ export type Database = {
           p_appointment_id: string
           p_status: "CONFIRMED" | "CANCELLED" | "COMPLETED"
         }
-        Returns: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED"
+        Returns: {
+          appointment_status: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED"
+          notification_claim_token: string | null
+        }[]
+      }
+      claim_appointment_notification: {
+        Args: {
+          p_appointment_id: string
+          p_claim_token: string
+        }
+        Returns: {
+          notification_id: string
+          notification_type: "NEW_REQUEST" | "CONFIRMED" | "CANCELLED"
+          recipient_email: string
+          client_name: string
+          barber_name: string
+          service_name: string
+          booking_date: string
+          start_time: string
+          end_time: string
+          dispatch_status: string
+          attempt: number
+        }[]
+      }
+      complete_appointment_notification: {
+        Args: {
+          p_notification_id: string
+          p_claim_token: string
+          p_provider_message_id: string
+        }
+        Returns: boolean
+      }
+      fail_appointment_notification: {
+        Args: {
+          p_notification_id: string
+          p_claim_token: string
+          p_error: string
+        }
+        Returns: boolean
       }
     }
     Enums: {
-      [_ in never]: never
+      appointment_status: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED"
+      notification_type: "NEW_REQUEST" | "CONFIRMED" | "CANCELLED"
+      notification_delivery_status: "PENDING" | "SENDING" | "SENT" | "FAILED"
     }
     CompositeTypes: {
       [_ in never]: never

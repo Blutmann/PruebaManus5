@@ -1,6 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables } from '@/integrations/supabase/types';
 import type { Appointment, Barber, ServiceId, Status } from '@/lib/kani-model';
+import { sendAppointmentNotification } from '@/lib/kani-notifications.functions';
 
 export type RealAppointmentStatus = Tables<'appointments'>['status'];
 export type RealAppointment = Appointment & { notes: string; statusCode: RealAppointmentStatus; barberId: string; serviceId: string };
@@ -48,6 +49,14 @@ export async function createRealAppointment(input: CreateAppointmentInput) {
   if (error) throw error;
   const row = data?.[0];
   if (!row) throw new Error('La reserva no devolvió un resultado válido.');
+  if (row.notification_claim_token) {
+    void sendAppointmentNotification({
+      data: {
+        appointmentId: row.appointment_id,
+        claimToken: row.notification_claim_token,
+      },
+    }).catch(error => console.error('[KANI notification] dispatch request failed', error));
+  }
   return row;
 }
 
@@ -100,7 +109,16 @@ export async function updateRealAppointmentStatus(id: string, status: 'CONFIRMED
     p_status: status,
   });
   if (error) throw error;
-  return data;
+  const row = data?.[0];
+  if (row?.notification_claim_token) {
+    void sendAppointmentNotification({
+      data: {
+        appointmentId: id,
+        claimToken: row.notification_claim_token,
+      },
+    }).catch(error => console.error('[KANI notification] dispatch request failed', error));
+  }
+  return row?.appointment_status;
 }
 
 function serviceIdForName(name: string): ServiceId {
