@@ -63,10 +63,10 @@ function AdminLayout() {
   const { profile } = authState.staff;
   return (
     <AdminStaffProvider staff={authState.staff}>
-      <div className="site-container admin-account-bar">
-        <div className="admin-account-identity"><strong>{profile.display_name}</strong><span>{profile.role}</span></div>
+      <header className="site-container admin-account-bar" aria-label="Cuenta de administración">
+        <div className="admin-account-identity"><strong>{profile.role === 'ADMIN' ? 'KANI Admin' : profile.display_name}</strong><span>{profile.role}</span></div>
         <Button variant="ghost" className="admin-signout" onClick={() => void signOut()}><LogOut />Cerrar sesión</Button>
-      </div>
+      </header>
       <Outlet />
     </AdminStaffProvider>
   );
