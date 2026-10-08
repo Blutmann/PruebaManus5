@@ -63,9 +63,9 @@ function AdminLayout() {
   const { profile } = authState.staff;
   return (
     <AdminStaffProvider staff={authState.staff}>
-      <div className="site-container flex items-center justify-end gap-4 pt-5">
-        <span className="text-xs text-muted-foreground">{profile.display_name} · {profile.role}</span>
-        <Button variant="ghost" onClick={() => void signOut()}><LogOut />Salir</Button>
+      <div className="site-container admin-account-bar">
+        <div className="admin-account-identity"><strong>{profile.display_name}</strong><span>{profile.role}</span></div>
+        <Button variant="ghost" className="admin-signout" onClick={() => void signOut()}><LogOut />Cerrar sesión</Button>
       </div>
       <Outlet />
     </AdminStaffProvider>

@@ -326,7 +326,7 @@ export type Database = {
           slot_date: string
           start_time: string
           end_time: string
-          status: "AVAILABLE"
+          status: "AVAILABLE" | "UNAVAILABLE"
         }
         Relationships: []
       }

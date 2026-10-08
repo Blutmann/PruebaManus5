@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { Home } from '@/components/kani/home';
+import { Booking } from '@/components/kani/booking';
 import { pageHead } from '@/lib/kani-head';
 
 export const Route = createFileRoute('/')({
-  head: () => pageHead('KANI Barber Studio', 'Barbería contemporánea en Martínez. Conocé nuestros servicios y reservá tu próximo turno.'),
-  component: Home,
+  head: () => pageHead('Elegí tu servicio', 'Reservá en KANI Barber Studio: elegí servicio, barbero, fecha y horario sin crear una cuenta.'),
+  component: Booking,
 });

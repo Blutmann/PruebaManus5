@@ -3,7 +3,9 @@ import type { Tables } from '@/integrations/supabase/types';
 import { bookingEndDate, isBookingDate, type Barber } from '@/lib/kani-model';
 
 export type AvailabilitySlot = Tables<'barber_availability_slots'>;
-export type PublicAvailabilitySlot = Tables<'available_barber_slots'>;
+export type PublicAvailabilitySlot = Omit<Tables<'available_barber_slots'>, 'status'> & {
+  status: AvailabilitySlot['status'];
+};
 
 const slotFields = 'id, barber_id, slot_date, start_time, end_time, status, internal_note, created_at, updated_at, updated_by';
 const publicSlotFields = 'id, barber_id, slot_date, start_time, end_time, status';
