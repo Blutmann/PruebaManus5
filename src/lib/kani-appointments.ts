@@ -121,6 +121,17 @@ export async function updateRealAppointmentStatus(id: string, status: 'CONFIRMED
   return row?.appointment_status;
 }
 
+export async function retryRealAppointmentNotification(id: string) {
+  const { data: claimToken, error } = await supabase.rpc('retry_appointment_notification', {
+    p_appointment_id: id,
+  });
+  if (error) throw error;
+  if (!claimToken) return 'ALREADY_SENT' as const;
+  return (await sendAppointmentNotification({
+    data: { appointmentId: id, claimToken },
+  })).status;
+}
+
 function serviceIdForName(name: string): ServiceId {
   if (name === 'Corte + barba') return 'corte-barba';
   if (name === 'Barba') return 'barba';

@@ -7,13 +7,14 @@ type NotificationType = Database['public']['Enums']['notification_type'];
 type NotificationClaim = {
   notification_id: string;
   notification_type: NotificationType;
-  recipient_email: string;
+  recipient_email: string | null;
   client_name: string;
   barber_name: string;
   service_name: string;
   booking_date: string;
   start_time: string;
   end_time: string;
+  client_notes: string | null;
   dispatch_status: string;
   attempt: number;
 };
@@ -27,6 +28,7 @@ type NotificationPayload = {
   bookingDate: string;
   startTime: string;
   endTime: string;
+  clientNotes: string | null;
 };
 
 type DispatchResult = {
@@ -54,6 +56,7 @@ export const sendAppointmentNotification = createServerFn({ method: 'POST' })
       notificationId = event.notification_id;
       if (event.dispatch_status === 'ALREADY_SENT') return { sent: true, status: 'ALREADY_SENT' };
       if (event.dispatch_status === 'IN_PROGRESS') return { sent: false, status: 'IN_PROGRESS' };
+      if (!event.recipient_email) throw new Error('NOTIFICATION_RECIPIENT_MISSING');
 
       const apiKey = process.env['RESEND_API_KEY'];
       const fromEmail = process.env['RESEND_FROM_EMAIL'];
@@ -69,6 +72,7 @@ export const sendAppointmentNotification = createServerFn({ method: 'POST' })
         bookingDate: event.booking_date,
         startTime: event.start_time,
         endTime: event.end_time,
+        clientNotes: event.client_notes,
       };
       const email = buildEmail(payload);
       const response = await fetch('https://api.resend.com/emails', {
@@ -104,11 +108,12 @@ export const sendAppointmentNotification = createServerFn({ method: 'POST' })
       if (notificationId) {
         try {
           const supabase = await createRequestSupabaseClient();
-          await supabase.rpc('fail_appointment_notification', {
+          const { error: recordError } = await supabase.rpc('fail_appointment_notification', {
             p_notification_id: notificationId,
             p_claim_token: data.claimToken,
             p_error: safeMessage,
           });
+          if (recordError) throw recordError;
         } catch (recordError) {
           console.error(`[KANI notification] failed to record failure: ${safeErrorMessage(recordError)}`);
         }
@@ -155,14 +160,15 @@ function buildEmail(payload: NotificationPayload) {
     serviceName: escapeHtml(payload.serviceName),
     date: escapeHtml(date),
     time: escapeHtml(time),
+    clientNotes: escapeHtml(payload.clientNotes ?? ''),
     status: '',
   };
   const copy = {
     NEW_REQUEST: {
-      subject: 'Recibimos tu solicitud en KANI',
-      title: 'Turno pendiente de confirmación',
-      intro: 'Recibimos tu solicitud. El equipo de KANI la revisará y te avisaremos cuando quede confirmada.',
-      status: 'PENDIENTE',
+      subject: 'Nueva solicitud de turno en KANI',
+      title: 'Nueva solicitud de turno',
+      intro: 'Hay una solicitud pendiente para revisar desde el panel de administración.',
+      status: 'Pendiente de confirmación',
     },
     CONFIRMED: {
       subject: 'Tu turno en KANI está confirmado',
@@ -179,8 +185,15 @@ function buildEmail(payload: NotificationPayload) {
   }[payload.notificationType];
   safe.status = copy.status;
   const subject = `${copy.subject} · ${payload.bookingDate}`;
-  const html = `<!doctype html><html lang="es"><body style="margin:0;background:#f4f1eb;color:#1c1c1c;font-family:Arial,sans-serif"><div style="max-width:560px;margin:0 auto;padding:36px 20px"><div style="background:#161616;padding:22px 24px;color:#f4f1eb;letter-spacing:.18em;font-weight:700;font-size:18px">KANI <span style="color:#c79b5b">/</span> BARBER STUDIO</div><main style="background:#fff;padding:34px 24px"><p style="margin:0 0 12px;color:#a37b43;font-size:11px;letter-spacing:.16em;font-weight:700">${safe.status}</p><h1 style="margin:0;font-size:28px;line-height:1.1">${copy.title}</h1><p style="color:#6d6d6d;line-height:1.6;margin:18px 0 28px">Hola ${safe.clientName},<br>${copy.intro}</p><div style="border-top:1px solid #e5e0d8;border-bottom:1px solid #e5e0d8;padding:18px 0"><p style="margin:0 0 10px"><strong>Servicio:</strong> ${safe.serviceName}</p><p style="margin:0 0 10px"><strong>Barbero:</strong> ${safe.barberName}</p><p style="margin:0 0 10px"><strong>Fecha:</strong> ${safe.date}</p><p style="margin:0"><strong>Horario:</strong> ${safe.time}</p></div><p style="color:#6d6d6d;line-height:1.6;margin:26px 0 0">San Isidro Labrador 7<br>Martínez, Provincia de Buenos Aires</p></main><p style="color:#8b8b8b;font-size:12px;line-height:1.5;text-align:center;margin:18px 8px">Este mensaje fue enviado automáticamente por KANI Barber Studio.</p></div></body></html>`;
-  const text = `${copy.title}\n\nHola ${payload.clientName},\n${copy.intro}\n\nServicio: ${payload.serviceName}\nBarbero: ${payload.barberName}\nFecha: ${date}\nHorario: ${time}\n\nKANI Barber Studio\nSan Isidro Labrador 7, Martínez, Provincia de Buenos Aires`;
+  const isNewRequest = payload.notificationType === 'NEW_REQUEST';
+  const adminUrl = 'https://kani-equhjmq4.manus.space/admin';
+  const greeting = isNewRequest ? `Hola ${safe.barberName}` : `Hola ${safe.clientName}`;
+  const observationsHtml = isNewRequest && safe.clientNotes ? `<p style="margin:12px 0 0"><strong>Observaciones:</strong> ${safe.clientNotes}</p>` : '';
+  const panelHtml = isNewRequest ? `<p style="margin:26px 0 0"><a href="${adminUrl}" style="display:inline-block;background:#9f173b;color:#fff;padding:12px 18px;text-decoration:none">Gestionar en /admin</a></p>` : '';
+  const observationsText = isNewRequest && payload.clientNotes ? `\nObservaciones: ${payload.clientNotes}` : '';
+  const panelText = isNewRequest ? `\nGestionar turno: ${adminUrl}` : '';
+  const html = `<!doctype html><html lang="es"><body style="margin:0;background:#f4f1eb;color:#1c1c1c;font-family:Arial,sans-serif"><div style="max-width:560px;margin:0 auto;padding:36px 20px"><div style="background:#161616;padding:22px 24px;color:#f4f1eb;letter-spacing:.18em;font-weight:700;font-size:18px">KANI <span style="color:#c79b5b">/</span> BARBER STUDIO</div><main style="background:#fff;padding:34px 24px"><p style="margin:0 0 12px;color:#a37b43;font-size:11px;letter-spacing:.16em;font-weight:700">${safe.status}</p><h1 style="margin:0;font-size:28px;line-height:1.1">${copy.title}</h1><p style="color:#6d6d6d;line-height:1.6;margin:18px 0 28px">${greeting},<br>${copy.intro}</p><div style="border-top:1px solid #e5e0d8;border-bottom:1px solid #e5e0d8;padding:18px 0">${isNewRequest ? `<p style="margin:0 0 10px"><strong>Cliente:</strong> ${safe.clientName}</p>` : ''}<p style="margin:0 0 10px"><strong>Servicio:</strong> ${safe.serviceName}</p><p style="margin:0 0 10px"><strong>Barbero:</strong> ${safe.barberName}</p><p style="margin:0 0 10px"><strong>Fecha:</strong> ${safe.date}</p><p style="margin:0"><strong>Horario:</strong> ${safe.time}</p>${observationsHtml}</div>${panelHtml}<p style="color:#6d6d6d;line-height:1.6;margin:26px 0 0">San Isidro Labrador 7<br>Martínez, Provincia de Buenos Aires</p></main><p style="color:#8b8b8b;font-size:12px;line-height:1.5;text-align:center;margin:18px 8px">Este mensaje fue enviado automáticamente por KANI Barber Studio.</p></div></body></html>`;
+  const text = `${copy.title}\n\n${isNewRequest ? `Hola ${payload.barberName}` : `Hola ${payload.clientName}`},\n${copy.intro}\n\n${isNewRequest ? `Cliente: ${payload.clientName}\n` : ''}Servicio: ${payload.serviceName}\nBarbero: ${payload.barberName}\nFecha: ${date}\nHorario: ${time}${observationsText}${panelText}\n\nKANI Barber Studio\nSan Isidro Labrador 7, Martínez, Provincia de Buenos Aires`;
   return { subject, html, text };
 }
 

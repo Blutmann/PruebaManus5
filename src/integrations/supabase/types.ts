@@ -178,8 +178,9 @@ export type Database = {
           id: string
           appointment_id: string
           notification_type: "NEW_REQUEST" | "CONFIRMED" | "CANCELLED"
-          recipient_email: string
+          recipient_email: string | null
           client_name: string
+          client_notes: string | null
           barber_name: string
           service_name: string
           booking_date: string
@@ -198,8 +199,9 @@ export type Database = {
           id?: string
           appointment_id: string
           notification_type: "NEW_REQUEST" | "CONFIRMED" | "CANCELLED"
-          recipient_email: string
+          recipient_email?: string | null
           client_name: string
+          client_notes?: string | null
           barber_name: string
           service_name: string
           booking_date: string
@@ -218,8 +220,9 @@ export type Database = {
           id?: string
           appointment_id?: string
           notification_type?: "NEW_REQUEST" | "CONFIRMED" | "CANCELLED"
-          recipient_email?: string
+          recipient_email?: string | null
           client_name?: string
+          client_notes?: string | null
           barber_name?: string
           service_name?: string
           booking_date?: string
@@ -319,8 +322,9 @@ export type Database = {
         Returns: {
           notification_id: string
           notification_type: "NEW_REQUEST" | "CONFIRMED" | "CANCELLED"
-          recipient_email: string
+          recipient_email: string | null
           client_name: string
+          client_notes: string | null
           barber_name: string
           service_name: string
           booking_date: string
@@ -345,6 +349,10 @@ export type Database = {
           p_error: string
         }
         Returns: boolean
+      }
+      retry_appointment_notification: {
+        Args: { p_appointment_id: string }
+        Returns: string | null
       }
     }
     Enums: {

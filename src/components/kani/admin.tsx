@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogFooter } f
 import { dateLabel, demoToday, serviceFor, type Barber } from '@/lib/kani-model';
 import { useAdminStaff } from '@/lib/kani-admin-context';
 import { permittedBarberNames } from '@/lib/kani-role-scope';
-import { appointmentErrorMessage, readRealAppointments, updateRealAppointmentStatus, type RealAppointment } from '@/lib/kani-appointments';
+import { appointmentErrorMessage, readRealAppointments, retryRealAppointmentNotification, updateRealAppointmentStatus, type RealAppointment } from '@/lib/kani-appointments';
 import { AdminAvailability } from './availability-admin';
 
 type View = 'upcoming' | 'pending' | 'availability';
@@ -76,6 +76,19 @@ export function Admin({ view }: { view: View }) {
     }
   }
 
+  async function retryEmail(appointment: RealAppointment) {
+    if (!isAppointmentVisible(appointment)) return;
+    try {
+      const status = await retryRealAppointmentNotification(appointment.id);
+      setNotice(status === 'SENT' || status === 'ALREADY_SENT'
+        ? 'Email enviado o ya procesado.'
+        : status === 'FAILED' ? 'No se pudo enviar el email. El fallo quedó registrado para reintentar.'
+          : 'No hay un email listo para reintentar.');
+    } catch (cause) {
+      setError(appointmentErrorMessage(cause));
+    }
+  }
+
   return <main className="site-container admin-page">
     <div className="admin-heading"><div className="min-w-0"><span className="eyebrow">KANI / ADMINISTRACIÓN</span><h1 className="section-title">Tu agenda, en orden.</h1><p className="mt-3 text-muted-foreground">Cada turno. Cada detalle. Todo en su lugar.</p></div><span className="admin-date">Martes 6 de octubre <span className="text-gold">2026</span></span></div>
     <nav className="admin-tabs" aria-label="Secciones de administración">{tabs.map(tab => <Button key={tab.id} asChild variant="ghost" className={view === tab.id ? 'tab-current' : ''}><Link to={tab.to} activeOptions={{ exact: true }}><tab.icon size={17} /><span>{tab.label}</span>{tab.id === 'pending' && pendingCount > 0 && <span className="count-badge">{pendingCount}</span>}</Link></Button>)}</nav>
@@ -88,7 +101,7 @@ export function Admin({ view }: { view: View }) {
         <label className="sr-only" htmlFor="date-filter">Filtrar por fecha</label><Input id="date-filter" type="date" aria-label="Filtrar por fecha" min={demoToday} className="h-11 w-auto" value={dateFilter} onChange={e => setDateFilter(e.target.value)} />{dateFilter && <Button variant="ghost" size="icon" className="h-11 w-11" aria-label="Quitar filtro de fecha" onClick={() => setDateFilter('')}><X /></Button>}
       </div></div>
       <div className="appointment-table-header"><span>FECHA Y HORA</span><span>CLIENTE / SERVICIO</span><span>BARBERO</span><span>ESTADO</span><span className="text-right">ACCIONES</span></div>
-      <div className="appointment-list">{list.map(a => <article className="appointment-row" key={a.id}><div className="appointment-when"><span className="text-2xl">{a.time}</span><span className="mt-1 block text-xs capitalize text-muted-foreground">{dateLabel(a.date)}</span></div><div className="appointment-client"><h3 className="font-medium">{a.name}</h3><span className="mt-1 block text-sm text-muted-foreground">{serviceFor(a.service).name} <span className="mx-1">·</span> {serviceFor(a.service).duration} min</span>{a.notes && <span className="mt-1 block text-xs text-muted-foreground">Con observaciones</span>}</div><span className="appointment-barber flex items-center gap-2 text-sm"><span className="small-avatar">{a.barber[0]}</span>{a.barber}</span><span className={`status ${a.statusCode === 'PENDING' ? 'pending' : a.statusCode === 'CONFIRMED' ? 'confirmed' : ''}`}>{a.statusCode === 'PENDING' ? <CircleDot size={12} /> : <Check size={12} />}{statusLabels[a.statusCode]}</span><div className="appointment-actions">{a.statusCode === 'PENDING' && <Button className="h-10" onClick={() => void changeStatus(a, 'CONFIRMED')}><Check />Confirmar</Button>}{a.statusCode !== 'CANCELLED' && a.statusCode !== 'COMPLETED' && <Button variant="outline" className="h-10" onClick={() => setCancel(a)}><X /><span>Cancelar</span></Button>}</div></article>)}</div>
+      <div className="appointment-list">{list.map(a => <article className="appointment-row" key={a.id}><div className="appointment-when"><span className="text-2xl">{a.time}</span><span className="mt-1 block text-xs capitalize text-muted-foreground">{dateLabel(a.date)}</span></div><div className="appointment-client"><h3 className="font-medium">{a.name}</h3><span className="mt-1 block text-sm text-muted-foreground">{serviceFor(a.service).name} <span className="mx-1">·</span> {serviceFor(a.service).duration} min</span>{a.notes && <span className="mt-1 block text-xs text-muted-foreground">Con observaciones</span>}</div><span className="appointment-barber flex items-center gap-2 text-sm"><span className="small-avatar">{a.barber[0]}</span>{a.barber}</span><span className={`status ${a.statusCode === 'PENDING' ? 'pending' : a.statusCode === 'CONFIRMED' ? 'confirmed' : ''}`}>{a.statusCode === 'PENDING' ? <CircleDot size={12} /> : <Check size={12} />}{statusLabels[a.statusCode]}</span><div className="appointment-actions">{a.statusCode === 'PENDING' && <Button className="h-10" onClick={() => void changeStatus(a, 'CONFIRMED')}><Check />Confirmar</Button>}{a.statusCode !== 'CANCELLED' && a.statusCode !== 'COMPLETED' && <Button variant="outline" className="h-10" onClick={() => setCancel(a)}><X /><span>Cancelar</span></Button>}{a.statusCode !== 'COMPLETED' && <Button variant="ghost" className="h-10" onClick={() => void retryEmail(a)}>Reintentar email</Button>}</div></article>)}</div>
       {loading && <div className="empty-state"><p className="text-sm text-muted-foreground">Cargando reservas reales…</p></div>}
       {!loading && list.length === 0 && <div className="empty-state"><CalendarDays size={32} /><h3 className="mt-4 text-lg">{view === 'pending' ? 'Todo al día.' : 'No hay turnos para mostrar.'}</h3><p className="mt-2 text-sm text-muted-foreground">Probá con otra fecha o barbero.</p></div>}
       <div className="mt-6 flex items-center gap-2 text-xs text-muted-foreground"><CircleDot size={12} className="text-gold" />Las solicitudes PENDING mantienen el horario reservado.</div>
