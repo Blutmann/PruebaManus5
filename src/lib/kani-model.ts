@@ -12,7 +12,6 @@ export type DayHours = { enabled: boolean; start: string; end: string };
 export type Availability = Record<Barber, DayHours[]>;
 export type SlotOverride = { available: boolean; note: string };
 export type SlotOverrides = Record<string, SlotOverride>;
-export const demoToday = '2026-10-06';
 export const money = (value: number) => '$' + value.toLocaleString('es-AR');
 export const serviceFor = (id: ServiceId) => services.find(s => s.id === id) ?? services[0];
 export const minutes = (time: string) => { const [h = 0, m = 0] = time.split(':').map(Number); return h * 60 + m; };
@@ -20,6 +19,7 @@ export const timeFor = (value: number) => `${Math.floor(value / 60).toString().p
 export const parseDate = (date: string) => new Date(date + 'T12:00:00');
 export const dateLabel = (date: string) => parseDate(date).toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' });
 export const isoDate = (date: Date) => `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+export const demoToday = isoDate(new Date());
 export const bookingEndDate = isoDate(new Date(parseDate(demoToday).getTime() + 21 * 24 * 60 * 60 * 1000));
 export const isBookingDate = (date: string) => date >= demoToday && date <= bookingEndDate && parseDate(date).getDay() !== 0;
 export const slotKey = (barber: Barber, date: string, time: string) => `${barber}|${date}|${time}`;

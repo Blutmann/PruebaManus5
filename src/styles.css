@@ -237,9 +237,24 @@
 .appointment-table-header, .appointment-row { display: grid; grid-template-columns: 1.15fr 1.5fr 1fr 1fr 1.6fr; align-items: center; gap: 18px; }
 .appointment-table-header { padding: 16px 0; border-bottom: 1px solid var(--border); font-size: 9px; letter-spacing: 1px; color: var(--muted-foreground); }
 .appointment-row { padding: 26px 0; border-bottom: 1px solid var(--border); }
-.appointment-actions { display: flex; gap: 8px; justify-content: flex-end; }
+.appointment-actions { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
 .appointment-actions .status { flex-shrink: 0; }
 .small-avatar { width: 28px; height: 28px; display: grid; place-items: center; color: var(--gold); background: var(--secondary); border-radius: 50%; font-size: 11px; flex-shrink: 0; }
+.booking-cta { position: relative; z-index: 10; }
+.admin-heading-actions { display: flex; align-items: center; justify-content: flex-end; gap: 18px; }
+.notification-trigger { position: relative; color: var(--muted-foreground); }
+.notification-trigger:hover { color: var(--foreground); }
+.notification-dot { position: absolute; top: 8px; right: 8px; width: 7px; height: 7px; border: 2px solid var(--background); border-radius: 50%; background: var(--primary); }
+.notification-popover { width: 340px; max-width: calc(100vw - 32px); }
+.notification-empty { display: grid; justify-items: center; gap: 10px; padding: 34px 10px 20px; color: var(--muted-foreground); text-align: center; }
+.notification-list { display: grid; gap: 15px; padding-top: 15px; }
+.notification-item { display: grid; grid-template-columns: 28px minmax(0,1fr); gap: 10px; }
+.notification-kind { display: grid; place-items: center; width: 28px; height: 28px; border: 1px solid var(--border); border-radius: 50%; color: var(--gold); }
+.notification-kind.appointment { color: var(--success); }
+.notification-kind.availability { color: var(--gold); }
+.appointment-note { display: inline-flex; align-items: center; gap: 6px; color: var(--gold); font-size: 10px; letter-spacing: .04em; text-align: left; }
+.appointment-note:hover { color: var(--foreground); text-decoration: underline; text-underline-offset: 3px; }
+.note-popover { width: 300px; max-width: calc(100vw - 32px); }
 .notice { display: flex; gap: 10px; align-items: center; font-size: 13px; padding: 10px 16px; border: 1px solid var(--border); color: var(--success); margin-top: 20px; }
 .empty-state { display: flex; flex-direction: column; align-items: center; padding: 75px 15px; color: var(--muted-foreground); border-bottom: 1px solid var(--border); text-align: center; }
 .availability-layout { display: grid; grid-template-columns: 240px minmax(0,600px); gap: 60px; margin-top: 32px; }
@@ -283,7 +298,7 @@ input[type=date], input[type=time] { color-scheme: dark; }
  .studio-note { flex-direction: column; align-items: flex-start; }
  .studio-note > div { align-items: flex-start; }
  .studio-note > a { margin-left: 45px; }
- .booking-page { padding-top: 24px; min-height: 720px; padding-bottom: 45px; }
+ .booking-page { padding-top: 24px; min-height: 720px; padding-bottom: 120px; }
  .booking-progress { gap: 5px; margin-top: 28px; margin-bottom: 32px; }
  .booking-progress > button { flex-direction: column; gap: 8px; padding-bottom: 13px; }
  .booking-progress small { font-size: 9px; }
@@ -298,7 +313,8 @@ input[type=date], input[type=time] { color-scheme: dark; }
  .confirmation-details { padding: 20px; font-size: 12px; }
  .admin-page { padding-top: 32px; }
  .admin-heading { display: block; }
- .admin-date { margin-top: 22px; }
+ .admin-heading-actions { justify-content: space-between; margin-top: 22px; }
+ .admin-date { margin-top: 0; }
  .admin-tabs { gap: 0; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); margin-top: 24px; }
  .admin-tabs > a { font-size: 10px; gap: 5px; flex-wrap: wrap; padding: 10px 3px; justify-content: center; height: 68px; }
  .admin-tabs > a svg { width: 15px; }
@@ -316,5 +332,8 @@ input[type=date], input[type=time] { color-scheme: dark; }
  .hours-row { gap: 10px; font-size: 12px; }
  .hours-row label { gap: 7px; }
  .time-input { width: 93px; padding-inline: 7px; font-size: 12px; }
+ .booking-cta { position: fixed; left: 20px; right: 20px; bottom: 0; z-index: 30; margin-top: 0; padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid var(--border); background: color-mix(in oklch, var(--background) 94%, transparent); box-shadow: 0 -12px 24px color-mix(in oklch, var(--background) 60%, transparent); backdrop-filter: blur(12px); }
+ .booking-cta > button { min-width: 0; }
+ .booking-cta > button:last-child { flex: 1; justify-content: center; }
 }
 @media(prefers-reduced-motion:reduce) { *,*::before,*::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
