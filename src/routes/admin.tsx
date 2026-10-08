@@ -52,7 +52,7 @@ function AdminLayout() {
       <main className="site-container admin-page">
         <div className="mx-auto max-w-sm py-12 text-center">
           <h1 className="eyebrow">ACCESO NO AUTORIZADO</h1>
-          <p className="mt-4 text-sm text-muted-foreground">Esta cuenta no tiene un perfil interno activo en KANI.</p>
+          <p className="mt-4 text-sm text-muted-foreground">Esta cuenta no tiene un perfil interno activo en Kani Barber Studio.</p>
           <Button className="mt-7" onClick={() => void signOut()}>Cerrar sesión</Button>
         </div>
       </main>

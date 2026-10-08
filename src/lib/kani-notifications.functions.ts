@@ -165,19 +165,19 @@ function buildEmail(payload: NotificationPayload) {
   };
   const copy = {
     NEW_REQUEST: {
-      subject: 'Nueva solicitud de turno en KANI',
+      subject: 'Nueva solicitud de turno en Kani Barber Studio',
       title: 'Nueva solicitud de turno',
       intro: 'Hay una solicitud pendiente para revisar desde el panel de administración.',
       status: 'Pendiente de confirmación',
     },
     CONFIRMED: {
-      subject: 'Tu turno en KANI está confirmado',
+      subject: 'Tu turno en Kani Barber Studio está confirmado',
       title: 'Tu turno está confirmado',
-      intro: 'Ya está todo listo. Te esperamos en KANI para tu próximo momento.',
+      intro: 'Ya está todo listo. Te esperamos en Kani Barber Studio para tu próximo momento.',
       status: 'CONFIRMADO',
     },
     CANCELLED: {
-      subject: 'Actualización de tu turno en KANI',
+      subject: 'Actualización de tu turno en Kani Barber Studio',
       title: 'Tu turno fue cancelado',
       intro: 'El turno indicado a continuación fue cancelado. Si querés, podés solicitar uno nuevo desde nuestra web.',
       status: 'CANCELADO',
@@ -192,8 +192,8 @@ function buildEmail(payload: NotificationPayload) {
   const panelHtml = isNewRequest ? `<p style="margin:26px 0 0"><a href="${adminUrl}" style="display:inline-block;background:#9f173b;color:#fff;padding:12px 18px;text-decoration:none">Gestionar en /admin</a></p>` : '';
   const observationsText = isNewRequest && payload.clientNotes ? `\nObservaciones: ${payload.clientNotes}` : '';
   const panelText = isNewRequest ? `\nGestionar turno: ${adminUrl}` : '';
-  const html = `<!doctype html><html lang="es"><body style="margin:0;background:#f4f1eb;color:#1c1c1c;font-family:Arial,sans-serif"><div style="max-width:560px;margin:0 auto;padding:36px 20px"><div style="background:#161616;padding:22px 24px;color:#f4f1eb;letter-spacing:.18em;font-weight:700;font-size:18px">KANI <span style="color:#c79b5b">/</span> BARBER STUDIO</div><main style="background:#fff;padding:34px 24px"><p style="margin:0 0 12px;color:#a37b43;font-size:11px;letter-spacing:.16em;font-weight:700">${safe.status}</p><h1 style="margin:0;font-size:28px;line-height:1.1">${copy.title}</h1><p style="color:#6d6d6d;line-height:1.6;margin:18px 0 28px">${greeting},<br>${copy.intro}</p><div style="border-top:1px solid #e5e0d8;border-bottom:1px solid #e5e0d8;padding:18px 0">${isNewRequest ? `<p style="margin:0 0 10px"><strong>Cliente:</strong> ${safe.clientName}</p>` : ''}<p style="margin:0 0 10px"><strong>Servicio:</strong> ${safe.serviceName}</p><p style="margin:0 0 10px"><strong>Barbero:</strong> ${safe.barberName}</p><p style="margin:0 0 10px"><strong>Fecha:</strong> ${safe.date}</p><p style="margin:0"><strong>Horario:</strong> ${safe.time}</p>${observationsHtml}</div>${panelHtml}<p style="color:#6d6d6d;line-height:1.6;margin:26px 0 0">San Isidro Labrador 7<br>Martínez, Provincia de Buenos Aires</p></main><p style="color:#8b8b8b;font-size:12px;line-height:1.5;text-align:center;margin:18px 8px">Este mensaje fue enviado automáticamente por KANI Barber Studio.</p></div></body></html>`;
-  const text = `${copy.title}\n\n${isNewRequest ? `Hola ${payload.barberName}` : `Hola ${payload.clientName}`},\n${copy.intro}\n\n${isNewRequest ? `Cliente: ${payload.clientName}\n` : ''}Servicio: ${payload.serviceName}\nBarbero: ${payload.barberName}\nFecha: ${date}\nHorario: ${time}${observationsText}${panelText}\n\nKANI Barber Studio\nSan Isidro Labrador 7, Martínez, Provincia de Buenos Aires`;
+  const html = `<!doctype html><html lang="es"><body style="margin:0;background:#f4f1eb;color:#1c1c1c;font-family:Arial,sans-serif"><div style="max-width:560px;margin:0 auto;padding:36px 20px"><div style="background:#161616;padding:22px 24px;color:#f4f1eb;letter-spacing:.18em;font-weight:700;font-size:18px">Kani Barber Studio</div><main style="background:#fff;padding:34px 24px"><p style="margin:0 0 12px;color:#a37b43;font-size:11px;letter-spacing:.16em;font-weight:700">${safe.status}</p><h1 style="margin:0;font-size:28px;line-height:1.1">${copy.title}</h1><p style="color:#6d6d6d;line-height:1.6;margin:18px 0 28px">${greeting},<br>${copy.intro}</p><div style="border-top:1px solid #e5e0d8;border-bottom:1px solid #e5e0d8;padding:18px 0">${isNewRequest ? `<p style="margin:0 0 10px"><strong>Cliente:</strong> ${safe.clientName}</p>` : ''}<p style="margin:0 0 10px"><strong>Servicio:</strong> ${safe.serviceName}</p><p style="margin:0 0 10px"><strong>Barbero:</strong> ${safe.barberName}</p><p style="margin:0 0 10px"><strong>Fecha:</strong> ${safe.date}</p><p style="margin:0"><strong>Horario:</strong> ${safe.time}</p>${observationsHtml}</div>${panelHtml}<p style="color:#6d6d6d;line-height:1.6;margin:26px 0 0">San Isidro Labrador 7<br>Martínez, Provincia de Buenos Aires</p></main><p style="color:#8b8b8b;font-size:12px;line-height:1.5;text-align:center;margin:18px 8px">Este mensaje fue enviado automáticamente por Kani Barber Studio.</p></div></body></html>`;
+  const text = `${copy.title}\n\n${isNewRequest ? `Hola ${payload.barberName}` : `Hola ${payload.clientName}`},\n${copy.intro}\n\n${isNewRequest ? `Cliente: ${payload.clientName}\n` : ''}Servicio: ${payload.serviceName}\nBarbero: ${payload.barberName}\nFecha: ${date}\nHorario: ${time}${observationsText}${panelText}\n\nKani Barber Studio\nSan Isidro Labrador 7, Martínez, Provincia de Buenos Aires`;
   return { subject, html, text };
 }
 

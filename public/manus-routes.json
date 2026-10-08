@@ -1,10 +1,10 @@
 {
   "routes": [
-    { "path": "/", "title": "Reservar turno · KANI Barber Studio" },
-    { "path": "/reservar", "title": "Reservar turno · KANI Barber Studio" },
-    { "path": "/admin", "title": "Administración · KANI Barber Studio" },
-    { "path": "/admin/pendientes", "title": "Turnos pendientes · KANI Barber Studio" },
-    { "path": "/admin/cancelados", "title": "Turnos cancelados · KANI Barber Studio" },
-    { "path": "/admin/disponibilidad", "title": "Horarios · KANI Barber Studio" }
+    { "path": "/", "title": "Kani Barber Studio - Solicitar turno" },
+    { "path": "/reservar", "title": "Kani Barber Studio - Solicitar turno" },
+    { "path": "/admin", "title": "Kani Barber Studio - Panel de control" },
+    { "path": "/admin/pendientes", "title": "Kani Barber Studio - Panel de control" },
+    { "path": "/admin/cancelados", "title": "Kani Barber Studio - Panel de control" },
+    { "path": "/admin/disponibilidad", "title": "Kani Barber Studio - Panel de control" }
   ]
 }
