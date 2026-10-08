@@ -214,7 +214,7 @@
 .summary-list > div { display: flex; justify-content: space-between; gap: 20px; }
 .summary-list dt { color: var(--muted-foreground); display: flex; gap: 9px; align-items: center; }
 .summary-list dd { text-align: right; }
-.calendar-panel { border: 1px solid var(--border); border-radius: 4px; padding: 24px; }
+.calendar-panel { border: 1px solid var(--border); border-radius: 4px; padding: 24px; background: var(--surface); }
 .calendar-grid { display: grid; grid-template-columns: repeat(7,minmax(0,1fr)); gap: 6px; }
 .calendar-weekday { text-align: center; color: var(--muted-foreground); font-size: 11px; margin-bottom: 8px; }
 .calendar-day { height: 45px; width: 100%; padding: 0; border: 1px solid transparent; }
@@ -245,8 +245,8 @@
 .status.pending { color: var(--gold); background: color-mix(in oklch,var(--gold) 10%,transparent); }
 .status.confirmed { color: var(--success); background: color-mix(in oklch,var(--success) 9%,transparent); }
 .status.cancelled { color: color-mix(in oklch, var(--primary) 88%, white); background: color-mix(in oklch,var(--primary) 14%,transparent); }
-.admin-page { padding-top: 48px; padding-bottom: 70px; min-height: 760px; }
-.admin-account-bar { display: flex; align-items: center; justify-content: flex-end; gap: 18px; padding-top: 20px; }
+.admin-page { padding-top: 28px; padding-bottom: 70px; min-height: 760px; }
+.admin-account-bar { display: flex; align-items: center; justify-content: flex-end; gap: 18px; min-height: 58px; padding-block: 10px; border-bottom: 1px solid var(--border); }
 .admin-account-identity { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; font-size: 12px; }
 .admin-account-identity strong { color: var(--foreground); font-weight: 600; }
 .admin-account-identity span { color: var(--gold); font-size: 10px; letter-spacing: .12em; }
@@ -270,8 +270,9 @@
 .appointment-actions .status { flex-shrink: 0; }
 .small-avatar { width: 28px; height: 28px; display: grid; place-items: center; color: var(--gold); background: var(--secondary); border-radius: 50%; font-size: 11px; flex-shrink: 0; }
 .booking-cta { position: relative; z-index: 10; gap: 10px; }
-.booking-home-button { flex: 0 0 44px; width: 44px; height: 44px; color: var(--primary-foreground) !important; }
+.booking-home-button { flex: 0 0 44px; width: 44px; height: 44px; margin-right: 12px; color: var(--primary-foreground) !important; }
 .booking-home-button:hover { background: color-mix(in oklch, var(--primary) 88%, white) !important; }
+.calendar-day.selected { background: var(--gold) !important; border-color: var(--gold) !important; color: var(--background) !important; }
 .booking-back-button { min-height: 44px; }
 .booking-next-button { margin-left: auto; min-height: 44px; }
 .exit-dialog { max-width: 420px; }
@@ -376,8 +377,8 @@ input[type=date], input[type=time] { color-scheme: dark; }
  .confirmation { padding-top: 45px; }
  .confirmation h1 { font-size: 30px; }
  .confirmation-details { padding: 20px; font-size: 12px; }
- .admin-page { padding-top: 32px; }
- .admin-account-bar { width: calc(100% - 40px); padding-top: 14px; gap: 10px; }
+ .admin-page { padding-top: 24px; }
+ .admin-account-bar { width: calc(100% - 40px); min-height: 52px; padding-block: 8px; gap: 10px; }
  .admin-account-identity { align-items: flex-start; margin-right: auto; font-size: 11px; }
  .admin-signout { padding-inline: 8px; font-size: 11px; }
  .admin-heading { display: block; }
@@ -411,7 +412,7 @@ input[type=date], input[type=time] { color-scheme: dark; }
  .time-input { width: 93px; padding-inline: 7px; font-size: 12px; }
  .booking-cta { position: fixed; left: 20px; right: 20px; bottom: 0; z-index: 30; margin-top: 0; padding: 10px 0 calc(10px + env(safe-area-inset-bottom)); border-top: 1px solid var(--border); background: color-mix(in oklch, var(--background) 94%, transparent); box-shadow: 0 -12px 24px color-mix(in oklch, var(--background) 60%, transparent); backdrop-filter: blur(12px); }
  .booking-cta > button { min-width: 0; }
- .booking-home-button { flex-basis: 44px; width: 44px; }
+ .booking-home-button { flex-basis: 44px; width: 44px; margin-right: 8px; }
  .booking-back-button { padding-inline: 13px; }
  .booking-next-button { flex: 1; justify-content: center; }
  .exit-dialog { width: calc(100% - 32px); padding: 22px; }
