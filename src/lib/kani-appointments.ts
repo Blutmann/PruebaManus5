@@ -4,7 +4,7 @@ import type { Appointment, Barber, ServiceId, Status } from '@/lib/kani-model';
 import { sendAppointmentNotification } from '@/lib/kani-notifications.functions';
 
 export type RealAppointmentStatus = Tables<'appointments'>['status'];
-export type RealAppointment = Appointment & { notes: string; statusCode: RealAppointmentStatus; barberId: string; serviceId: string };
+export type RealAppointment = Appointment & { notes: string; statusCode: RealAppointmentStatus; barberId: string; serviceId: string; requestNumber: number };
 
 type AppointmentRow = Tables<'appointments'>;
 
@@ -36,7 +36,7 @@ export function appointmentErrorMessage(error: unknown) {
 }
 
 export async function createRealAppointment(input: CreateAppointmentInput) {
-  const { data, error } = await supabase.rpc('request_appointment', {
+  const { data, error } = await supabase.rpc('request_appointment_with_number', {
     p_barber_name: input.barber,
     p_service_name: input.serviceName,
     p_booking_date: input.date,
@@ -63,7 +63,7 @@ export async function createRealAppointment(input: CreateAppointmentInput) {
 export async function readRealAppointments() {
   const { data: rows, error } = await supabase
     .from('appointments')
-    .select('id, client_id, barber_id, service_id, booking_date, start_time, end_time, status, notes, created_at, updated_at')
+    .select('id, request_number, client_id, barber_id, service_id, booking_date, start_time, end_time, status, notes, created_at, updated_at')
     .order('booking_date', { ascending: true })
     .order('start_time', { ascending: true });
   if (error) throw error;
@@ -87,6 +87,7 @@ export async function readRealAppointments() {
     if (!client || !barber || !service) return [];
     return [{
       id: row.id,
+      requestNumber: row.request_number,
       service: serviceIdForName(service.name),
       barber: barber.name as Barber,
       date: row.booking_date,

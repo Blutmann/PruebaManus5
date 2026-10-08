@@ -77,7 +77,10 @@ begin
       event_time
     )
     values (
-      case when new.status = 'UNAVAILABLE' then 'AVAILABILITY_UNAVAILABLE' else 'AVAILABILITY_AVAILABLE' end,
+      case
+        when new.status = 'UNAVAILABLE' then 'AVAILABILITY_UNAVAILABLE'::public.admin_activity_event_type
+        else 'AVAILABILITY_AVAILABLE'::public.admin_activity_event_type
+      end,
       v_actor_user_id,
       coalesce(v_actor_display_name, 'Personal KANI'),
       new.barber_id,
@@ -123,7 +126,7 @@ begin
       event_time
     )
     values (
-      'APPOINTMENT_REQUESTED',
+      'APPOINTMENT_REQUESTED'::public.admin_activity_event_type,
       null,
       coalesce(v_client_name, 'Cliente'),
       new.barber_id,
@@ -152,7 +155,10 @@ begin
       event_time
     )
     values (
-      case when new.status = 'CONFIRMED' then 'APPOINTMENT_CONFIRMED' else 'APPOINTMENT_CANCELLED' end,
+      case
+        when new.status = 'CONFIRMED' then 'APPOINTMENT_CONFIRMED'::public.admin_activity_event_type
+        else 'APPOINTMENT_CANCELLED'::public.admin_activity_event_type
+      end,
       v_actor_user_id,
       coalesce(v_actor_display_name, 'Personal KANI'),
       new.barber_id,
