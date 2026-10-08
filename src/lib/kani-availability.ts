@@ -1,6 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables } from '@/integrations/supabase/types';
-import type { Barber } from '@/lib/kani-model';
+import { bookingEndDate, isBookingDate, type Barber } from '@/lib/kani-model';
 
 export type AvailabilitySlot = Tables<'barber_availability_slots'>;
 export type PublicAvailabilitySlot = Tables<'available_barber_slots'>;
@@ -71,4 +71,47 @@ export async function updateAvailabilitySlot({
 
   if (error) throw error;
   return data as AvailabilitySlot;
+}
+
+export async function createAvailabilitySlots({
+  barberId,
+  dates,
+  startTime,
+}: {
+  barberId: string;
+  dates: string[];
+  startTime: string;
+}) {
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  if (userError || !user) throw userError ?? new Error('Sesión no disponible');
+
+  const [hoursText, minutesText] = startTime.split(':');
+  const hours = Number(hoursText);
+  const minutes = Number(minutesText);
+  if (!Number.isInteger(hours) || !Number.isInteger(minutes) || hours < 10 || hours >= 20 || minutes % 5 !== 0) {
+    throw new Error('El horario debe estar entre las 10:00 y las 19:55, en intervalos de 5 minutos.');
+  }
+  const endMinutes = hours * 60 + minutes + 60;
+  if (endMinutes > 20 * 60) throw new Error('El horario termina fuera del horario operativo.');
+
+  const validDates = dates.filter(slotDate => isBookingDate(slotDate));
+  if (validDates.length !== dates.filter(Boolean).length) throw new Error(`La fecha debe estar entre ${new Date(`${bookingEndDate}T12:00:00`).toLocaleDateString('es-AR')} y dentro de los días de atención.`);
+
+  const rows = validDates.map(slotDate => ({
+    barber_id: barberId,
+    slot_date: slotDate,
+    start_time: `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:00`,
+    end_time: `${String(Math.floor(endMinutes / 60)).padStart(2, '0')}:${String(endMinutes % 60).padStart(2, '0')}:00`,
+    status: 'AVAILABLE' as const,
+    updated_by: user.id,
+  }));
+  if (rows.length === 0) throw new Error('Elegí al menos una fecha.');
+
+  const { data, error } = await supabase
+    .from('barber_availability_slots')
+    .upsert(rows, { onConflict: 'barber_id,slot_date,start_time', ignoreDuplicates: true })
+    .select(slotFields);
+
+  if (error) throw error;
+  return (data ?? []) as AvailabilitySlot[];
 }

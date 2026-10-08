@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ReservarRouteImport } from './routes/reservar'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminCanceladosRouteImport } from './routes/admin.cancelados'
 import { Route as AdminDisponibilidadRouteImport } from './routes/admin.disponibilidad'
 import { Route as AdminPendientesRouteImport } from './routes/admin.pendientes'
 
@@ -36,6 +37,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminCanceladosRoute = AdminCanceladosRouteImport.update({
+  id: '/cancelados',
+  path: '/cancelados',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminDisponibilidadRoute = AdminDisponibilidadRouteImport.update({
   id: '/disponibilidad',
   path: '/disponibilidad',
@@ -51,6 +57,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/reservar': typeof ReservarRoute
+  '/admin/cancelados': typeof AdminCanceladosRoute
   '/admin/disponibilidad': typeof AdminDisponibilidadRoute
   '/admin/pendientes': typeof AdminPendientesRoute
   '/admin/': typeof AdminIndexRoute
@@ -58,6 +65,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/reservar': typeof ReservarRoute
+  '/admin/cancelados': typeof AdminCanceladosRoute
   '/admin/disponibilidad': typeof AdminDisponibilidadRoute
   '/admin/pendientes': typeof AdminPendientesRoute
   '/admin': typeof AdminIndexRoute
@@ -67,6 +75,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/reservar': typeof ReservarRoute
+  '/admin/cancelados': typeof AdminCanceladosRoute
   '/admin/disponibilidad': typeof AdminDisponibilidadRoute
   '/admin/pendientes': typeof AdminPendientesRoute
   '/admin/': typeof AdminIndexRoute
@@ -77,17 +86,24 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/reservar'
+    | '/admin/cancelados'
     | '/admin/disponibilidad'
     | '/admin/pendientes'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    '/' | '/reservar' | '/admin/disponibilidad' | '/admin/pendientes' | '/admin'
+    | '/'
+    | '/reservar'
+    | '/admin/cancelados'
+    | '/admin/disponibilidad'
+    | '/admin/pendientes'
+    | '/admin'
   id:
     | '__root__'
     | '/'
     | '/admin'
     | '/reservar'
+    | '/admin/cancelados'
     | '/admin/disponibilidad'
     | '/admin/pendientes'
     | '/admin/'
@@ -129,6 +145,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/cancelados': {
+      id: '/admin/cancelados'
+      path: '/cancelados'
+      fullPath: '/admin/cancelados'
+      preLoaderRoute: typeof AdminCanceladosRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/disponibilidad': {
       id: '/admin/disponibilidad'
       path: '/disponibilidad'
@@ -147,12 +170,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminCanceladosRoute: typeof AdminCanceladosRoute
   AdminDisponibilidadRoute: typeof AdminDisponibilidadRoute
   AdminPendientesRoute: typeof AdminPendientesRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminCanceladosRoute: AdminCanceladosRoute,
   AdminDisponibilidadRoute: AdminDisponibilidadRoute,
   AdminPendientesRoute: AdminPendientesRoute,
   AdminIndexRoute: AdminIndexRoute,

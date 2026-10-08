@@ -4,6 +4,7 @@
     { "path": "/reservar", "title": "Reservar turno · KANI Barber Studio" },
     { "path": "/admin", "title": "Administración · KANI Barber Studio" },
     { "path": "/admin/pendientes", "title": "Turnos pendientes · KANI Barber Studio" },
+    { "path": "/admin/cancelados", "title": "Turnos cancelados · KANI Barber Studio" },
     { "path": "/admin/disponibilidad", "title": "Disponibilidad · KANI Barber Studio" }
   ]
 }
