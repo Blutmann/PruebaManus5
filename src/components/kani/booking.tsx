@@ -122,9 +122,8 @@ export function Booking() {
   if (result) return (
     <main className="site-container confirmation">
       <div className="confirmation-mark"><Check size={30} /></div>
-      <span className="eyebrow">PENDIENTE DE CONFIRMACIÓN</span>
-      <h1>Turno pendiente de confirmación</h1>
-      <p className="confirmation-lead text-muted-foreground">Tu solicitud fue registrada correctamente. Te avisaremos por email cuando {result.barber} la confirme.</p>
+      <h1>Solicitaste un turno</h1>
+      <p className="confirmation-lead text-muted-foreground">Recibimos tu solicitud correctamente. Te enviaremos un email cuando {result.barber} confirme el turno.</p>
       <div className="confirmation-details">
         <div className="confirmation-request-number">Solicitud #{result.requestNumber}</div>
         <dl className="summary-list">
@@ -141,10 +140,10 @@ export function Booking() {
         <p className="mt-2 text-sm text-muted-foreground">San Isidro Labrador 7 · Martínez, Provincia de Buenos Aires</p>
         <div className="confirmation-actions">
           <Button asChild className="confirmation-home action-brand" aria-label="Volver a reservar">
-            <a href="/reservar"><House size={17} /> HOME</a>
+            <a href="/reservar">Volver al inicio</a>
           </Button>
           <Button asChild variant="outline" className="confirmation-secondary">
-            <a href="https://www.google.com/maps/place/KANI+BARBER+STUDIO/data=!4m2!3m1!1s0x0:0x48bcfe7b2ea7ba60" target="_blank" rel="noreferrer"><MapPin size={16} /> Cómo llegar</a>
+            <a href="https://www.google.com/maps/place/KANI+BARBER+STUDIO/data=!4m2!3m1!1s0x0:0x48bcfe7b2ea7ba60" target="_blank" rel="noreferrer"><MapPin size={16} /> Ver ubicación</a>
           </Button>
           <Button asChild variant="outline" className="confirmation-secondary">
             <a href="https://www.instagram.com/kanibarberstudio/" target="_blank" rel="noreferrer"><Instagram size={16} /> Instagram</a>
