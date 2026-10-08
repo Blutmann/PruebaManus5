@@ -144,7 +144,6 @@ export function AdminAvailability({
   return <section className="py-9">
     <div className="availability-heading">
       <div><h2 className="text-2xl">DISPONIBILIDAD</h2><p className="mt-2 text-sm text-muted-foreground">Disponibilidad real persistida por fecha y hora.</p></div>
-      <SlidersHorizontal className="text-gold" aria-hidden="true" />
     </div>
     <div className="mt-8 flex flex-wrap items-end gap-3">
       <div><label className="mb-2 block text-xs text-muted-foreground" htmlFor="availability-date">Fecha</label><Input id="availability-date" type="date" min={demoToday} max={bookingEndDate} value={selectedDate} onChange={event => setSelectedDate(event.target.value)} /></div>
