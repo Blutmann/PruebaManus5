@@ -96,7 +96,40 @@ export function Booking() {
       setSubmitting(false);
     }
   }
-  if (result) return <main className="site-container confirmation"><div className="confirmation-mark"><Check size={30} /></div><span className="eyebrow">NOS VEMOS EN KANI</span><h1>Turno pendiente de confirmación.</h1><p className="text-muted-foreground">Tu solicitud fue registrada correctamente.<br />{result.barber} revisará tu turno y recibirás una notificación cuando lo confirme.</p><div className="confirmation-details"><div className="flex justify-between border-b pb-5"><span className="text-muted-foreground">Solicitud #{result.requestNumber}</span><StatusPending /></div><dl className="summary-list"><div><dt>Servicio</dt><dd>{serviceFor(result.service).name}</dd></div><div><dt>Barbero</dt><dd>{result.barber}</dd></div><div><dt>Fecha</dt><dd className="capitalize">{dateLabel(result.date)}</dd></div><div><dt>Horario</dt><dd>{result.time} · {serviceFor(result.service).duration} min</dd></div><div><dt>A nombre de</dt><dd>{result.name}</dd></div>{result.notes?.trim() && <div><dt>Observaciones</dt><dd className="max-w-[65%] whitespace-pre-wrap">{result.notes.trim()}</dd></div>}<div><dt>Total</dt><dd>{money(serviceFor(result.service).price)}</dd></div></dl></div><p className="text-sm text-muted-foreground">TURNO PENDIENTE DE CONFIRMACIÓN.</p><section className="mt-8 border-t pt-7"><h2 className="text-sm font-medium">KANI BARBER STUDIO</h2><p className="mt-3 text-sm text-muted-foreground">San Isidro Labrador 7<br />Martínez, Provincia de Buenos Aires</p><p className="mt-3 text-sm text-muted-foreground">Lunes a sábados<br />10:00 a 20:00 hs</p></section><Button asChild className="action-brand mt-7 h-12 px-8"><a href="/">Volver al inicio <ArrowRight /></a></Button></main>;
+  if (result) return (
+    <main className="site-container confirmation">
+      <div className="confirmation-mark"><Check size={30} /></div>
+      <span className="eyebrow">SOLICITUD RECIBIDA</span>
+      <h1>Solicitud recibida</h1>
+      <p className="confirmation-lead text-muted-foreground">
+        Tu solicitud fue registrada correctamente.<br />
+        El turno queda pendiente de confirmación. Te avisaremos por email cuando {result.barber} lo confirme.
+      </p>
+      <div className="confirmation-details">
+        <div className="flex justify-between border-b pb-5">
+          <span className="text-muted-foreground">Solicitud #{result.requestNumber}</span>
+          <StatusPending />
+        </div>
+        <dl className="summary-list">
+          <div><dt>Servicio</dt><dd>{serviceFor(result.service).name}</dd></div>
+          <div><dt>Barbero</dt><dd>{result.barber}</dd></div>
+          <div><dt>Fecha</dt><dd className="capitalize">{dateLabel(result.date)}</dd></div>
+          <div><dt>Horario</dt><dd>{result.time} · {serviceFor(result.service).duration} min</dd></div>
+          <div><dt>A nombre de</dt><dd>{result.name}</dd></div>
+          {result.notes?.trim() && <div><dt>Observaciones</dt><dd className="max-w-[65%] whitespace-pre-wrap">{result.notes.trim()}</dd></div>}
+          <div><dt>Total</dt><dd>{money(serviceFor(result.service).price)}</dd></div>
+        </dl>
+      </div>
+      <section className="confirmation-place border-t pt-7">
+        <h2 className="text-sm font-medium">KANI BARBER STUDIO</h2>
+        <p className="mt-3 text-sm text-muted-foreground">San Isidro Labrador 7<br />Martínez, Provincia de Buenos Aires</p>
+        <p className="mt-3 text-sm text-muted-foreground">Lunes a sábados<br />10:00 a 20:00 hs</p>
+      </section>
+      <Button asChild variant="outline" className="confirmation-back mt-7 h-12 px-8">
+        <a href="/">Volver al inicio <ArrowRight /></a>
+      </Button>
+    </main>
+  );
   const titles = ['Elegí un servicio', 'Elegí un barbero', 'Elegí una fecha', 'Elegí un horario', 'Completá tus datos', 'Confirmá tu turno'];
   const subtitles = ['', '', '', '', '', ''];
   const canNext = [Boolean(service), Boolean(barber), Boolean(date), Boolean(time), true, true][step];
@@ -114,7 +147,7 @@ export function Booking() {
     {error && <p role="alert" className="mt-5 text-destructive">{error}</p>}<div className="booking-cta mt-8 flex items-center justify-between border-t pt-6"><Button variant="ghost" onClick={() => move(step - 1)} disabled={step === 0 || submitting}><ArrowLeft /> Atrás</Button><Button disabled={!canNext || submitting} className="action-positive h-12 px-6" onClick={step === 5 ? submit : next}>{step === 5 ? 'Solicitar turno' : 'Continuar'} <ArrowRight /></Button></div>
     </section><aside className="booking-aside"><span className="eyebrow">TU RESERVA</span><h2 className="mt-4 text-2xl">Un momento para vos.</h2><dl className="summary-list mt-6"><div><dt><Scissors size={16} /> Servicio</dt><dd>{selected?.name ?? 'Por elegir'}</dd></div><div><dt><UserRound size={16} /> Barbero</dt><dd>{barber ?? 'Por elegir'}</dd></div><div><dt><CalendarDays size={16} /> Fecha</dt><dd className="capitalize">{date ? parseDate(date).toLocaleDateString('es-AR', { day: 'numeric', month: 'short' }) : 'Por elegir'}</dd></div><div><dt><Clock3 size={16} /> Hora</dt><dd>{time || 'Por elegir'}</dd></div></dl>{selected && <div className="mt-6 flex items-center justify-between border-t pt-6"><span className="text-sm text-muted-foreground">{selected.duration} min</span><span className="text-xl">{money(selected.price)}</span></div>}<p className="mt-9 flex items-start gap-2 text-xs leading-relaxed text-muted-foreground"><CircleCheck size={15} className="shrink-0 text-gold" /> Sin cuenta. Sin pagos online.<br />Solo tu próximo turno.</p></aside></div></main>;
 }
-function StatusPending() { return <span className="status pending"><CircleDot size={12} /> Pendiente</span>; }
+function StatusPending() { return <span className="status pending"><CircleDot size={12} /> PENDIENTE</span>; }
 
 function slotsForDate(service: ServiceId, date: string, publicSlots: PublicAvailabilitySlot[], now = new Date()) {
   const duration = serviceFor(service).duration;
