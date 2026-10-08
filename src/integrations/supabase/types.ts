@@ -173,6 +173,51 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_activity_notifications: {
+        Row: {
+          id: string
+          event_type: "AVAILABILITY_UNAVAILABLE" | "AVAILABILITY_AVAILABLE" | "APPOINTMENT_REQUESTED" | "APPOINTMENT_CONFIRMED" | "APPOINTMENT_CANCELLED"
+          actor_user_id: string | null
+          actor_display_name: string
+          barber_id: string | null
+          appointment_id: string | null
+          availability_slot_id: string | null
+          barber_name: string
+          client_name: string | null
+          event_date: string
+          event_time: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          event_type: "AVAILABILITY_UNAVAILABLE" | "AVAILABILITY_AVAILABLE" | "APPOINTMENT_REQUESTED" | "APPOINTMENT_CONFIRMED" | "APPOINTMENT_CANCELLED"
+          actor_user_id?: string | null
+          actor_display_name: string
+          barber_id?: string | null
+          appointment_id?: string | null
+          availability_slot_id?: string | null
+          barber_name: string
+          client_name?: string | null
+          event_date: string
+          event_time?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          event_type?: "AVAILABILITY_UNAVAILABLE" | "AVAILABILITY_AVAILABLE" | "APPOINTMENT_REQUESTED" | "APPOINTMENT_CONFIRMED" | "APPOINTMENT_CANCELLED"
+          actor_user_id?: string | null
+          actor_display_name?: string
+          barber_id?: string | null
+          appointment_id?: string | null
+          availability_slot_id?: string | null
+          barber_name?: string
+          client_name?: string | null
+          event_date?: string
+          event_time?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
       appointment_notification_events: {
         Row: {
           id: string
@@ -359,6 +404,7 @@ export type Database = {
       appointment_status: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED"
       notification_type: "NEW_REQUEST" | "CONFIRMED" | "CANCELLED"
       notification_delivery_status: "PENDING" | "SENDING" | "SENT" | "FAILED"
+      admin_activity_event_type: "AVAILABILITY_UNAVAILABLE" | "AVAILABILITY_AVAILABLE" | "APPOINTMENT_REQUESTED" | "APPOINTMENT_CONFIRMED" | "APPOINTMENT_CANCELLED"
     }
     CompositeTypes: {
       [_ in never]: never

@@ -9,15 +9,13 @@ import { dateLabel, demoToday, serviceFor, type Barber } from '@/lib/kani-model'
 import { useAdminStaff } from '@/lib/kani-admin-context';
 import { permittedBarberNames } from '@/lib/kani-role-scope';
 import { appointmentErrorMessage, readRealAppointments, retryRealAppointmentNotification, updateRealAppointmentStatus, type RealAppointment } from '@/lib/kani-appointments';
+import { readAdminActivityNotifications, type AdminActivityEvent } from '@/lib/kani-admin-activity';
 import { AdminAvailability } from './availability-admin';
 
 type View = 'upcoming' | 'pending' | 'availability';
 
 const statusLabels = { PENDING: 'Pendiente', CONFIRMED: 'Confirmado', CANCELLED: 'Cancelado', COMPLETED: 'Completado' } as const;
 type AdminNotification = { id: string; type: 'availability' | 'appointment' | 'info'; message: string; time: string };
-
-// Fuente aislada para la futura integración de eventos. No inventa novedades reales en producción.
-const recentNotifications: AdminNotification[] = [];
 
 export function Admin({ view }: { view: View }) {
   const { profile, barbers: permittedRows } = useAdminStaff();
@@ -31,6 +29,7 @@ export function Admin({ view }: { view: View }) {
   const [loading, setLoading] = useState(true);
   const [notice, setNotice] = useState('');
   const [error, setError] = useState('');
+  const [recentNotifications, setRecentNotifications] = useState<AdminNotification[]>([]);
 
   async function reload() {
     setLoading(true);
@@ -48,6 +47,17 @@ export function Admin({ view }: { view: View }) {
     if (profile.role === 'BARBER' && firstPermittedBarber) setBarberFilter(firstPermittedBarber);
   }, [profile.role, firstPermittedBarber]);
   useEffect(() => { void reload(); }, []);
+  useEffect(() => {
+    if (profile.role !== 'ADMIN') {
+      setRecentNotifications([]);
+      return;
+    }
+    let cancelled = false;
+    void readAdminActivityNotifications()
+      .then(events => { if (!cancelled) setRecentNotifications(events.map(toAdminNotification)); })
+      .catch(cause => { if (!cancelled) setError(cause instanceof Error ? cause.message : 'No se pudieron cargar las novedades.'); });
+    return () => { cancelled = true; };
+  }, [profile.role]);
 
   if (!firstPermittedBarber) {
     return <main className="site-container admin-page"><div className="py-12 text-center text-destructive">No hay una agenda autorizada para este perfil.</div></main>;
@@ -95,7 +105,7 @@ export function Admin({ view }: { view: View }) {
   }
 
   return <main className="site-container admin-page">
-    <div className="admin-heading"><div className="min-w-0"><span className="eyebrow">KANI / ADMINISTRACIÓN</span><h1 className="section-title">Tu agenda, en orden.</h1><p className="mt-3 text-muted-foreground">Cada turno. Cada detalle. Todo en su lugar.</p></div><div className="admin-heading-actions"><Popover><PopoverTrigger asChild><Button variant="outline" size="icon" className="notification-trigger" aria-label={recentNotifications.length ? `${recentNotifications.length} novedades recientes` : 'Notificaciones'}><Bell />{recentNotifications.length > 0 && <span className="notification-dot" aria-hidden="true" />}</Button></PopoverTrigger><PopoverContent align="end" className="notification-popover"><div className="flex items-start justify-between gap-4 border-b pb-3"><div><span className="eyebrow">ACTIVIDAD</span><h2 className="mt-1 text-lg">Notificaciones</h2></div><Bell size={17} className="text-gold" aria-hidden="true" /></div>{recentNotifications.length === 0 ? <div className="notification-empty"><Bell size={24} /><p>No hay novedades recientes.</p></div> : <div className="notification-list">{recentNotifications.map(notification => <article key={notification.id} className="notification-item"><span className={`notification-kind ${notification.type}`} aria-hidden="true">{notification.type === 'availability' ? <SlidersHorizontal size={13} /> : notification.type === 'appointment' ? <CalendarDays size={13} /> : <Bell size={13} />}</span><div><p className="text-sm leading-relaxed">{notification.message}</p><time className="mt-1 block text-xs text-muted-foreground">{notification.time}</time></div></article>)}</div>}</PopoverContent></Popover><span className="admin-date">{dateLabel(demoToday)}</span></div></div>
+    <div className="admin-heading"><div className="min-w-0"><span className="eyebrow">KANI / ADMINISTRACIÓN</span><h1 className="section-title">Tu agenda, en orden.</h1><p className="mt-3 text-muted-foreground">Cada turno. Cada detalle. Todo en su lugar.</p></div><div className="admin-heading-actions"><Popover><PopoverTrigger asChild><Button variant="outline" size="icon" className={profile.role === 'ADMIN' ? 'notification-trigger' : 'hidden'} aria-label={recentNotifications.length ? `${recentNotifications.length} novedades recientes` : 'Notificaciones'}><Bell />{recentNotifications.length > 0 && <span className="notification-dot" aria-hidden="true" />}</Button></PopoverTrigger><PopoverContent align="end" className="notification-popover"><div className="flex items-start justify-between gap-4 border-b pb-3"><div><span className="eyebrow">ACTIVIDAD</span><h2 className="mt-1 text-lg">Notificaciones</h2></div><Bell size={17} className="text-gold" aria-hidden="true" /></div>{recentNotifications.length === 0 ? <div className="notification-empty"><Bell size={24} /><p>No hay novedades recientes.</p></div> : <div className="notification-list">{recentNotifications.map(notification => <article key={notification.id} className="notification-item"><span className={`notification-kind ${notification.type}`} aria-hidden="true">{notification.type === 'availability' ? <SlidersHorizontal size={13} /> : notification.type === 'appointment' ? <CalendarDays size={13} /> : <Bell size={13} />}</span><div><p className="text-sm leading-relaxed">{notification.message}</p><time className="mt-1 block text-xs text-muted-foreground">{notification.time}</time></div></article>)}</div>}</PopoverContent></Popover><span className="admin-date">{dateLabel(demoToday)}</span></div></div>
     <nav className="admin-tabs" aria-label="Secciones de administración">{tabs.map(tab => <Button key={tab.id} asChild variant="ghost" className={view === tab.id ? 'tab-current' : ''}><Link to={tab.to} activeOptions={{ exact: true }}><tab.icon size={17} /><span>{tab.label}</span>{tab.id === 'pending' && pendingCount > 0 && <span className="count-badge">{pendingCount}</span>}</Link></Button>)}</nav>
     {notice && <div role="status" className="notice"><Check size={16} />{notice}<Button size="icon" variant="ghost" className="ml-auto" aria-label="Cerrar aviso" onClick={() => setNotice('')}><X /></Button></div>}
     {error && <div role="alert" className="notice text-destructive"><X size={16} />{error}</div>}
@@ -117,4 +127,26 @@ export function Admin({ view }: { view: View }) {
 
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function toAdminNotification(event: AdminActivityEvent): AdminNotification {
+  const date = new Date(`${event.event_date}T12:00:00`).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const time = event.event_time?.slice(0, 5) ?? '--:--';
+  const client = event.client_name ?? 'cliente';
+  const message = event.event_type === 'AVAILABILITY_UNAVAILABLE'
+    ? `${event.actor_display_name} marcó como NO DISPONIBLE el horario de ${time} hs del ${date}.`
+    : event.event_type === 'AVAILABILITY_AVAILABLE'
+      ? `${event.actor_display_name} marcó como DISPONIBLE el horario de ${time} hs del ${date}.`
+      : event.event_type === 'APPOINTMENT_REQUESTED'
+        ? `${client} solicitó un turno con ${event.barber_name} el ${date} a las ${time} hs.`
+        : event.event_type === 'APPOINTMENT_CONFIRMED'
+          ? `${event.actor_display_name} confirmó el turno de ${client} del ${date} a las ${time} hs.`
+          : `${event.actor_display_name} canceló el turno de ${client} del ${date} a las ${time} hs.`;
+
+  return {
+    id: event.id,
+    type: event.event_type.startsWith('AVAILABILITY') ? 'availability' : 'appointment',
+    message,
+    time: new Date(event.created_at).toLocaleString('es-AR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }),
+  };
 }
