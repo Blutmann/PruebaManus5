@@ -349,26 +349,6 @@ export type Database = {
           booking_date: string
           start_time: string
           end_time: string
-          notification_claim_token: string | null
-        }[]
-      }
-      request_appointment_with_number: {
-        Args: {
-          p_barber_name: string
-          p_service_name: string
-          p_booking_date: string
-          p_start_time: string
-          p_client_name: string
-          p_client_phone: string
-          p_client_email: string
-          p_notes?: string | null
-        }
-        Returns: {
-          appointment_id: string
-          appointment_status: "PENDING"
-          booking_date: string
-          start_time: string
-          end_time: string
           request_number: number
           notification_claim_token: string | null
         }[]

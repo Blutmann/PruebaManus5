@@ -36,7 +36,7 @@ export function appointmentErrorMessage(error: unknown) {
 }
 
 export async function createRealAppointment(input: CreateAppointmentInput) {
-  const { data, error } = await supabase.rpc('request_appointment_with_number', {
+  const { data, error } = await supabase.rpc('request_appointment', {
     p_barber_name: input.barber,
     p_service_name: input.serviceName,
     p_booking_date: input.date,

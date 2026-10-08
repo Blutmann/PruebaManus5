@@ -20,6 +20,7 @@ export function Booking() {
   const [publicSlots, setPublicSlots] = useState<PublicAvailabilitySlot[]>([]);
   const [availabilityLoading, setAvailabilityLoading] = useState(false);
   const [availabilityError, setAvailabilityError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const [clock, setClock] = useState(() => new Date());
   const formRef = useRef<HTMLFormElement>(null);
   const selected = service ? serviceFor(service) : null;
@@ -81,20 +82,8 @@ export function Booking() {
   function move(next: number) { setStep(next); setError(''); window.scrollTo({ top: 0, behavior: 'smooth' }); }
   function next() { if (step === 4 && !formRef.current?.reportValidity()) return; move(step + 1); }
   async function submit() {
-    if (!service || !barber || !date || !time) return;
-    try {
-      const latestSlots = await readPublicAvailabilitySlots(barber, date, date);
-      const latestTimes = slotsForDate(service, date, latestSlots, new Date());
-      if (!latestTimes.includes(time)) {
-        setTime('');
-        move(3);
-        setError('Ese horario ya no está disponible. Elegí otro para continuar.');
-        return;
-      }
-    } catch (cause) {
-      setError(cause instanceof Error ? cause.message : 'No se pudo verificar la disponibilidad.');
-      return;
-    }
+    if (!service || !barber || !date || !time || submitting) return;
+    setSubmitting(true);
     try {
       const created = await createRealAppointment({ barber, serviceName: serviceFor(service).name, date, time, name: contact.name.trim(), phone: contact.phone.trim(), email: contact.email.trim(), notes: contact.notes });
       setResult({ id: created.appointment_id, requestNumber: created.request_number, service, barber, date, time, name: contact.name.trim(), email: contact.email.trim(), phone: contact.phone.trim(), notes: contact.notes, status: 'Pendiente' });
@@ -103,6 +92,8 @@ export function Booking() {
       setTime('');
       move(3);
       setError(appointmentErrorMessage(cause));
+    } finally {
+      setSubmitting(false);
     }
   }
   if (result) return <main className="site-container confirmation"><div className="confirmation-mark"><Check size={30} /></div><span className="eyebrow">NOS VEMOS EN KANI</span><h1>Turno pendiente de confirmación.</h1><p className="text-muted-foreground">Tu solicitud fue registrada correctamente.<br />{result.barber} revisará tu turno y recibirás una notificación cuando lo confirme.</p><div className="confirmation-details"><div className="flex justify-between border-b pb-5"><span className="text-muted-foreground">Solicitud #{result.requestNumber}</span><StatusPending /></div><dl className="summary-list"><div><dt>Servicio</dt><dd>{serviceFor(result.service).name}</dd></div><div><dt>Barbero</dt><dd>{result.barber}</dd></div><div><dt>Fecha</dt><dd className="capitalize">{dateLabel(result.date)}</dd></div><div><dt>Horario</dt><dd>{result.time} · {serviceFor(result.service).duration} min</dd></div><div><dt>A nombre de</dt><dd>{result.name}</dd></div>{result.notes?.trim() && <div><dt>Observaciones</dt><dd className="max-w-[65%] whitespace-pre-wrap">{result.notes.trim()}</dd></div>}<div><dt>Total</dt><dd>{money(serviceFor(result.service).price)}</dd></div></dl></div><p className="text-sm text-muted-foreground">TURNO PENDIENTE DE CONFIRMACIÓN.</p><section className="mt-8 border-t pt-7"><h2 className="text-sm font-medium">KANI BARBER STUDIO</h2><p className="mt-3 text-sm text-muted-foreground">San Isidro Labrador 7<br />Martínez, Provincia de Buenos Aires</p><p className="mt-3 text-sm text-muted-foreground">Lunes a sábados<br />10:00 a 20:00 hs</p></section><Button asChild className="mt-7 h-12 px-8"><Link to="/">Volver al inicio <ArrowRight /></Link></Button></main>;
@@ -120,7 +111,7 @@ export function Booking() {
     {step === 3 && <div><div className="mb-6 flex items-center gap-2 text-sm capitalize text-gold"><CalendarDays size={16} /> {dateLabel(date)}</div>{[['Mañana', slots.filter(t => t < '13:00')], ['Tarde', slots.filter(t => t >= '13:00')]].map(([label, group]) => <div key={String(label)} className="mb-6"><h2 className="mb-3 text-sm text-muted-foreground">{label}</h2><div className="grid grid-cols-3 gap-2 sm:grid-cols-4">{(group as string[]).map(t => <Button key={t} variant="outline" className={`h-12 ${time === t ? 'selected' : ''}`} aria-pressed={time === t} onClick={() => setTime(t)}>{t}</Button>)}</div></div>)}{availabilityError && <p role="alert" className="py-3 text-sm text-destructive">{availabilityError}</p>}{slots.length === 0 && !availabilityLoading && <p className="py-6 text-muted-foreground">No hay horarios disponibles. Elegí otra fecha.</p>}</div>}
     {step === 4 && <form ref={formRef} className="space-y-6" onSubmit={e => { e.preventDefault(); next(); }}><label className="field-label">Nombre y apellido<Input required minLength={3} autoComplete="name" value={contact.name} onChange={e => setContact({ ...contact, name: e.target.value })} placeholder="Tu nombre completo" /></label><label className="field-label">Celular<Input type="tel" required pattern="[+0-9 ()\-]{8,20}" autoComplete="tel" value={contact.phone} onChange={e => setContact({ ...contact, phone: e.target.value })} placeholder="11 1234 5678" /></label><label className="field-label">Email<Input type="email" required autoComplete="email" value={contact.email} onChange={e => setContact({ ...contact, email: e.target.value })} placeholder="nombre@email.com" /></label><label className="field-label">Observaciones <span className="text-xs font-normal text-muted-foreground">(opcional)</span><textarea className="notes-input" maxLength={500} value={contact.notes} onChange={e => setContact({ ...contact, notes: e.target.value })} placeholder="Algo que quieras contarnos" /></label><Button type="submit" hidden className="hidden" tabIndex={-1}>Continuar</Button></form>}
     {step === 5 && <div><div className="review-line"><UserRound size={20} /><div><h2>{contact.name}</h2><p className="mt-1 break-all text-sm text-muted-foreground">{contact.email}</p><p className="mt-1 text-sm text-muted-foreground">{contact.phone}</p></div><Button variant="ghost" className="ml-auto text-gold" onClick={() => move(4)}>Editar</Button></div><dl className="summary-list border-b py-5"><div><dt>Servicio</dt><dd>{selected?.name}</dd></div><div><dt>Barbero</dt><dd>{barber}</dd></div><div><dt>Fecha</dt><dd className="capitalize">{dateLabel(date)}</dd></div><div><dt>Horario</dt><dd>{time} · {selected?.duration} min</dd></div>{contact.notes.trim() && <div><dt>Observaciones</dt><dd className="max-w-[65%] whitespace-pre-wrap">{contact.notes.trim()}</dd></div>}<div><dt>Total</dt><dd className="text-xl">{selected && money(selected.price)}</dd></div></dl><div className="mt-6 flex items-start gap-3 text-sm text-muted-foreground"><Clock3 className="mt-0.5 shrink-0 text-gold" size={18} /><p>Tu solicitud quedará pendiente hasta que {barber} confirme el turno.</p></div></div>}
-    {error && <p role="alert" className="mt-5 text-destructive">{error}</p>}<div className="booking-cta mt-8 flex items-center justify-between border-t pt-6"><Button variant="ghost" onClick={() => move(step - 1)} disabled={step === 0}><ArrowLeft /> Atrás</Button><Button disabled={!canNext} className="h-12 px-6" onClick={step === 5 ? submit : next}>{step === 5 ? 'Solicitar turno' : 'Continuar'} <ArrowRight /></Button></div>
+    {error && <p role="alert" className="mt-5 text-destructive">{error}</p>}<div className="booking-cta mt-8 flex items-center justify-between border-t pt-6"><Button variant="ghost" onClick={() => move(step - 1)} disabled={step === 0 || submitting}><ArrowLeft /> Atrás</Button><Button disabled={!canNext || submitting} className="h-12 px-6" onClick={step === 5 ? submit : next}>{step === 5 ? 'Solicitar turno' : 'Continuar'} <ArrowRight /></Button></div>
     </section><aside className="booking-aside"><span className="eyebrow">TU RESERVA</span><h2 className="mt-4 text-2xl">Un momento para vos.</h2><dl className="summary-list mt-6"><div><dt><Scissors size={16} /> Servicio</dt><dd>{selected?.name ?? 'Por elegir'}</dd></div><div><dt><UserRound size={16} /> Barbero</dt><dd>{barber ?? 'Por elegir'}</dd></div><div><dt><CalendarDays size={16} /> Fecha</dt><dd className="capitalize">{date ? parseDate(date).toLocaleDateString('es-AR', { day: 'numeric', month: 'short' }) : 'Por elegir'}</dd></div><div><dt><Clock3 size={16} /> Hora</dt><dd>{time || 'Por elegir'}</dd></div></dl>{selected && <div className="mt-6 flex items-center justify-between border-t pt-6"><span className="text-sm text-muted-foreground">{selected.duration} min</span><span className="text-xl">{money(selected.price)}</span></div>}<p className="mt-9 flex items-start gap-2 text-xs leading-relaxed text-muted-foreground"><CircleCheck size={15} className="shrink-0 text-gold" /> Sin cuenta. Sin pagos online.<br />Solo tu próximo turno.</p></aside></div></main>;
 }
 function StatusPending() { return <span className="status pending"><CircleDot size={12} /> Pendiente</span>; }
