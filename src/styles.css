@@ -195,6 +195,7 @@
 .booking-layout { display: grid; grid-template-columns: minmax(0,1fr) 300px; gap: 72px; align-items: start; }
 .section-title { font-size: 34px; line-height: 1.25; font-weight: 500; margin-top: 13px; }
 .booking-page .section-title, .booking-page .field-label { font-family: var(--font-display); letter-spacing: .01em; }
+.booking-page .section-title { margin-bottom: 22px; }
 .booking-aside { margin-top: 9px; padding: 27px 0 27px 28px; border-left: 1px solid var(--border); }
 .booking-aside .eyebrow { font-size: 9px; }
 .booking-option { width: 100%; display: flex; gap: 18px; height: 98px; padding: 20px; background: var(--surface); white-space: normal; }
