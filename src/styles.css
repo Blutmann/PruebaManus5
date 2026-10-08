@@ -148,7 +148,7 @@
   }
 
   body {
-    background-color: var(--color-background);
+    background-color: #010302;
     color: var(--color-foreground);
     font-family: var(--font-sans);
     letter-spacing: 0;
@@ -188,9 +188,7 @@
 .confirmation-back { border-color: color-mix(in oklch,var(--foreground) 30%,transparent) !important; color: var(--foreground) !important; }
 .confirmation-back:hover { border-color: var(--gold) !important; color: var(--gold) !important; background: transparent !important; }
 .back-link { display: inline-flex; gap: 9px; align-items: center; font-size: 12px; color: var(--muted-foreground); }
-.booking-page { position: relative; isolation: isolate; overflow: clip; max-width: 1020px; padding-top: 30px; padding-bottom: 80px; min-height: 780px; }
-.booking-page > :not(.brand-watermark) { position: relative; z-index: 1; }
-.brand-watermark { position: absolute; z-index: 0; pointer-events: none; width: min(560px, 55vw); aspect-ratio: 1; right: -190px; top: 150px; background: url('/kani-watermark.webp') center / contain no-repeat; opacity: .065; mix-blend-mode: screen; transform: rotate(-4deg); }
+.booking-page { max-width: 1020px; padding-top: 30px; padding-bottom: 80px; min-height: 780px; }
 .booking-progress { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); margin-top: 38px; margin-bottom: 55px; border-bottom: 1px solid var(--border); }
 .booking-progress > button { display: flex; align-items: center; gap: 10px; height: auto; justify-content: flex-start; padding: 0 0 19px; border-radius: 0; color: var(--muted-foreground); border-bottom: 2px solid transparent; }
 .booking-progress > button > span { width: 24px; height: 24px; border: 1px solid var(--border); border-radius: 50%; font-size: 9px; display: grid; place-items: center; flex-shrink: 0; }
@@ -271,7 +269,13 @@
 .appointment-retry { width: 100%; justify-content: center; }
 .appointment-actions .status { flex-shrink: 0; }
 .small-avatar { width: 28px; height: 28px; display: grid; place-items: center; color: var(--gold); background: var(--secondary); border-radius: 50%; font-size: 11px; flex-shrink: 0; }
-.booking-cta { position: relative; z-index: 10; }
+.booking-cta { position: relative; z-index: 10; gap: 10px; }
+.booking-home-button { flex: 0 0 44px; width: 44px; height: 44px; color: var(--muted-foreground); }
+.booking-home-button:hover { color: var(--foreground); }
+.booking-back-button { min-height: 44px; }
+.booking-next-button { margin-left: auto; min-height: 44px; }
+.exit-dialog { max-width: 420px; }
+.exit-dialog-actions { gap: 8px; }
 .booking-time-slot.time-unavailable { border-color: color-mix(in oklch, var(--primary) 55%, transparent); color: color-mix(in oklch, var(--primary) 75%, var(--muted-foreground)); background: color-mix(in oklch, var(--primary) 8%, transparent); opacity: 1; text-decoration: line-through; cursor: not-allowed; }
 .admin-heading-actions { display: flex; align-items: center; justify-content: flex-end; gap: 18px; }
 .notification-trigger { position: relative; color: var(--muted-foreground); }
@@ -358,7 +362,6 @@ input[type=date], input[type=time] { color-scheme: dark; }
  .studio-note > div { align-items: flex-start; }
  .studio-note > a { margin-left: 45px; }
  .booking-page { padding-top: 24px; min-height: 720px; padding-bottom: 120px; }
- .brand-watermark { width: 260px; right: -110px; top: 250px; opacity: .04; }
  .site-footer { padding-bottom: calc(120px + env(safe-area-inset-bottom)); }
  .booking-progress { gap: 5px; margin-top: 28px; margin-bottom: 32px; }
  .booking-progress > button { flex-direction: column; gap: 8px; padding-bottom: 13px; }
@@ -408,6 +411,11 @@ input[type=date], input[type=time] { color-scheme: dark; }
  .time-input { width: 93px; padding-inline: 7px; font-size: 12px; }
  .booking-cta { position: fixed; left: 20px; right: 20px; bottom: 0; z-index: 30; margin-top: 0; padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid var(--border); background: color-mix(in oklch, var(--background) 94%, transparent); box-shadow: 0 -12px 24px color-mix(in oklch, var(--background) 60%, transparent); backdrop-filter: blur(12px); }
  .booking-cta > button { min-width: 0; }
- .booking-cta > button:last-child { flex: 1; justify-content: center; }
+ .booking-home-button { flex-basis: 44px; width: 44px; }
+ .booking-back-button { padding-inline: 13px; }
+ .booking-next-button { flex: 1; justify-content: center; }
+ .exit-dialog { width: calc(100% - 32px); padding: 22px; }
+ .exit-dialog-actions { flex-direction: column; }
+ .exit-dialog-actions > button { width: 100%; min-height: 44px; }
 }
 @media(prefers-reduced-motion:reduce) { *,*::before,*::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
