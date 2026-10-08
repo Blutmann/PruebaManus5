@@ -227,6 +227,14 @@
 .confirmation p { line-height: 1.8; }
 .confirmation-details { text-align: left; margin-block: 35px 20px; border: 1px solid var(--border); padding: 26px; border-radius: 4px; }
 .confirmation-details .summary-list { margin-top: 26px; }
+.action-positive { background: var(--gold) !important; color: var(--background) !important; box-shadow: 0 1px 2px color-mix(in oklch, var(--gold) 24%, transparent); }
+.action-positive:hover { background: color-mix(in oklch, var(--gold) 88%, white) !important; }
+.action-brand { background: var(--primary) !important; color: var(--primary-foreground) !important; }
+.action-brand:hover { background: color-mix(in oklch, var(--primary) 88%, white) !important; }
+.action-brand-outline { border-color: color-mix(in oklch, var(--primary) 60%, transparent) !important; color: color-mix(in oklch, var(--primary) 88%, white) !important; }
+.action-brand-outline:hover { background: color-mix(in oklch, var(--primary) 18%, transparent) !important; color: var(--foreground) !important; }
+.action-brand-text { color: color-mix(in oklch, var(--primary) 88%, white) !important; }
+.action-brand-text:hover { color: var(--foreground) !important; }
 .status { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; width: fit-content; border-radius: 4px; padding: 6px 9px; white-space: nowrap; }
 .status.pending { color: var(--gold); background: color-mix(in oklch,var(--gold) 10%,transparent); }
 .status.confirmed { color: var(--success); background: color-mix(in oklch,var(--success) 9%,transparent); }
