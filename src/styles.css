@@ -187,6 +187,7 @@
 .confirmation-place { margin-top: 24px; }
 .confirmation-request-number { color: var(--muted-foreground); font-size: 12px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
 .confirmation-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 20px; }
+.confirmation-home + .confirmation-secondary { margin-left: auto; }
 .confirmation-home { min-height: 44px; }
 .confirmation-secondary { min-height: 44px; color: var(--muted-foreground) !important; }
 .confirmation-secondary:hover { color: var(--foreground) !important; border-color: var(--gold) !important; background: transparent !important; }

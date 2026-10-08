@@ -140,7 +140,7 @@ export function Booking() {
         <p className="mt-2 text-sm text-muted-foreground">San Isidro Labrador 7 · Martínez, Provincia de Buenos Aires</p>
         <div className="confirmation-actions">
           <Button asChild className="confirmation-home action-brand" aria-label="Volver a reservar">
-            <a href="/reservar">Volver al inicio</a>
+            <a href="/reservar">Reservar otro turno</a>
           </Button>
           <Button asChild variant="outline" className="confirmation-secondary">
             <a href="https://www.google.com/maps/place/KANI+BARBER+STUDIO/data=!4m2!3m1!1s0x0:0x48bcfe7b2ea7ba60" target="_blank" rel="noreferrer"><MapPin size={16} /> Ver ubicación</a>
