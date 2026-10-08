@@ -88,10 +88,10 @@ export function Admin({ view }: { view: View }) {
     return [metricDate, values] as const;
   });
   const tabs = [
-    { to: '/admin' as const, label: 'Confirmados', icon: CalendarDays, id: 'upcoming' as const },
+    { to: '/admin' as const, label: 'Confirmados', icon: Check, id: 'upcoming' as const },
     { to: '/admin/pendientes' as const, label: 'Pendientes', icon: Clock3, id: 'pending' as const },
     { to: '/admin/cancelados' as const, label: 'Cancelados', icon: Ban, id: 'cancelled' as const },
-    { to: '/admin/disponibilidad' as const, label: 'Horarios', icon: SlidersHorizontal, id: 'availability' as const },
+    { to: '/admin/disponibilidad' as const, label: 'Horarios', icon: CalendarDays, id: 'availability' as const },
   ];
 
   async function changeStatus(appointment: RealAppointment, next: 'CONFIRMED' | 'CANCELLED' | 'COMPLETED') {
@@ -125,7 +125,7 @@ export function Admin({ view }: { view: View }) {
     {notice && <div role="status" className="notice"><Check size={16} />{notice}<Button size="icon" variant="ghost" className="ml-auto" aria-label="Cerrar aviso" onClick={() => setNotice('')}><X /></Button></div>}
     {error && <div role="alert" className="notice text-destructive"><X size={16} />{error}</div>}
     {view !== 'availability' ? <section className="py-9">
-      <div className="admin-list-heading"><div className="min-w-0"><h2 className="text-2xl">{listTitle} <span className="ml-2 text-base text-muted-foreground">{list.length.toString().padStart(2, '0')}</span></h2></div><div className="admin-list-controls flex flex-wrap items-center gap-3">
+      <div className="admin-list-heading"><div className="min-w-0"><h2 className="text-2xl">{listTitle}<span className="ml-2 text-base text-muted-foreground">· {list.length.toString().padStart(2, '0')}</span></h2></div><div className="admin-list-controls flex flex-wrap items-center gap-3">
         <label className="sr-only" htmlFor="barber-filter">Filtrar por barbero</label>
         {profile.role === 'ADMIN' ? <select id="barber-filter" className="select-control" value={scopedBarberFilter} onChange={e => setBarberFilter(e.target.value as Barber | 'Todos')}><option value="Todos">Todos los barberos</option>{permittedBarbers.map(b => <option key={b}>{b}</option>)}</select> : <span className="select-control" aria-label="Barbero autorizado">{ownBarber ?? ''}</span>}
         <label className="sr-only" htmlFor="date-filter">Filtrar por fecha</label><Input id="date-filter" type="date" aria-label="Filtrar por fecha" min={view === 'cancelled' ? undefined : demoToday} className="h-11 w-auto" value={dateFilter} onChange={e => setDateFilter(e.target.value)} />{dateFilter && <Button variant="ghost" size="icon" className="h-11 w-11" aria-label="Quitar filtro de fecha" onClick={() => setDateFilter('')}><X /></Button>}

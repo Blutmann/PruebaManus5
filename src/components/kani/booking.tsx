@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { ArrowLeft, ArrowRight, Check, Clock3, Scissors, CalendarDays, UserRound, ChevronLeft, ChevronRight, CircleCheck, House } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, Clock3, Scissors, CalendarDays, UserRound, ChevronLeft, ChevronRight, CircleCheck, House, MapPin, Instagram } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -122,34 +122,35 @@ export function Booking() {
   if (result) return (
     <main className="site-container confirmation">
       <div className="confirmation-mark"><Check size={30} /></div>
-      <span className="eyebrow">TURNO PENDIENTE DE CONFIRMACIÓN</span>
+      <span className="eyebrow">PENDIENTE DE CONFIRMACIÓN</span>
       <h1>Turno pendiente de confirmación</h1>
-      <p className="confirmation-lead text-muted-foreground">
-        Tu solicitud fue registrada correctamente.<br />
-        Te avisaremos por email cuando {result.barber} lo confirme.
-      </p>
+      <p className="confirmation-lead text-muted-foreground">Tu solicitud fue registrada correctamente. Te avisaremos por email cuando {result.barber} la confirme.</p>
       <div className="confirmation-details">
-        <div className="flex justify-between border-b pb-5">
-          <span className="text-muted-foreground">Solicitud #{result.requestNumber}</span>
-        </div>
+        <div className="confirmation-request-number">Solicitud #{result.requestNumber}</div>
         <dl className="summary-list">
           <div><dt>Servicio</dt><dd>{serviceFor(result.service).name}</dd></div>
           <div><dt>Barbero</dt><dd>{result.barber}</dd></div>
-          <div><dt>Fecha</dt><dd className="capitalize">{dateLabel(result.date)}</dd></div>
-          <div><dt>Horario</dt><dd>{result.time} · {serviceFor(result.service).duration} min</dd></div>
+          <div><dt>Cuándo</dt><dd className="capitalize">{dateLabel(result.date)} · {result.time}</dd></div>
+          <div><dt>Duración · total</dt><dd>{serviceFor(result.service).duration} min · {money(serviceFor(result.service).price)}</dd></div>
           <div><dt>A nombre de</dt><dd>{result.name}</dd></div>
           {result.notes?.trim() && <div><dt>Observaciones</dt><dd className="max-w-[65%] whitespace-pre-wrap">{result.notes.trim()}</dd></div>}
-          <div><dt>Total</dt><dd>{money(serviceFor(result.service).price)}</dd></div>
         </dl>
       </div>
-      <section className="confirmation-place border-t pt-7">
+      <section className="confirmation-place">
         <h2 className="text-sm font-medium">KANI BARBER STUDIO</h2>
-        <p className="mt-3 text-sm text-muted-foreground">San Isidro Labrador 7<br />Martínez, Provincia de Buenos Aires</p>
-        <p className="mt-3 text-sm text-muted-foreground">Lunes a sábados<br />10:00 a 20:00 hs</p>
+        <p className="mt-2 text-sm text-muted-foreground">San Isidro Labrador 7 · Martínez, Provincia de Buenos Aires</p>
+        <div className="confirmation-actions">
+          <Button asChild className="confirmation-home action-brand" aria-label="Volver a reservar">
+            <a href="/reservar"><House size={17} /> HOME</a>
+          </Button>
+          <Button asChild variant="outline" className="confirmation-secondary">
+            <a href="https://www.google.com/maps/place/KANI+BARBER+STUDIO/data=!4m2!3m1!1s0x0:0x48bcfe7b2ea7ba60" target="_blank" rel="noreferrer"><MapPin size={16} /> Cómo llegar</a>
+          </Button>
+          <Button asChild variant="outline" className="confirmation-secondary">
+            <a href="https://www.instagram.com/kanibarberstudio/" target="_blank" rel="noreferrer"><Instagram size={16} /> Instagram</a>
+          </Button>
+        </div>
       </section>
-      <Button asChild variant="outline" className="confirmation-back mt-7 h-12 px-8">
-        <a href="/">Volver al inicio <ArrowRight /></a>
-      </Button>
     </main>
   );
   const titles = ['Elegí un servicio', 'Elegí un barbero', 'Elegí una fecha', 'Elegí un horario', 'Completá tus datos', 'Confirmá tu turno'];

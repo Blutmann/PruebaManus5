@@ -1,6 +1,5 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
-import { LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AdminAccess } from '@/components/kani/admin-access';
 import { getAuthenticatedStaff, signOut, type AuthenticatedStaff } from '@/lib/kani-auth';
@@ -60,13 +59,8 @@ function AdminLayout() {
     );
   }
 
-  const { profile } = authState.staff;
   return (
     <AdminStaffProvider staff={authState.staff}>
-      <header className="site-container admin-account-bar" aria-label="Cuenta de administración">
-        <div className="admin-account-identity"><strong>{profile.role === 'ADMIN' ? 'KANI Admin' : profile.display_name}</strong><span>{profile.role}</span></div>
-        <Button variant="ghost" className="admin-signout" onClick={() => void signOut()}><LogOut />Cerrar sesión</Button>
-      </header>
       <Outlet />
     </AdminStaffProvider>
   );
