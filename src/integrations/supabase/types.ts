@@ -65,6 +65,39 @@ export type Database = {
         }
         Relationships: []
       }
+      barber_transfer_details: {
+        Row: {
+          barber_id: string
+          alias: string
+          cuit: string
+          holder_name: string
+          down_payment_ars: number
+          active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          barber_id: string
+          alias: string
+          cuit: string
+          holder_name: string
+          down_payment_ars?: number
+          active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          barber_id?: string
+          alias?: string
+          cuit?: string
+          holder_name?: string
+          down_payment_ars?: number
+          active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       clients: {
         Row: {
           id: string
@@ -232,6 +265,12 @@ export type Database = {
           recipient_email: string | null
           client_name: string
           client_notes: string | null
+          service_price_ars: number | null
+          service_duration_minutes: number | null
+          down_payment_ars: number | null
+          transfer_alias: string | null
+          transfer_cuit: string | null
+          transfer_holder_name: string | null
           barber_name: string
           service_name: string
           booking_date: string
@@ -253,6 +292,12 @@ export type Database = {
           recipient_email?: string | null
           client_name: string
           client_notes?: string | null
+          service_price_ars?: number | null
+          service_duration_minutes?: number | null
+          down_payment_ars?: number | null
+          transfer_alias?: string | null
+          transfer_cuit?: string | null
+          transfer_holder_name?: string | null
           barber_name: string
           service_name: string
           booking_date: string
@@ -274,6 +319,12 @@ export type Database = {
           recipient_email?: string | null
           client_name?: string
           client_notes?: string | null
+          service_price_ars?: number | null
+          service_duration_minutes?: number | null
+          down_payment_ars?: number | null
+          transfer_alias?: string | null
+          transfer_cuit?: string | null
+          transfer_holder_name?: string | null
           barber_name?: string
           service_name?: string
           booking_date?: string
@@ -377,6 +428,12 @@ export type Database = {
           recipient_email: string | null
           client_name: string
           client_notes: string | null
+          service_price_ars: number | null
+          service_duration_minutes: number | null
+          down_payment_ars: number | null
+          transfer_alias: string | null
+          transfer_cuit: string | null
+          transfer_holder_name: string | null
           barber_name: string
           service_name: string
           booking_date: string
