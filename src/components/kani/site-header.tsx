@@ -1,5 +1,5 @@
 import { Link, useNavigate, useRouterState } from '@tanstack/react-router';
-import { useEffect, useState, type MouseEvent } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { ArrowUpRight, Building2, Instagram, LogOut, MapPin, Menu, Moon, Sun, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -61,5 +61,16 @@ export function SiteHeader() {
 }
 
 export function SiteFooter() {
-  return <footer className="site-footer border-t text-xs text-muted-foreground"><div className="site-container flex flex-col gap-6 py-7 sm:flex-row sm:items-end sm:justify-between"><div><h2 className="text-sm font-medium text-foreground">Kani Barber Studio</h2><p className="mt-2 leading-relaxed">San Isidro Labrador 7<br />Martínez, Provincia de Buenos Aires</p><p className="mt-2 leading-relaxed">Lunes a sábados<br />10:00 a 20:00 hs</p></div><div className="flex flex-col gap-3 sm:items-end"><div className="flex flex-wrap gap-4"><Link to="/estudio" className="inline-flex items-center gap-2 hover:text-foreground"><Building2 size={14} /> Contacto</Link><a href="https://www.google.com/maps/place/KANI+BARBER+STUDIO/data=!4m2!3m1!1s0x0:0x48bcfe7b2ea7ba60" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 hover:text-foreground"><MapPin size={14} /> Ver ubicación</a><a href="https://www.instagram.com/kanibarberstudio/" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 hover:text-foreground"><Instagram size={14} /> Instagram</a></div><span>© 2026 Kani Barber Studio</span></div></div></footer>;
+  const footerRef = useRef<HTMLElement>(null);
+  useLayoutEffect(() => {
+    const footer = footerRef.current;
+    if (!footer) return;
+    const updateHeight = () => document.documentElement.style.setProperty('--site-footer-height', `${footer.getBoundingClientRect().height}px`);
+    updateHeight();
+    const observer = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(updateHeight) : null;
+    observer?.observe(footer);
+    window.addEventListener('resize', updateHeight);
+    return () => { observer?.disconnect(); window.removeEventListener('resize', updateHeight); document.documentElement.style.removeProperty('--site-footer-height'); };
+  }, []);
+  return <footer ref={footerRef} className="site-footer border-t text-xs text-muted-foreground"><div className="site-container flex flex-col gap-6 py-7 sm:flex-row sm:items-end sm:justify-between"><div><h2 className="text-sm font-medium text-foreground">Kani Barber Studio</h2><p className="mt-2 leading-relaxed">San Isidro Labrador 7<br />Martínez, Provincia de Buenos Aires</p><p className="mt-2 leading-relaxed">Lunes a sábados<br />10:00 a 20:00 hs</p></div><div className="flex flex-col gap-3 sm:items-end"><div className="flex flex-wrap gap-4"><Link to="/estudio" className="inline-flex items-center gap-2 hover:text-foreground"><Building2 size={14} /> Contacto</Link><a href="https://www.google.com/maps/place/KANI+BARBER+STUDIO/data=!4m2!3m1!1s0x0:0x48bcfe7b2ea7ba60" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 hover:text-foreground"><MapPin size={14} /> Ver ubicación</a><a href="https://www.instagram.com/kanibarberstudio/" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 hover:text-foreground"><Instagram size={14} /> Instagram</a></div><span>© 2026 Kani Barber Studio</span></div></div></footer>;
 }

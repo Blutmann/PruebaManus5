@@ -44,3 +44,8 @@ Implementar exclusivamente en Preview un dashboard visual, moderno y útil dentr
 - Mantener RLS, autenticación, permisos administrativos, lógica de reservas, disponibilidad, depósitos, notificaciones y Resend sin cambios.
 - Verificar totales contra los registros de origen, filtros, estados vacíos, desktop/mobile y rechazo de acceso administrativo para usuarios sin permisos.
 - Ejecutar TypeScript, tests y build; dejar identificado cualquier caso que no pueda probarse por falta de datos reales.
+
+
+## Coordinar Header, NavBar y Footer en desktop
+
+Implementar exclusivamente en Preview una composición donde Header, NavBar y Footer estén coordinados: Header fijo arriba; contenido con scroll normal; NavBar de reservas fija a ancho completo; Footer fijo inmediatamente debajo de la NavBar, sin solapamientos ni pérdidas de accesibilidad. Mantener la NavBar en `position: fixed`, sus botones y lógica sin cambios, conservar fondo opaco y temas claro/oscuro, evitar que el contenido principal quede oculto y preservar mobile. Verificar los seis pasos, desplazamiento, footer completo, enlaces, alturas variables y ausencia de cambios en reservas, disponibilidad, Supabase, autenticación o Resend. No publicar Production ni activar publicación automática.

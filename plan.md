@@ -46,3 +46,10 @@ La NavBar inferior de `/reservar` se corrige como una superficie fija e independ
 La NavBar ya estaba correctamente fijada a la ventana, con ancho completo y `z-index: 30`. El problema estructural era que el espacio de seguridad se agregaba dentro del footer (`padding-bottom`), haciendo que la barra pareciera ocupar parte de su layout. La solución es eliminar por completo ese padding del footer y reservar exactamente `70px` en `.site-shell`, después del contenido completo de la página. Así el footer conserva su altura natural y termina antes del borde superior de la NavBar, mientras la zona técnica queda cubierta por la propia barra fija.
 
 El cambio se aplica únicamente desde `min-width: 768px`; mobile mantiene sus reglas existentes sin modificación. Se conserva `position: fixed`, ancho completo, opacidad, tokens de tema, espacio necesario para el contenido principal y el comportamiento del flujo. No se modifican reservas, autenticación, Supabase, Resend ni Production.
+
+
+## Composición coordinada de chrome fijo en desktop (Preview)
+
+El Header pasa a ser fijo en el borde superior y el Footer pasa a ser fijo en el borde inferior. La NavBar de reservas permanece fija, pero su `bottom` se calcula con la altura real del Footer, por lo que queda inmediatamente por encima de este. `ResizeObserver` publica `--site-footer-height` y `--booking-cta-height` en el documento para coordinar alturas variables sin márgenes arbitrarios.
+
+El shell reserva el espacio de Header en la parte superior y la suma Footer + NavBar en la parte inferior; el Footer no recibe padding artificial para alojar la NavBar. Desktop conserva fondo opaco, tokens de tema y z-index ordenado: Header 120, NavBar 30, Footer 20. Mobile mantiene el Header relativo, Footer oculto en el flujo de reservas y NavBar al borde inferior.
