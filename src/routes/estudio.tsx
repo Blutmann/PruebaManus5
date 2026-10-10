@@ -10,9 +10,9 @@ const instagramUrl = "https://www.instagram.com/kanibarberstudio/";
 export const Route = createFileRoute("/estudio")({
   head: () =>
     pageHead(
-      "El estudio",
+      "Conocé Kani",
       "Conocé Kani Barber Studio, nuestra ubicación y horarios de atención.",
-      "Kani Barber Studio - El estudio",
+      "Kani Barber Studio - Conocé Kani",
     ),
   component: StudioPage,
 });
@@ -23,7 +23,7 @@ function StudioPage() {
       <div className="studio-page-header">
         <div>
           <p className="eyebrow">KANI BARBER STUDIO</p>
-          <h1 className="section-title">El estudio</h1>
+          <h1 className="section-title">Conocé Kani</h1>
           <p className="studio-page-lead">
             Un espacio para bajar un cambio, cuidar tu estilo y salir sintiéndote vos.
           </p>

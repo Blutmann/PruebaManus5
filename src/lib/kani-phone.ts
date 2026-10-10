@@ -18,6 +18,7 @@ export const phoneCountries = getCountries().map((country) => ({
   dialCode: `+${getCountryCallingCode(country)}`,
   name: displayNames?.of(country) ?? country,
   flag: countryToFlag(country),
+  isoCode: country,
 }));
 
 export function countryToFlag(country: string) {
