@@ -380,6 +380,36 @@ export type Database = {
         }
         Relationships: []
       }
+      maintenance_availability_operations: {
+        Row: {
+          id: string
+          actor_user_id: string | null
+          status: "RUNNING" | "SUCCEEDED" | "FAILED"
+          notifications_deleted: number
+          error_code: string | null
+          started_at: string
+          completed_at: string | null
+        }
+        Insert: {
+          id?: string
+          actor_user_id?: string | null
+          status: "RUNNING" | "SUCCEEDED" | "FAILED"
+          notifications_deleted?: number
+          error_code?: string | null
+          started_at?: string
+          completed_at?: string | null
+        }
+        Update: {
+          id?: string
+          actor_user_id?: string | null
+          status?: "RUNNING" | "SUCCEEDED" | "FAILED"
+          notifications_deleted?: number
+          error_code?: string | null
+          started_at?: string
+          completed_at?: string | null
+        }
+        Relationships: []
+      }
       staff_profiles: {
         Row: {
           user_id: string
@@ -511,6 +541,19 @@ export type Database = {
           appointments_deleted: number
           notification_events_deleted: number
           admin_notifications_deleted: number
+          error_code: string | null
+        }[]
+      }
+      admin_count_availability_notifications: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      admin_cleanup_availability_notifications: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          operation_id: string
+          operation_status: "RUNNING" | "SUCCEEDED" | "FAILED"
+          notifications_deleted: number
           error_code: string | null
         }[]
       }

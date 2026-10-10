@@ -702,3 +702,18 @@ html[data-theme="light"] input[type=date], html[data-theme="light"] input[type=t
   font-size: .8rem;
   line-height: 1.45;
 }
+
+.maintenance-availability-section {
+  border-color: var(--border);
+}
+
+.maintenance-availability-card {
+  border: 1px solid color-mix(in oklab, var(--gold) 34%, var(--border));
+  border-radius: 18px;
+  background: color-mix(in oklab, var(--gold) 5%, var(--surface));
+  padding: 1.25rem;
+}
+
+.maintenance-availability-card > .notice {
+  align-items: flex-start;
+}
