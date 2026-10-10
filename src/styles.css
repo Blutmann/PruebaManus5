@@ -289,7 +289,8 @@
 .appointment-retry { width: 100%; justify-content: center; }
 .appointment-actions .status { flex-shrink: 0; }
 .small-avatar { width: 28px; height: 28px; display: grid; place-items: center; color: var(--gold); background: var(--secondary); border-radius: 50%; font-size: 11px; flex-shrink: 0; }
-.booking-cta { position: relative; z-index: 10; gap: 10px; }
+.booking-cta { position: fixed; inset-inline: 0; bottom: 0; z-index: 30; width: 100%; box-sizing: border-box; padding-inline: max(20px, calc((100vw - 1020px) / 2)); border-top: 1px solid var(--border); background: color-mix(in oklch, var(--background) 94%, transparent); box-shadow: 0 -12px 24px color-mix(in oklch, var(--background) 60%, transparent); backdrop-filter: blur(12px); }
+.booking-cta-inner { gap: 10px; padding-block: 10px; }
 .booking-home-button { flex: 0 0 44px; width: 44px; height: 44px; margin-right: 12px; color: var(--primary-foreground) !important; }
 .booking-home-button:hover { background: color-mix(in oklch, var(--primary) 88%, white) !important; }
 .calendar-day.selected { background: var(--gold) !important; border-color: var(--gold) !important; color: var(--background) !important; }
@@ -449,8 +450,8 @@ input[type=date], input[type=time] { color-scheme: dark; }
  .hours-row { gap: 10px; font-size: 12px; }
  .hours-row label { gap: 7px; }
  .time-input { width: 93px; padding-inline: 7px; font-size: 12px; }
- .booking-cta { position: fixed; left: 20px; right: 20px; bottom: 0; z-index: 30; margin-top: 0; padding: 10px 0 calc(10px + env(safe-area-inset-bottom)); border-top: 1px solid var(--border); background: color-mix(in oklch, var(--background) 94%, transparent); box-shadow: 0 -12px 24px color-mix(in oklch, var(--background) 60%, transparent); backdrop-filter: blur(12px); }
- .booking-cta > button { min-width: 0; }
+ .booking-cta { padding-inline: 20px; padding-bottom: env(safe-area-inset-bottom); border-top: 1px solid var(--border); }
+ .booking-cta-inner > button { min-width: 0; }
  .booking-home-button { flex-basis: 44px; width: 44px; margin-right: 8px; }
  .booking-back-button { padding-inline: 13px; }
  .booking-next-button { flex: 1; justify-content: center; }
