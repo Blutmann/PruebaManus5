@@ -12,6 +12,7 @@ import {
   formatDelta,
   formatPercentage,
   getDashboardRange,
+  hasComparableMetrics,
   getPreviousRange,
   filterAppointments,
   summarizeAppointments,
@@ -20,7 +21,7 @@ import {
   type DashboardMetrics,
   type DashboardOccupancyCell,
 } from '@/lib/kani-dashboard';
-import { demoToday, type Barber } from '@/lib/kani-model';
+import { demoToday } from '@/lib/kani-model';
 
 const periodOptions: Array<{ value: DashboardPeriod; label: string }> = [
   { value: 'week', label: 'Esta semana' },
@@ -43,20 +44,31 @@ export function AdminDemandDashboard({
   const [period, setPeriod] = useState<DashboardPeriod>('week');
   const [customStart, setCustomStart] = useState(demoToday);
   const [customEnd, setCustomEnd] = useState(demoToday);
-  const [barberFilter, setBarberFilter] = useState<'Todos' | Barber>('Todos');
+  const [barberFilter, setBarberFilter] = useState('Todos');
   const [availabilitySlots, setAvailabilitySlots] = useState<DashboardAvailabilitySlot[]>([]);
   const [availabilityLoading, setAvailabilityLoading] = useState(false);
   const [availabilityError, setAvailabilityError] = useState('');
 
   const range = useMemo(() => getDashboardRange(period, customStart, customEnd, demoToday), [period, customEnd, customStart]);
   const previousRange = useMemo(() => range ? getPreviousRange(range) : null, [range]);
-  const selectedBarber = barberFilter === 'Todos' ? null : barberFilter;
-  const scopedAppointments = useMemo(() => selectedBarber ? filterAppointments(appointments, range ?? { startDate: '', endDate: '', label: '' }, selectedBarber) : filterAppointments(appointments, range ?? { startDate: '', endDate: '', label: '' }), [appointments, range, selectedBarber]);
+  const permittedBarberIds = useMemo(() => new Set(permittedRows.map(row => row.id)), [permittedRows]);
+  const selectedBarberRow = barberFilter === 'Todos' ? null : permittedRows.find(row => row.id === barberFilter) ?? null;
+  const selectedBarber = selectedBarberRow?.name ?? null;
+  const scopedAppointments = useMemo(() => {
+    const allowedAppointments = appointments.filter(appointment => permittedBarberIds.has(appointment.barberId));
+    const inRangeAppointments = filterAppointments(allowedAppointments, range ?? { startDate: '', endDate: '', label: '' });
+    return selectedBarberRow ? inRangeAppointments.filter(appointment => appointment.barberId === selectedBarberRow.id) : inRangeAppointments;
+  }, [appointments, permittedBarberIds, range, selectedBarberRow]);
   const metrics = useMemo(() => summarizeAppointments(scopedAppointments), [scopedAppointments]);
-  const previousMetrics = useMemo(() => previousRange ? summarizeAppointments(selectedBarber ? filterAppointments(appointments, previousRange, selectedBarber) : filterAppointments(appointments, previousRange)) : null, [appointments, previousRange, selectedBarber]);
+  const previousMetrics = useMemo(() => {
+    if (!previousRange) return null;
+    const allowedAppointments = appointments.filter(appointment => permittedBarberIds.has(appointment.barberId));
+    const inRangeAppointments = filterAppointments(allowedAppointments, previousRange);
+    return summarizeAppointments(selectedBarberRow ? inRangeAppointments.filter(appointment => appointment.barberId === selectedBarberRow.id) : inRangeAppointments);
+  }, [appointments, permittedBarberIds, previousRange, selectedBarberRow]);
   const dailyDemand = useMemo(() => range ? buildDailyDemand(scopedAppointments, range) : [], [range, scopedAppointments]);
-  const selectedBarberId = permittedRows.find(row => row.name === selectedBarber)?.id ?? null;
-  const scopedSlots = useMemo(() => selectedBarberId ? availabilitySlots.filter(slot => slot.barber_id === selectedBarberId) : availabilitySlots, [availabilitySlots, selectedBarberId]);
+  const selectedBarberId = selectedBarberRow?.id ?? null;
+  const scopedSlots = useMemo(() => availabilitySlots.filter(slot => permittedBarberIds.has(slot.barber_id) && (!selectedBarberId || slot.barber_id === selectedBarberId)), [availabilitySlots, permittedBarberIds, selectedBarberId]);
   const occupancy = useMemo(() => range ? buildOccupancyCells(scopedSlots, scopedAppointments, range) : { cells: [], timeRows: [] }, [range, scopedAppointments, scopedSlots]);
 
   const rangeStart = range?.startDate;
@@ -69,6 +81,7 @@ export function AdminDemandDashboard({
     let active = true;
     setAvailabilityLoading(true);
     setAvailabilityError('');
+    setAvailabilitySlots([]);
     void readDashboardAvailabilitySlots(rangeStart, rangeEnd)
       .then(rows => { if (active) setAvailabilitySlots(rows); })
       .catch(error => { if (active) setAvailabilityError(error instanceof Error ? error.message : 'No se pudo cargar la disponibilidad.'); })
@@ -78,22 +91,23 @@ export function AdminDemandDashboard({
 
   useEffect(() => {
     if (role === 'BARBER') {
-      setBarberFilter(permittedRows[0]?.name as Barber | undefined ?? 'Todos');
+      setBarberFilter(permittedRows[0]?.id ?? 'Todos');
     } else {
       setBarberFilter('Todos');
     }
   }, [permittedRows, role]);
 
+  const hasComparisonData = previousMetrics ? hasComparableMetrics(metrics, previousMetrics) : false;
   const cards = [
-    { label: 'Turnos solicitados', value: metrics.requested, helper: 'Todas las solicitudes del período', delta: previousMetrics ? formatDelta(comparisonPercent(metrics.requested, previousMetrics.requested)) : null, icon: CalendarRange, tone: 'accent' },
-    { label: 'Turnos confirmados', value: metrics.confirmed, helper: 'Estado confirmado', delta: previousMetrics ? formatDelta(comparisonPercent(metrics.confirmed, previousMetrics.confirmed)) : null, icon: CheckCircle2, tone: 'positive' },
-    { label: 'Turnos pendientes', value: metrics.pending, helper: 'Aún requieren respuesta', delta: previousMetrics ? formatDelta(comparisonPercent(metrics.pending, previousMetrics.pending)) : null, icon: CircleDot, tone: 'accent' },
-    { label: 'Turnos cancelados', value: metrics.cancelled, helper: 'Solicitudes canceladas', delta: previousMetrics ? formatDelta(comparisonPercent(metrics.cancelled, previousMetrics.cancelled)) : null, icon: TrendingDown, tone: 'warning' },
-    { label: 'Tasa de confirmación', value: formatPercentage(metrics.confirmationRate), helper: 'Confirmados ÷ turnos resueltos', delta: previousMetrics?.confirmationRate !== null && previousMetrics?.confirmationRate !== undefined && metrics.confirmationRate !== null ? formatRateDelta(metrics.confirmationRate, previousMetrics.confirmationRate) : null, icon: TrendingUp, tone: 'positive' },
+    { label: 'Turnos solicitados', value: metrics.requested, helper: 'Todas las solicitudes del período', delta: hasComparisonData ? formatDelta(comparisonPercent(metrics.requested, previousMetrics!.requested)) : null, icon: CalendarRange, tone: 'accent' },
+    { label: 'Turnos confirmados', value: metrics.confirmed, helper: 'Estado confirmado', delta: hasComparisonData ? formatDelta(comparisonPercent(metrics.confirmed, previousMetrics!.confirmed)) : null, icon: CheckCircle2, tone: 'positive' },
+    { label: 'Turnos pendientes', value: metrics.pending, helper: 'Aún requieren respuesta', delta: hasComparisonData ? formatDelta(comparisonPercent(metrics.pending, previousMetrics!.pending)) : null, icon: CircleDot, tone: 'accent' },
+    { label: 'Turnos cancelados', value: metrics.cancelled, helper: 'Solicitudes canceladas', delta: hasComparisonData ? formatDelta(comparisonPercent(metrics.cancelled, previousMetrics!.cancelled)) : null, icon: TrendingDown, tone: 'warning' },
+    { label: 'Tasa de confirmación', value: formatPercentage(metrics.confirmationRate), helper: 'Confirmados ÷ turnos resueltos', delta: hasComparisonData && metrics.confirmationRate !== null && previousMetrics!.confirmationRate !== null ? formatRateDelta(metrics.confirmationRate, previousMetrics!.confirmationRate) : null, icon: TrendingUp, tone: 'positive' },
   ] as const;
 
-  const opportunityText = getOpportunityText(dailyDemand, scopedSlots.length, metrics);
   const cellByKey = new Map(occupancy.cells.map(cell => [cell.key, cell]));
+  const opportunityText = !availabilityLoading && !availabilityError ? getOpportunityText(dailyDemand, occupancy.cells, metrics) : '';
 
   return <section className="demand-dashboard" aria-labelledby="admin-metrics-title">
     <div className="demand-dashboard-heading">
@@ -105,7 +119,7 @@ export function AdminDemandDashboard({
       <div className="demand-dashboard-controls">
         <label htmlFor="dashboard-period">Período</label>
         <select id="dashboard-period" className="select-control" value={period} onChange={event => setPeriod(event.target.value as DashboardPeriod)}>{periodOptions.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
-        {role === 'ADMIN' ? <><label htmlFor="dashboard-barber">Barbero</label><select id="dashboard-barber" className="select-control" value={barberFilter} onChange={event => setBarberFilter(event.target.value as 'Todos' | Barber)}><option value="Todos">Todos</option>{permittedRows.map(row => <option key={row.id} value={row.name}>{row.name}</option>)}</select></> : <span className="select-control" aria-label="Barbero autorizado">{permittedRows[0]?.name ?? 'Mi agenda'}</span>}
+        {role === 'ADMIN' ? <><label htmlFor="dashboard-barber">Barbero</label><select id="dashboard-barber" className="select-control" value={barberFilter} onChange={event => setBarberFilter(event.target.value)}><option value="Todos">Todos</option>{permittedRows.map(row => <option key={row.id} value={row.id}>{row.name}</option>)}</select></> : <span className="select-control" aria-label="Barbero autorizado">{permittedRows[0]?.name ?? 'Mi agenda'}</span>}
       </div>
     </div>
     {period === 'custom' && <div className="demand-custom-range" aria-label="Rango personalizado">
@@ -130,12 +144,13 @@ function HeatmapCell({ cell }: { cell: DashboardOccupancyCell | undefined }) {
   return <div className={`demand-heatmap-cell ${tone}`} role="cell" aria-label={`${cell.dayLabel} ${cell.time}: ${cell.confirmed} confirmados, ${cell.pending} pendientes, ${cell.available} disponibles y ${cell.unavailable} bloqueados`} title={`${cell.dayLabel} ${cell.time}`}><strong>{cell.total}</strong><div className="demand-heatmap-counts"><span className="confirmed">C {cell.confirmed}</span><span className="pending">P {cell.pending}</span><span className="available">D {cell.available}</span><span className="unavailable">B {cell.unavailable}</span></div></div>;
 }
 
-function getOpportunityText(dailyDemand: ReturnType<typeof buildDailyDemand>, availabilityCount: number, metrics: DashboardMetrics) {
-  if (!availabilityCount) return 'No hay capacidad registrada para sugerir oportunidades en este período.';
-  const daysWithConfirmed = dailyDemand.filter(day => day.confirmed > 0);
+function getOpportunityText(dailyDemand: ReturnType<typeof buildDailyDemand>, cells: DashboardOccupancyCell[], metrics: DashboardMetrics) {
+  const daysWithCapacity = dailyDemand.filter(day => cells.some(cell => cell.dayKey === day.key && cell.available > 0));
+  if (!daysWithCapacity.length) return 'No hay capacidad libre registrada para sugerir oportunidades en este período.';
+  const daysWithConfirmed = daysWithCapacity.filter(day => day.confirmed > 0);
   if (!daysWithConfirmed.length) return 'Todavía no hay confirmaciones reales en este período; la grilla muestra la capacidad registrada sin concluir sobre la demanda.';
-  const highest = Math.max(...dailyDemand.map(day => day.confirmed));
-  const lowestDays = dailyDemand.filter(day => day.confirmed === Math.min(...dailyDemand.map(day => day.confirmed)) && day.confirmed < highest);
+  const highest = Math.max(...daysWithCapacity.map(day => day.confirmed));
+  const lowestDays = daysWithCapacity.filter(day => day.confirmed === Math.min(...daysWithCapacity.map(day => day.confirmed)) && day.confirmed < highest);
   if (!lowestDays.length) return `Hay ${metrics.confirmed} turnos confirmados distribuidos sin una diferencia clara entre días.`;
   return `${lowestDays.map(day => day.fullLabel).join(' y ')} concentran la menor cantidad de confirmaciones; podrían evaluarse acciones comerciales, sin que esto sea una conclusión definitiva.`;
 }

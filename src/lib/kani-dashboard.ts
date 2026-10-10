@@ -16,6 +16,7 @@ export type DashboardMetrics = {
   pending: number;
   cancelled: number;
   completed: number;
+  resolved: number;
   confirmationRate: number | null;
 };
 
@@ -124,7 +125,7 @@ export function summarizeAppointments(appointments: RealAppointment[]): Dashboar
   const cancelled = appointments.filter(appointment => appointment.statusCode === 'CANCELLED').length;
   const completed = appointments.filter(appointment => appointment.statusCode === 'COMPLETED').length;
   const resolved = confirmed + cancelled + completed;
-  return { requested, confirmed, pending, cancelled, completed, confirmationRate: resolved ? confirmed / resolved : null };
+  return { requested, confirmed, pending, cancelled, completed, resolved, confirmationRate: resolved ? confirmed / resolved : null };
 }
 
 function weekdayKey(value: string) {
@@ -140,7 +141,7 @@ export function buildDailyDemand(appointments: RealAppointment[], range: Dashboa
       label: day.label,
       fullLabel: day.fullLabel,
       requested: rows.length,
-      confirmed: rows.filter(appointment => appointment.statusCode === 'CONFIRMED' || appointment.statusCode === 'COMPLETED').length,
+      confirmed: rows.filter(appointment => appointment.statusCode === 'CONFIRMED').length,
     };
   });
 }
@@ -193,6 +194,10 @@ export function buildOccupancyCells(slots: DashboardAvailabilitySlot[], appointm
 export function comparisonPercent(current: number, previous: number) {
   if (previous === 0) return null;
   return ((current - previous) / previous) * 100;
+}
+
+export function hasComparableMetrics(current: DashboardMetrics, previous: DashboardMetrics) {
+  return current.resolved > 0 && previous.resolved > 0;
 }
 
 export function formatPercentage(value: number | null) {
