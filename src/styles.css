@@ -242,7 +242,6 @@ html[data-theme="light"] {
 .confirmation-secondary:hover { color: var(--foreground) !important; border-color: var(--gold) !important; background: transparent !important; }
 .back-link { display: inline-flex; gap: 9px; align-items: center; font-size: 12px; color: var(--muted-foreground); }
 .booking-page { max-width: 1020px; padding-top: 12px; padding-bottom: 110px; min-height: 780px; }
-.site-shell:has(.booking-cta) .site-footer { padding-bottom: 24px; }
 .booking-progress { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); margin-top: 12px; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
 .booking-progress > button { display: flex; align-items: center; gap: 10px; height: auto; justify-content: flex-start; padding: 0 0 19px; border-radius: 0; color: var(--muted-foreground); border-bottom: 2px solid transparent; }
 .booking-progress > button > span { width: 24px; height: 24px; border: 1px solid var(--border); border-radius: 50%; font-size: 9px; display: grid; place-items: center; flex-shrink: 0; }
@@ -479,6 +478,7 @@ html[data-theme="light"] input[type=date], html[data-theme="light"] input[type=t
 .studio-info-card p { margin-top: 8px; color: var(--muted-foreground); line-height: 1.5; }
 .studio-card-action { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; color: var(--gold); font-family: var(--font-sans); font-size: 12px; font-weight: 700; }
 @media(min-width:1500px) { .home-hero { height: 660px; } }
+@media(min-width:768px) { .site-shell:has(.booking-cta) { padding-bottom: 70px; } }
 @media(max-width:1023px) {
  .site-container,.site-header > div { width: calc(100% - 48px); }
  .booking-layout { gap: 30px; grid-template-columns: minmax(0,1fr) 260px; }
