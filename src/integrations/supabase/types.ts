@@ -341,6 +341,45 @@ export type Database = {
         }
         Relationships: []
       }
+      maintenance_operations: {
+        Row: {
+          id: string
+          actor_user_id: string | null
+          selected_statuses: Array<"PENDING" | "CONFIRMED" | "COMPLETED" | "CANCELLED">
+          status: "RUNNING" | "SUCCEEDED" | "FAILED"
+          appointments_deleted: number
+          notification_events_deleted: number
+          admin_notifications_deleted: number
+          error_code: string | null
+          started_at: string
+          completed_at: string | null
+        }
+        Insert: {
+          id?: string
+          actor_user_id?: string | null
+          selected_statuses: Array<"PENDING" | "CONFIRMED" | "COMPLETED" | "CANCELLED">
+          status: "RUNNING" | "SUCCEEDED" | "FAILED"
+          appointments_deleted?: number
+          notification_events_deleted?: number
+          admin_notifications_deleted?: number
+          error_code?: string | null
+          started_at?: string
+          completed_at?: string | null
+        }
+        Update: {
+          id?: string
+          actor_user_id?: string | null
+          selected_statuses?: Array<"PENDING" | "CONFIRMED" | "COMPLETED" | "CANCELLED">
+          status?: "RUNNING" | "SUCCEEDED" | "FAILED"
+          appointments_deleted?: number
+          notification_events_deleted?: number
+          admin_notifications_deleted?: number
+          error_code?: string | null
+          started_at?: string
+          completed_at?: string | null
+        }
+        Relationships: []
+      }
       staff_profiles: {
         Row: {
           user_id: string
@@ -462,6 +501,18 @@ export type Database = {
       retry_appointment_notification: {
         Args: { p_appointment_id: string }
         Returns: string | null
+      }
+      admin_cleanup_appointment_records: {
+        Args: { p_statuses: Array<"PENDING" | "CONFIRMED" | "COMPLETED" | "CANCELLED"> }
+        Returns: {
+          operation_id: string
+          operation_status: "RUNNING" | "SUCCEEDED" | "FAILED"
+          selected_statuses: Array<"PENDING" | "CONFIRMED" | "COMPLETED" | "CANCELLED">
+          appointments_deleted: number
+          notification_events_deleted: number
+          admin_notifications_deleted: number
+          error_code: string | null
+        }[]
       }
     }
     Enums: {

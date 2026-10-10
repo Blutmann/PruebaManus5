@@ -6,6 +6,7 @@
     { "path": "/admin", "title": "Kani Barber Studio - Panel de control" },
     { "path": "/admin/pendientes", "title": "Kani Barber Studio - Panel de control" },
     { "path": "/admin/cancelados", "title": "Kani Barber Studio - Panel de control" },
-    { "path": "/admin/disponibilidad", "title": "Kani Barber Studio - Panel de control" }
+    { "path": "/admin/disponibilidad", "title": "Kani Barber Studio - Panel de control" },
+    { "path": "/admin/mantenimiento", "title": "Kani Barber Studio - Panel de control" }
   ]
 }

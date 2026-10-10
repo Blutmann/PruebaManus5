@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Ban, Bell, CalendarDays, Check, CircleDot, Clock3, Mail, MailOpen, MessageSquareText, SlidersHorizontal, X, XCircle } from 'lucide-react';
+import { Ban, Bell, CalendarDays, Check, CircleDot, Clock3, Mail, MailOpen, MessageSquareText, SlidersHorizontal, Wrench, X, XCircle } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,9 +10,10 @@ import { useAdminStaff } from '@/lib/kani-admin-context';
 import { permittedBarberNames } from '@/lib/kani-role-scope';
 import { appointmentErrorMessage, readRealAppointments, retryRealAppointmentNotification, updateRealAppointmentStatus, type RealAppointment } from '@/lib/kani-appointments';
 import { markAllAdminActivityNotificationsRead, readAdminActivityNotifications, setAdminActivityNotificationRead, type AdminActivityEvent } from '@/lib/kani-admin-activity';
+import { AdminMaintenance } from './admin-maintenance';
 import { AdminAvailability } from './availability-admin';
 
-type View = 'upcoming' | 'pending' | 'cancelled' | 'availability';
+type View = 'upcoming' | 'pending' | 'cancelled' | 'availability' | 'maintenance';
 
 const statusLabels = { PENDING: 'Pendiente', CONFIRMED: 'Confirmado', CANCELLED: 'Cancelado', COMPLETED: 'Completado' } as const;
 type NotificationHref = '/admin' | '/admin/pendientes' | '/admin/cancelados' | '/admin/disponibilidad';
@@ -89,11 +90,12 @@ export function Admin({ view }: { view: View }) {
     });
     return [metricDate, values] as const;
   });
-  const tabs = [
+  const tabs: Array<{ to: '/admin' | '/admin/pendientes' | '/admin/cancelados' | '/admin/disponibilidad' | '/admin/mantenimiento'; label: string; icon: typeof Check; id: View }> = [
     { to: '/admin' as const, label: 'Confirmados', icon: Check, id: 'upcoming' as const },
     { to: '/admin/pendientes' as const, label: 'Pendientes', icon: Clock3, id: 'pending' as const },
     { to: '/admin/cancelados' as const, label: 'Cancelados', icon: Ban, id: 'cancelled' as const },
     { to: '/admin/disponibilidad' as const, label: 'Horarios', icon: CalendarDays, id: 'availability' as const },
+    ...(profile.role === 'ADMIN' ? [{ to: '/admin/mantenimiento' as const, label: 'Mantenimiento', icon: Wrench, id: 'maintenance' as const }] : []),
   ];
 
   async function changeStatus(appointment: RealAppointment, next: 'CONFIRMED' | 'CANCELLED' | 'COMPLETED') {
@@ -147,7 +149,7 @@ export function Admin({ view }: { view: View }) {
     <nav className="admin-tabs" aria-label="Secciones de administración">{tabs.map(tab => <Button key={tab.id} asChild variant="ghost" className={view === tab.id ? 'tab-current' : ''}><Link to={tab.to} activeOptions={{ exact: true }}><tab.icon size={17} /><span>{tab.label}</span>{tab.id === 'pending' && pendingCount > 0 && <span className="count-badge">{pendingCount}</span>}</Link></Button>)}</nav>
     {notice && <div role="status" className="notice"><Check size={16} />{notice}<Button size="icon" variant="ghost" className="ml-auto" aria-label="Cerrar aviso" onClick={() => setNotice('')}><X /></Button></div>}
     {error && <div role="alert" className="notice text-destructive"><X size={16} />{error}</div>}
-    {view !== 'availability' ? <section className="py-9">
+    {view === 'maintenance' ? <AdminMaintenance /> : view !== 'availability' ? <section className="py-9">
       <div className="admin-list-heading"><div className="min-w-0"><h2 className="text-2xl">{listTitle}<span className="ml-2 text-base text-muted-foreground">· {list.length.toString().padStart(2, '0')}</span></h2></div><div className="admin-list-controls flex flex-wrap items-center gap-3">
         <label className="sr-only" htmlFor="barber-filter">Filtrar por barbero</label>
         {profile.role === 'ADMIN' ? <select id="barber-filter" className="select-control" value={scopedBarberFilter} onChange={e => setBarberFilter(e.target.value as Barber | 'Todos')}><option value="Todos">Todos los barberos</option>{permittedBarbers.map(b => <option key={b}>{b}</option>)}</select> : <span className="select-control" aria-label="Barbero autorizado">{ownBarber ?? ''}</span>}

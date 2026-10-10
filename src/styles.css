@@ -635,3 +635,62 @@ html[data-theme="light"] input[type=date], html[data-theme="light"] input[type=t
   font-family: var(--font-sans);
   font-size: 16px;
 }
+
+
+/* Admin maintenance: explicit, quiet and theme-aware destructive flow. */
+.maintenance-scope-card,
+.maintenance-preserve-card,
+.maintenance-summary,
+.maintenance-confirmation-list {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--surface);
+  padding: 1.25rem;
+}
+
+.maintenance-preserve-card {
+  border-color: color-mix(in oklab, var(--gold) 36%, var(--border));
+  background: color-mix(in oklab, var(--gold) 7%, var(--surface));
+}
+
+.maintenance-status-option {
+  display: flex;
+  align-items: flex-start;
+  gap: .75rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: .85rem;
+  cursor: pointer;
+  transition: border-color .2s ease, background-color .2s ease;
+}
+
+.maintenance-status-option:hover,
+.maintenance-status-option.selected {
+  border-color: var(--gold);
+  background: color-mix(in oklab, var(--gold) 8%, var(--surface));
+}
+
+.maintenance-status-option strong,
+.maintenance-status-option small {
+  display: block;
+}
+
+.maintenance-status-option small {
+  margin-top: .25rem;
+  color: var(--muted-foreground);
+  font-size: .76rem;
+  line-height: 1.4;
+}
+
+.maintenance-confirmation-list {
+  display: grid;
+  gap: .4rem;
+  border-color: color-mix(in oklab, var(--primary) 50%, var(--border));
+  background: color-mix(in oklab, var(--primary) 7%, var(--surface));
+}
+
+.maintenance-confirmation-list span {
+  color: var(--muted-foreground);
+  font-size: .8rem;
+  line-height: 1.45;
+}
