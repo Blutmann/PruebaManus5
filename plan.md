@@ -39,3 +39,10 @@ Dashboard editorial japonés contemporáneo: tarjetas de superficie sobria con a
 ## Corrección estructural de la NavBar de reservas (Preview)
 
 La NavBar inferior de `/reservar` se corrige como una superficie fija e independiente del flujo, reemplazando el `sticky` que la hacía depender del ancho y la altura de la sección de contenido. El fondo ocupa todo el viewport y el interior queda centrado dentro del ancho de la página. El documento reserva espacio en la página y en el footer para que ningún contenido o enlace quede debajo de la barra. La superficie es opaca y usa `var(--chrome)` para conservar los temas claro y oscuro. El alcance se limita a `src/styles.css`; no se modifican el flujo de reservas, Supabase, autenticación, RLS, RPCs, Resend ni Production.
+
+
+## Corrección de jerarquía NavBar-footer en desktop (Preview)
+
+La NavBar ya estaba correctamente fijada a la ventana, con ancho completo y `z-index: 30`, mientras el footer tenía `z-index: 10`. La causa del orden visual incorrecto no era un contexto de apilamiento: era la reserva adicional de `padding-bottom: 90px` aplicada al footer cuando existía `.booking-cta`. Esa reserva hacía que el footer terminara visualmente antes de la barra y que la NavBar pareciera quedar debajo.
+
+Se conserva `position: fixed`, el ancho completo, el fondo opaco, el espacio reservado dentro de `.booking-page` y todo el comportamiento mobile. El footer pasa a usar únicamente `padding-bottom: 24px` en desktop: el contenido y sus enlaces quedan por encima de la barra, mientras el fondo del footer puede quedar detrás de la NavBar. No se modifican reservas, autenticación, Supabase, Resend ni Production.
