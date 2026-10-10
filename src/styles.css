@@ -148,16 +148,23 @@
   }
 
   body {
+    position: relative;
+    isolation: isolate;
+    min-height: 100vh;
     background-color: #010302;
-    background-image: url('/kani-background-desktop.webp');
-    background-position: center top;
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-attachment: fixed;
     color: var(--color-foreground);
     font-family: var(--font-sans);
     letter-spacing: 0;
     -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: url('/kani-background-desktop.webp') center top / cover no-repeat;
   }
 }
 
@@ -367,7 +374,7 @@ input[type=date], input[type=time] { color-scheme: dark; }
  .hero-caption { display: none; }
 }
 @media(max-width:767px) {
- body { background-image: url('/kani-background-mobile.webp'); }
+ body::before { background-image: url('/kani-background-mobile.webp'); }
  .site-container,.site-header > div { width: calc(100% - 40px); }
  .site-footer > .site-container { width: calc(100% - 40px); padding-inline: 0; }
  .site-header { height: 80px; }
