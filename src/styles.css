@@ -249,7 +249,7 @@ html[data-theme="light"] {
 .booking-layout { display: grid; grid-template-columns: minmax(0,1fr) 300px; gap: 72px; align-items: start; }
 .section-title { font-size: 29px; line-height: 1.2; font-weight: 500; margin-top: 4px; }
 .section-title, .services-heading h2, .booking-aside > h2, .calendar-panel h2, .barber-choice-inline h2, .review-line h2, .confirmation h1, .studio-info-card h2 { font-family: var(--font-display); }
-.booking-page .section-title { letter-spacing: .01em; font-size: 26px; }
+.booking-page .section-title { font-family: var(--font-display); letter-spacing: .01em; font-size: 26px; }
 .booking-page .field-label { font-family: var(--font-sans); }
 .admin-page, .admin-page h1, .admin-page h2, .admin-page h3, .admin-page button, .admin-page input, .admin-page select { font-family: var(--font-sans); }
 .booking-page .section-title { margin-bottom: 12px; }
@@ -427,10 +427,11 @@ html[data-theme="light"] input[type=date], html[data-theme="light"] input[type=t
 .field-validation-icon.invalid { color: var(--destructive); background: color-mix(in oklch, var(--destructive) 13%, transparent); }
 .field-control:has(> .notes-input) .field-validation-icon { top: 16px; transform: none; }
 .field-validation-message { display: block; margin-top: 6px; color: color-mix(in oklch, var(--destructive) 88%, white); font-family: var(--font-sans); font-size: 11px; line-height: 1.35; }
-.mobile-menu-trigger { display: none; }
 .header-controls { display: flex; flex: 0 0 auto; align-items: center; gap: 12px; }
-.theme-toggle { width: 44px; height: 44px; flex: 0 0 44px; color: var(--gold); }
-.theme-toggle svg { width: 17px; height: 17px; }
+.header-control-button { width: 44px; height: 44px; flex: 0 0 44px; padding: 0; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; }
+.header-control-button svg { width: 17px; height: 17px; }
+.mobile-menu-trigger { display: none; }
+.theme-toggle { color: var(--gold); }
 .mobile-menu-cta { display: none; }
 .mobile-menu { display: none; }
 .booking-title-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
