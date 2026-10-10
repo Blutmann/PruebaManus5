@@ -34,3 +34,8 @@ Dashboard editorial japonés contemporáneo: tarjetas de superficie sobria con a
 - No crear turnos ni datos ficticios para completar gráficos.
 - No modificar reservas, disponibilidad, depósitos, notificaciones, Resend, autenticación, roles o RLS.
 - No modificar `/reservar` ni publicar Production.
+
+
+## Corrección estructural de la NavBar de reservas (Preview)
+
+La NavBar inferior de `/reservar` se corrige como una superficie fija e independiente del flujo, reemplazando el `sticky` que la hacía depender del ancho y la altura de la sección de contenido. El fondo ocupa todo el viewport y el interior queda centrado dentro del ancho de la página. El documento reserva espacio en la página y en el footer para que ningún contenido o enlace quede debajo de la barra. La superficie es opaca y usa `var(--chrome)` para conservar los temas claro y oscuro. El alcance se limita a `src/styles.css`; no se modifican el flujo de reservas, Supabase, autenticación, RLS, RPCs, Resend ni Production.
