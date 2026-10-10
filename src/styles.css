@@ -486,6 +486,7 @@ html[data-theme="light"] input[type=date], html[data-theme="light"] input[type=t
  .site-footer > .site-container { width: calc(100% - 40px); padding-inline: 0; }
  .site-header { height: 72px; position: relative; }
  .site-header > div { gap: 10px; }
+ .header-controls { margin-left: auto; }
  .desktop-primary-nav, .admin-public-cta { display: none !important; }
  .mobile-menu-trigger { display: inline-flex; }
  .mobile-menu { position: fixed; inset: 72px 0 calc(69px + env(safe-area-inset-bottom)); z-index: 100; display: grid; align-content: start; gap: 0; overflow-y: auto; padding: 14px 20px calc(104px + env(safe-area-inset-bottom)); border: 0; background: var(--chrome); box-shadow: none; }
