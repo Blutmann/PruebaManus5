@@ -22,7 +22,7 @@ function StudioPage() {
     <main className="site-container studio-page">
       <div className="studio-page-header">
         <div>
-          <p className="eyebrow">KANI BARBER STUDIO</p>
+          <p className="eyebrow">Kani Barber Studio</p>
           <h1 className="section-title">Contacto</h1>
           <p className="studio-page-lead">
             Bajá un cambio. Sentite vos.
