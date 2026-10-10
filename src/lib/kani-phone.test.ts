@@ -3,7 +3,7 @@ import { formatPhoneInput, normalizeCountrySearch, normalizePhone, otherPhoneCou
 
 describe("phone normalization", () => {
   it("normalizes an Argentine mobile number to E.164", () => {
-    expect(normalizePhone("9 11 2843-6014", "AR")?.e164).toBe("+5491128436014");
+    expect(normalizePhone("9 11 0000-0000", "AR")?.e164).toBe("+5491100000000");
   });
 
   it("normalizes a Brazilian mobile number to E.164", () => {
@@ -11,7 +11,7 @@ describe("phone normalization", () => {
   });
 
   it("formats while typing and rejects letters through the input helper", () => {
-    expect(formatPhoneInput("9 11 ab2843-6014", "AR")).toBe("91128436014");
+    expect(formatPhoneInput("9 11 ab0000-0000", "AR")).toBe("91100000000");
     expect(normalizePhone("123", "AR")).toBeNull();
   });
 });

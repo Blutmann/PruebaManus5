@@ -50,13 +50,13 @@ function StudioPage() {
           <Instagram className="studio-info-icon" size={22} />
           <div>
             <h2>Instagram</h2>
-            <p>Seguinos en Instagram.</p>
+          <p>Seguinos en Instagram y conocé nuestro trabajo.</p>
             <span className="studio-card-action">@kanibarberstudio <ArrowRight size={15} /></span>
           </div>
         </a>
       </div>
       <div className="studio-booking-cta-wrap">
-        <Button asChild variant="outline" className="studio-booking-cta">
+        <Button asChild className="studio-booking-cta action-positive">
           <Link to="/reservar">
             Solicitar turno <ArrowRight />
           </Link>
