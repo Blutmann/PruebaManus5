@@ -625,7 +625,7 @@ html[data-theme="light"] input[type=date], html[data-theme="light"] input[type=t
 .booking-page form input[name="email"],
 .booking-page form textarea[name="notes"] {
   font-family: var(--font-sans);
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .booking-page form input[name="name"]::placeholder,
