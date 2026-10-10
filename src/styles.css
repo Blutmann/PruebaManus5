@@ -19,7 +19,7 @@
  */
 
 @theme inline {
-  --font-sans: 'Noto Sans', sans-serif;
+  --font-sans: 'Zen Antique', serif;
   --font-display: 'Zen Antique', serif;
   --color-gold: var(--gold);
   --color-success: var(--success);
