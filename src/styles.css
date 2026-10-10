@@ -108,12 +108,12 @@
   --sidebar-accent-foreground: #F2EFE7;
   --sidebar-border: #4b4740;
   --sidebar-ring: #B99A5B;
-  --button-primary-bg: #F2EFE7;
+  --button-primary-bg: #B99A5B;
   --button-primary-text: #191919;
-  --button-primary-hover: #e5dfd4;
-  --button-primary-active: #d8d0c3;
+  --button-primary-hover: #c5a866;
+  --button-primary-active: #a98748;
   --button-primary-border: #B99A5B;
-  --button-primary-focus: #B99A5B;
+  --button-primary-focus: #F2EFE7;
   --button-primary-disabled-bg: #4b4740;
   --button-primary-disabled-text: #c9c4ba;
   --button-primary-disabled-border: #5b554a;
@@ -249,7 +249,7 @@ html[data-theme="light"] {
 .booking-layout { display: grid; grid-template-columns: minmax(0,1fr) 300px; gap: 72px; align-items: start; }
 .section-title { font-size: 29px; line-height: 1.2; font-weight: 500; margin-top: 4px; }
 .section-title, .services-heading h2, .booking-aside > h2, .calendar-panel h2, .barber-choice-inline h2, .review-line h2, .confirmation h1, .studio-info-card h2 { font-family: var(--font-display); }
-.booking-page .section-title { letter-spacing: .01em; }
+.booking-page .section-title { letter-spacing: .01em; font-size: 26px; }
 .booking-page .field-label { font-family: var(--font-sans); }
 .admin-page, .admin-page h1, .admin-page h2, .admin-page h3, .admin-page button, .admin-page input, .admin-page select { font-family: var(--font-sans); }
 .booking-page .section-title { margin-bottom: 12px; }
@@ -538,6 +538,7 @@ html[data-theme="light"] input[type=date], html[data-theme="light"] input[type=t
  .booking-layout { display: block; }
  .booking-aside { display: none; }
  .section-title { font-size: 24px; line-height: 1.2; margin-top: 2px; }
+ .booking-page .section-title { font-size: 22px; }
  .booking-option { gap: 14px; padding: 14px 16px; height: 90px; }
  .booking-defer-option { height: 90px; min-height: 90px; padding: 14px 16px; gap: 14px; }
  .booking-defer-option .barber-defer-mark { width: 40px; height: 40px; flex-basis: 40px; }
