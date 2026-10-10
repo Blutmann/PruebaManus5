@@ -1,36 +1,60 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables } from '@/integrations/supabase/types';
-import { bookingEndDate, isBookingDate, type Barber } from '@/lib/kani-model';
+import { bookingEndDate, isBookingDate, minutes, type Barber } from '@/lib/kani-model';
 
 export type AvailabilitySlot = Tables<'barber_availability_slots'>;
 export type PublicAvailabilitySlot = Omit<Tables<'available_barber_slots'>, 'status'> & {
   status: AvailabilitySlot['status'];
+  barber_name: Barber;
 };
 
 const slotFields = 'id, barber_id, slot_date, start_time, end_time, status, internal_note, created_at, updated_at, updated_by';
 const publicSlotFields = 'id, barber_id, slot_date, start_time, end_time, status';
 
-export async function readPublicAvailabilitySlots(barber: Barber, fromDate: string, toDate: string) {
-  const { data: barberRow, error: barberError } = await supabase
-    .from('barbers')
-    .select('id')
-    .eq('name', barber)
-    .eq('active', true)
-    .single();
-
+export async function readPublicAvailabilitySlots(barber: Barber | null, fromDate: string, toDate: string) {
+  let barberQuery = supabase.from('barbers').select('id, name').eq('active', true);
+  if (barber) barberQuery = barberQuery.eq('name', barber);
+  const { data: barberRows, error: barberError } = await barberQuery;
   if (barberError) throw barberError;
+  if (!barberRows?.length) return [] as PublicAvailabilitySlot[];
 
+  const barberById = new Map(barberRows.map(row => [row.id, row.name as Barber]));
   const { data, error } = await supabase
     .from('available_barber_slots')
     .select(publicSlotFields)
-    .eq('barber_id', barberRow.id)
+    .in('barber_id', barberRows.map(row => row.id))
     .gte('slot_date', fromDate)
     .lte('slot_date', toDate)
     .order('slot_date', { ascending: true })
     .order('start_time', { ascending: true });
 
   if (error) throw error;
-  return data as PublicAvailabilitySlot[];
+  return (data ?? []).flatMap(slot => {
+    const barberName = barberById.get(slot.barber_id);
+    return barberName ? [{ ...slot, barber_name: barberName }] : [];
+  }) as PublicAvailabilitySlot[];
+}
+
+export function slotCanStillBeBooked(slotDate: string, startTime: string, now: Date) {
+  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  return slotDate !== today || minutes(startTime.slice(0, 5)) > now.getHours() * 60 + now.getMinutes();
+}
+
+export function availableTimesForServiceDate(slots: PublicAvailabilitySlot[], date: string, duration: number, now: Date, barber?: Barber | null) {
+  return [...new Set(slots
+    .filter(slot => slot.slot_date === date && slot.status === 'AVAILABLE')
+    .filter(slot => !barber || slot.barber_name === barber)
+    .filter(slot => minutes(slot.end_time.slice(0, 5)) - minutes(slot.start_time.slice(0, 5)) >= duration)
+    .filter(slot => slotCanStillBeBooked(slot.slot_date, slot.start_time, now))
+    .map(slot => slot.start_time.slice(0, 5)))].sort();
+}
+
+export function eligibleBarbersForServiceSlot(slots: PublicAvailabilitySlot[], date: string, time: string, duration: number, now: Date) {
+  return [...new Set(slots
+    .filter(slot => slot.slot_date === date && slot.status === 'AVAILABLE' && slot.start_time.slice(0, 5) === time)
+    .filter(slot => minutes(slot.end_time.slice(0, 5)) - minutes(slot.start_time.slice(0, 5)) >= duration)
+    .filter(slot => slotCanStillBeBooked(slot.slot_date, slot.start_time, now))
+    .map(slot => slot.barber_name))];
 }
 
 export async function readAvailabilitySlots(barberId: string, slotDate: string) {

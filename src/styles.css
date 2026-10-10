@@ -204,8 +204,8 @@
 .confirmation-secondary { min-height: 44px; color: var(--muted-foreground) !important; }
 .confirmation-secondary:hover { color: var(--foreground) !important; border-color: var(--gold) !important; background: transparent !important; }
 .back-link { display: inline-flex; gap: 9px; align-items: center; font-size: 12px; color: var(--muted-foreground); }
-.booking-page { max-width: 1020px; padding-top: 24px; padding-bottom: 80px; min-height: 780px; }
-.booking-progress { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); margin-top: 28px; margin-bottom: 30px; border-bottom: 1px solid var(--border); }
+.booking-page { max-width: 1020px; padding-top: 12px; padding-bottom: 80px; min-height: 780px; }
+.booking-progress { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); margin-top: 12px; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
 .booking-progress > button { display: flex; align-items: center; gap: 10px; height: auto; justify-content: flex-start; padding: 0 0 19px; border-radius: 0; color: var(--muted-foreground); border-bottom: 2px solid transparent; }
 .booking-progress > button > span { width: 24px; height: 24px; border: 1px solid var(--border); border-radius: 50%; font-size: 9px; display: grid; place-items: center; flex-shrink: 0; }
 .booking-progress small { font-size: 11px; }
@@ -213,10 +213,17 @@
 .booking-progress .current > span { border-color: var(--gold); color: var(--gold); }
 .booking-progress .complete > span { color: var(--gold); }
 .booking-layout { display: grid; grid-template-columns: minmax(0,1fr) 300px; gap: 72px; align-items: start; }
-.section-title { font-size: 34px; line-height: 1.25; font-weight: 500; margin-top: 8px; }
+.section-title { font-size: 29px; line-height: 1.2; font-weight: 500; margin-top: 4px; }
 .booking-page .section-title, .booking-page .field-label { font-family: var(--font-display); letter-spacing: .01em; }
-.booking-page .section-title { margin-bottom: 17px; }
+.booking-page .section-title { margin-bottom: 12px; }
 .booking-aside { margin-top: 9px; padding: 27px 0 27px 28px; border-left: 1px solid var(--border); }
+.booking-defer-option { width: 100%; min-height: 74px; display: flex; align-items: center; gap: 14px; padding: 14px 20px; background: color-mix(in oklch, var(--surface) 70%, transparent); text-align: left; }
+.barber-defer-mark { width: 36px; height: 36px; display: grid; place-items: center; flex-shrink: 0; border: 1px dashed color-mix(in oklch, var(--gold) 55%, var(--border)); border-radius: 50%; color: var(--gold); font-family: var(--font-display); font-size: 20px; }
+.barber-choice-inline { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border); }
+.barber-choice-inline h2 { font-size: 18px; font-weight: 500; margin-bottom: 5px; }
+.barber-choice-list { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; margin-top: 13px; }
+.barber-choice-list > button { min-height: 48px; justify-content: space-between; padding-inline: 13px; }
+
 .booking-aside .eyebrow { font-size: 9px; }
 .booking-option { width: 100%; display: flex; gap: 18px; height: 98px; padding: 20px; background: var(--surface); box-shadow: 0 10px 26px rgb(0 0 0 / 0.14); white-space: normal; }
 .selected { border-color: var(--gold) !important; background: color-mix(in oklch,var(--gold) 9%,var(--background)) !important; color: var(--foreground) !important; }
@@ -264,8 +271,8 @@
 .status.cancelled { color: color-mix(in oklch, var(--primary) 88%, white); background: color-mix(in oklch,var(--primary) 14%,transparent); }
 .admin-page { padding-top: 28px; padding-bottom: 70px; min-height: 760px; }
 .admin-header-left { display: flex; align-items: center; gap: 28px; min-width: 0; }
-.admin-public-cta { color: var(--foreground) !important; border-color: var(--border) !important; }
-.admin-public-cta:hover { border-color: var(--gold) !important; color: var(--gold) !important; background: transparent !important; }
+.admin-public-cta { color: var(--background) !important; border-color: var(--gold) !important; }
+.admin-public-cta:hover { border-color: var(--gold) !important; color: var(--background) !important; background: color-mix(in oklch, var(--gold) 88%, white) !important; }
 .admin-account-bar { display: flex; align-items: center; justify-content: flex-end; gap: 18px; min-height: 58px; padding-block: 10px; border-bottom: 1px solid var(--border); }
 .admin-account-identity { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; font-size: 12px; }
 .admin-account-identity strong { color: var(--foreground); font-weight: 600; }
@@ -398,15 +405,19 @@ input[type=date], input[type=time] { color-scheme: dark; }
  .studio-note { flex-direction: column; align-items: flex-start; }
  .studio-note > div { align-items: flex-start; }
  .studio-note > a { margin-left: 45px; }
- .booking-page { padding-top: 16px; min-height: 720px; padding-bottom: 120px; }
+ .booking-page { padding-top: 8px; min-height: 720px; padding-bottom: 120px; }
  .site-footer { padding-bottom: calc(120px + env(safe-area-inset-bottom)); }
- .booking-progress { gap: 5px; margin-top: 20px; margin-bottom: 22px; }
+ .booking-progress { gap: 5px; margin-top: 10px; margin-bottom: 16px; }
  .booking-progress > button { flex-direction: column; gap: 8px; padding-bottom: 13px; }
  .booking-progress small { font-size: 9px; }
  .booking-layout { display: block; }
  .booking-aside { display: none; }
- .section-title { font-size: 29px; margin-top: 5px; }
+ .section-title { font-size: 24px; line-height: 1.2; margin-top: 2px; }
  .booking-option { gap: 12px; padding: 12px; height: 82px; }
+ .booking-defer-option { min-height: 82px; padding: 12px; gap: 10px; }
+ .barber-defer-mark { width: 32px; height: 32px; }
+ .barber-choice-list { grid-template-columns: 1fr; }
+ .barber-choice-inline { margin-top: 18px; padding-top: 15px; }
  .booking-option .option-icon { width: 32px; height: 32px; }
  .booking-option .text-lg { font-size: 1rem; }
  .calendar-panel { padding: 18px; }
