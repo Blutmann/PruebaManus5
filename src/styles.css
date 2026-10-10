@@ -108,6 +108,18 @@
   --sidebar-accent-foreground: #F2EFE7;
   --sidebar-border: #4b4740;
   --sidebar-ring: #B99A5B;
+  --button-primary-bg: #F2EFE7;
+  --button-primary-text: #191919;
+  --button-primary-hover: #e5dfd4;
+  --button-primary-active: #d8d0c3;
+  --button-primary-border: #B99A5B;
+  --button-primary-focus: #B99A5B;
+  --button-primary-disabled-bg: #4b4740;
+  --button-primary-disabled-text: #c9c4ba;
+  --button-primary-disabled-border: #5b554a;
+  --button-destructive-bg: #762936;
+  --button-destructive-text: #F2EFE7;
+  --button-destructive-hover: #63212C;
 }
 
 html[data-theme="light"] {
@@ -150,6 +162,18 @@ html[data-theme="light"] {
   --sidebar-accent-foreground: #191919;
   --sidebar-border: #D8D3C9;
   --sidebar-ring: #94743D;
+  --button-primary-bg: #762936;
+  --button-primary-text: #FFFFFF;
+  --button-primary-hover: #63212C;
+  --button-primary-active: #551d26;
+  --button-primary-border: #762936;
+  --button-primary-focus: #94743D;
+  --button-primary-disabled-bg: #D8D3C9;
+  --button-primary-disabled-text: #5e5a53;
+  --button-primary-disabled-border: #b9b3a8;
+  --button-destructive-bg: #762936;
+  --button-destructive-text: #FFFFFF;
+  --button-destructive-hover: #63212C;
 }
 
 @layer base {
@@ -273,10 +297,15 @@ html[data-theme="light"] {
 .confirmation p { line-height: 1.8; }
 .confirmation-details { text-align: left; margin-block: 24px 18px; border: 1px solid color-mix(in oklch, var(--gold) 15%, var(--border)); padding: 20px; border-radius: 4px; background: var(--surface); box-shadow: 0 12px 30px rgb(0 0 0 / 0.16); }
 .confirmation-details .summary-list { margin-top: 18px; gap: 14px; }
-.action-positive { background: var(--gold) !important; color: var(--background) !important; box-shadow: 0 1px 2px color-mix(in oklch, var(--gold) 24%, transparent); }
-.action-positive:hover { background: color-mix(in oklch, var(--gold) 88%, white) !important; }
-.action-brand { background: var(--primary) !important; color: var(--primary-foreground) !important; }
-.action-brand:hover { background: color-mix(in oklch, var(--primary) 88%, white) !important; }
+.button-primary, .action-positive { border: 1px solid var(--button-primary-border) !important; background: var(--button-primary-bg) !important; color: var(--button-primary-text) !important; box-shadow: 0 1px 2px rgb(0 0 0 / 18%); }
+.button-primary:hover, .action-positive:hover { background: var(--button-primary-hover) !important; color: var(--button-primary-text) !important; }
+.button-primary:active, .action-positive:active { background: var(--button-primary-active) !important; }
+.button-primary:focus-visible, .action-positive:focus-visible { outline: none !important; box-shadow: 0 0 0 2px var(--button-primary-focus), 0 0 0 4px var(--background) !important; }
+.button-primary:disabled, .action-positive:disabled { border-color: var(--button-primary-disabled-border) !important; background: var(--button-primary-disabled-bg) !important; color: var(--button-primary-disabled-text) !important; opacity: 1 !important; box-shadow: none; }
+.action-brand { border: 1px solid var(--button-destructive-bg) !important; background: var(--button-destructive-bg) !important; color: var(--button-destructive-text) !important; }
+.action-brand:hover { background: var(--button-destructive-hover) !important; color: var(--button-destructive-text) !important; }
+.action-brand:focus-visible { outline: none !important; box-shadow: 0 0 0 2px var(--button-primary-focus), 0 0 0 4px var(--background) !important; }
+.action-brand:disabled { border-color: var(--button-primary-disabled-border) !important; background: var(--button-primary-disabled-bg) !important; color: var(--button-primary-disabled-text) !important; opacity: 1 !important; }
 .action-brand-outline { border-color: color-mix(in oklch, var(--primary) 60%, transparent) !important; color: color-mix(in oklch, var(--primary) 88%, white) !important; }
 .action-brand-outline:hover { background: color-mix(in oklch, var(--primary) 18%, transparent) !important; color: var(--foreground) !important; }
 .action-brand-text { color: color-mix(in oklch, var(--primary) 88%, white) !important; }
@@ -289,8 +318,8 @@ html[data-theme="light"] {
 .status.cancelled { color: color-mix(in oklch, var(--primary) 88%, white); background: color-mix(in oklch,var(--primary) 14%,transparent); }
 .admin-page { padding-top: 28px; padding-bottom: 70px; min-height: 760px; }
 .admin-header-left { display: flex; align-items: center; gap: 28px; min-width: 0; }
-.admin-public-cta { color: var(--background) !important; border-color: var(--gold) !important; }
-.admin-public-cta:hover { border-color: var(--gold) !important; color: var(--background) !important; background: color-mix(in oklch, var(--gold) 88%, white) !important; }
+.admin-public-cta { border-color: var(--button-primary-border) !important; }
+.admin-public-cta:hover { border-color: var(--button-primary-border) !important; }
 .admin-account-bar { display: flex; align-items: center; justify-content: flex-end; gap: 18px; min-height: 58px; padding-block: 10px; border-bottom: 1px solid var(--border); }
 .admin-account-identity { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; font-size: 12px; }
 .admin-account-identity strong { color: var(--foreground); font-weight: 600; }
