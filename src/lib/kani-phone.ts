@@ -8,6 +8,8 @@ import {
 
 export type PhoneCountry = CountryCode;
 
+const countryShortCodes: Record<string, string> = { AR: 'ARG', US: 'USA', BR: 'BRA', UY: 'URY', CL: 'CHL', PY: 'PRY', BO: 'BOL', MX: 'MEX', ES: 'ESP', IT: 'ITA' };
+
 const displayNames =
   typeof Intl !== "undefined" && "DisplayNames" in Intl
     ? new Intl.DisplayNames(["es"], { type: "region" })
@@ -19,6 +21,7 @@ export const phoneCountries = getCountries().map((country) => ({
   name: displayNames?.of(country) ?? country,
   flag: countryToFlag(country),
   isoCode: country,
+  shortCode: countryShortCodes[country] ?? country,
 }));
 
 export function countryToFlag(country: string) {

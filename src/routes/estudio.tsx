@@ -25,7 +25,7 @@ function StudioPage() {
           <p className="eyebrow">KANI BARBER STUDIO</p>
           <h1 className="section-title">Contacto</h1>
           <p className="studio-page-lead">
-            Un espacio para bajar un cambio, cuidar tu estilo y sentirte vos.
+            Bajá un cambio. Sentite vos.
           </p>
         </div>
         <Button asChild className="action-positive studio-booking-cta">
@@ -35,40 +35,30 @@ function StudioPage() {
         </Button>
       </div>
       <div className="studio-info-grid">
-        <section className="studio-info-card">
+        <a className="studio-info-card studio-info-link" href={mapsUrl} target="_blank" rel="noreferrer" aria-label="Abrir ubicación de Kani Barber Studio en Google Maps">
           <MapPin className="studio-info-icon" size={22} />
           <div>
             <h2>Ubicación</h2>
-            <p>
-              San Isidro Labrador 7, Martínez<br />
-              Provincia de Buenos Aires
-            </p>
-            <a href={mapsUrl} target="_blank" rel="noreferrer">
-              Ver ubicación en Google Maps
-            </a>
+            <p>San Isidro Labrador 7, Martínez<br />Provincia de Buenos Aires</p>
+            <span className="studio-card-action">Ver ubicación <ArrowRight size={15} /></span>
           </div>
-        </section>
-        <section className="studio-info-card">
+        </a>
+        <Link className="studio-info-card studio-info-link" to="/reservar" aria-label="Solicitar un turno en Kani Barber Studio">
           <Clock3 className="studio-info-icon" size={22} />
           <div>
             <h2>Horarios</h2>
-            <p>
-              Lunes a sábados
-              <br />
-              10:00 a 20:00 hs
-            </p>
+            <p>Lunes a sábados<br />10:00 a 20:00 hs</p>
+            <span className="studio-card-action">Solicitar turno <ArrowRight size={15} /></span>
           </div>
-        </section>
-        <section className="studio-info-card">
+        </Link>
+        <a className="studio-info-card studio-info-link" href={instagramUrl} target="_blank" rel="noreferrer" aria-label="Abrir Instagram de Kani Barber Studio">
           <Instagram className="studio-info-icon" size={22} />
           <div>
             <h2>Instagram</h2>
             <p>Seguinos en Instagram.</p>
-            <a href={instagramUrl} target="_blank" rel="noreferrer">
-              @kanibarberstudio
-            </a>
+            <span className="studio-card-action">@kanibarberstudio <ArrowRight size={15} /></span>
           </div>
-        </section>
+        </a>
       </div>
     </main>
   );

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatPhoneInput, normalizePhone } from "./kani-phone";
+import { formatPhoneInput, normalizePhone, phoneCountries } from "./kani-phone";
 
 describe("phone normalization", () => {
   it("normalizes an Argentine mobile number to E.164", () => {
@@ -13,5 +13,14 @@ describe("phone normalization", () => {
   it("formats while typing and rejects letters through the input helper", () => {
     expect(formatPhoneInput("9 11 ab2843-6014", "AR")).toBe("91128436014");
     expect(normalizePhone("123", "AR")).toBeNull();
+  });
+});
+
+
+describe("phone country labels", () => {
+  it("uses short labels for common countries", () => {
+    expect(phoneCountries.find(country => country.code === "AR")?.shortCode).toBe("ARG");
+    expect(phoneCountries.find(country => country.code === "US")?.shortCode).toBe("USA");
+    expect(phoneCountries.find(country => country.code === "BR")?.shortCode).toBe("BRA");
   });
 });
