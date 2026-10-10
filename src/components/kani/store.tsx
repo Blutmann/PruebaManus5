@@ -1,11 +1,12 @@
 import { createContext, useContext, useState, type ReactNode } from 'react';
 import { initialAppointments, initialAvailability, initialSlotOverrides, availableSlots, slotKey, type Appointment, type Availability, type Barber, type SlotOverride, type SlotOverrides, type Status } from '@/lib/kani-model';
-type Store = { appointments: Appointment[]; availability: Availability; slotOverrides: SlotOverrides; addAppointment: (a: Omit<Appointment, 'id' | 'status'>) => Appointment | null; setStatus: (id: string, status: Status) => void; setAvailability: (availability: Availability) => void; setSlotOverride: (barber: Barber, date: string, time: string, override: SlotOverride | null) => void };
+type Store = { appointments: Appointment[]; availability: Availability; slotOverrides: SlotOverrides; mobileMenuOpen: boolean; setMobileMenuOpen: (open: boolean) => void; addAppointment: (a: Omit<Appointment, 'id' | 'status'>) => Appointment | null; setStatus: (id: string, status: Status) => void; setAvailability: (availability: Availability) => void; setSlotOverride: (barber: Barber, date: string, time: string, override: SlotOverride | null) => void };
 const KaniContext = createContext<Store | null>(null);
 export function KaniProvider({ children }: { children: ReactNode }) {
   const [appointments, setAppointments] = useState<Appointment[]>(initialAppointments);
   const [availability, setAvailability] = useState<Availability>(initialAvailability);
   const [slotOverrides, setSlotOverrides] = useState<SlotOverrides>(initialSlotOverrides);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   function addAppointment(a: Omit<Appointment, 'id' | 'status'>) {
     if (!availableSlots(a.service, a.barber, a.date, appointments, availability, slotOverrides).includes(a.time)) return null;
     const next: Appointment = { ...a, id: `K-${Date.now().toString().slice(-6)}`, status: 'Pendiente' };
@@ -20,6 +21,6 @@ export function KaniProvider({ children }: { children: ReactNode }) {
       return { ...prev, [key]: override };
     });
   }
-  return <KaniContext.Provider value={{ appointments, availability, slotOverrides, addAppointment, setStatus, setAvailability, setSlotOverride }}>{children}</KaniContext.Provider>;
+  return <KaniContext.Provider value={{ appointments, availability, slotOverrides, mobileMenuOpen, setMobileMenuOpen, addAppointment, setStatus, setAvailability, setSlotOverride }}>{children}</KaniContext.Provider>;
 }
 export function useKani() { const store = useContext(KaniContext); if (!store) throw new Error('KANI provider is missing'); return store; }
