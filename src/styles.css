@@ -217,12 +217,13 @@
 .booking-page .section-title, .booking-page .field-label { font-family: var(--font-display); letter-spacing: .01em; }
 .booking-page .section-title { margin-bottom: 12px; }
 .booking-aside { margin-top: 9px; padding: 27px 0 27px 28px; border-left: 1px solid var(--border); }
-.booking-defer-option { width: 100%; min-height: 74px; display: flex; align-items: center; gap: 14px; padding: 14px 20px; background: color-mix(in oklch, var(--surface) 70%, transparent); text-align: left; }
-.barber-defer-mark { width: 36px; height: 36px; display: grid; place-items: center; flex-shrink: 0; border: 1px dashed color-mix(in oklch, var(--gold) 55%, var(--border)); border-radius: 50%; color: var(--gold); font-family: var(--font-display); font-size: 20px; }
+.booking-defer-option { width: 100%; min-height: 74px; display: flex; align-items: center; gap: 14px; padding: 14px 20px; background: color-mix(in oklch, var(--surface) 70%, transparent); text-align: left; white-space: normal; }
+.barber-defer-mark { width: 36px; height: 36px; display: grid; place-items: center; flex: 0 0 36px; border: 1px dashed color-mix(in oklch, var(--gold) 55%, var(--border)); border-radius: 50%; color: var(--gold); font-family: var(--font-display); font-size: 20px; }
+.booking-defer-copy { min-width: 0; overflow-wrap: anywhere; line-height: 1.25; }
 .barber-choice-inline { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); }
 .barber-choice-inline h2 { font-size: 17px; line-height: 1.2; font-weight: 500; margin-bottom: 8px; }
 .barber-choice-list { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; }
-.barber-choice-list > button { min-height: 48px; justify-content: space-between; padding-inline: 13px; }
+.barber-choice-list > button { min-height: 48px; justify-content: center; padding-inline: 13px; text-align: center; white-space: nowrap; }
 
 .booking-aside .eyebrow { font-size: 9px; }
 .booking-option { width: 100%; display: flex; gap: 18px; height: 98px; padding: 20px; background: var(--surface); box-shadow: 0 10px 26px rgb(0 0 0 / 0.14); white-space: normal; }
@@ -415,9 +416,10 @@ input[type=date], input[type=time] { color-scheme: dark; }
  .section-title { font-size: 24px; line-height: 1.2; margin-top: 2px; }
  .booking-option { gap: 12px; padding: 12px; height: 82px; }
  .booking-defer-option { min-height: 82px; padding: 12px; gap: 10px; }
- .barber-defer-mark { width: 32px; height: 32px; }
+ .barber-defer-mark { width: 32px; height: 32px; flex-basis: 32px; }
  .barber-choice-list { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 6px; }
  .barber-choice-list > button { min-height: 48px; padding-inline: 6px; font-size: 12px; }
+ .booking-defer-copy { font-size: 12px; }
  .barber-choice-inline { margin-top: 12px; padding-top: 10px; }
  .booking-option .option-icon { width: 32px; height: 32px; }
  .booking-option .text-lg { font-size: 1rem; }
