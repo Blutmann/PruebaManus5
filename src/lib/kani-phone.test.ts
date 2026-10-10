@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatPhoneInput, normalizeCountrySearch, normalizePhone, otherPhoneCountries, phoneCountries, primaryPhoneCountries } from "./kani-phone";
+import { formatPhoneInput, normalizeCountrySearch, normalizePhone, otherPhoneCountries, phoneCountries, phonePlaceholder, primaryPhoneCountries } from "./kani-phone";
 
 describe("phone normalization", () => {
   it("normalizes an Argentine mobile number to E.164", () => {
@@ -35,5 +35,26 @@ describe("phone country labels", () => {
     expect(normalizeCountrySearch("España")).toBe("espana");
     expect(normalizeCountrySearch("esPANA")).toBe("espana");
     expect(normalizeCountrySearch("Perú")).toBe("peru");
+  });
+});
+
+describe("phone placeholders", () => {
+  it("uses country-specific national examples for the requested countries", () => {
+    expect(phonePlaceholder("AR")).toBe("11 2345-6789");
+    expect(phonePlaceholder("BR")).toBe("(11) 96123-4567");
+    expect(phonePlaceholder("CL")).toBe("(2) 2123 4567");
+    expect(phonePlaceholder("UY")).toBe("94231234");
+    expect(phonePlaceholder("US")).toBe("(201) 555-0123");
+    expect(phonePlaceholder("ES")).toBe("612 34 56 78");
+  });
+
+  it("also provides examples for countries outside the primary group", () => {
+    expect(phonePlaceholder("JP")).not.toBe(phonePlaceholder("AR"));
+    expect(phonePlaceholder("DE")).not.toBe("Número de celular");
+    expect(phonePlaceholder("AU")).not.toBe("Número de celular");
+  });
+
+  it("provides a country-specific example for every selectable country", () => {
+    expect(phoneCountries.every(country => phonePlaceholder(country.code) !== "Número de celular")).toBe(true);
   });
 });
