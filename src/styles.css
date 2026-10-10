@@ -222,7 +222,8 @@
 .booking-defer-copy { min-width: 0; overflow-wrap: anywhere; line-height: 1.25; }
 .barber-choice-inline { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); }
 .barber-choice-inline h2 { font-size: 17px; line-height: 1.2; font-weight: 500; margin-bottom: 8px; }
-.barber-choice-list { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; }
+.booking-time-grid, .barber-choice-list { gap: 8px; }
+.barber-choice-list { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); }
 .barber-choice-list > button { min-height: 48px; justify-content: center; padding-inline: 13px; text-align: center; white-space: nowrap; }
 
 .booking-aside .eyebrow { font-size: 9px; }
@@ -417,7 +418,7 @@ input[type=date], input[type=time] { color-scheme: dark; }
  .booking-option { gap: 12px; padding: 12px; height: 82px; }
  .booking-defer-option { min-height: 82px; padding: 12px; gap: 10px; }
  .barber-defer-mark { width: 32px; height: 32px; flex-basis: 32px; }
- .barber-choice-list { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 6px; }
+ .barber-choice-list { grid-template-columns: repeat(3,minmax(0,1fr)); }
  .barber-choice-list > button { min-height: 48px; padding-inline: 6px; font-size: 12px; }
  .booking-defer-copy { font-size: 12px; }
  .barber-choice-inline { margin-top: 12px; padding-top: 10px; }
