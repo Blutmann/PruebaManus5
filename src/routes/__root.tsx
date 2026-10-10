@@ -8,7 +8,7 @@ import {
   Scripts,
   type ErrorComponentProps,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -120,13 +120,14 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <QueryClientProvider client={queryClient}>
       <KaniProvider>
-        <SiteHeader />
+        <SiteHeader menuOpen={mobileMenuOpen} onMenuOpenChange={setMobileMenuOpen} />
         <Outlet />
-        <SiteFooter />
+        <SiteFooter menuOpen={mobileMenuOpen} onMenuOpenChange={setMobileMenuOpen} />
       </KaniProvider>
     </QueryClientProvider>
   );
