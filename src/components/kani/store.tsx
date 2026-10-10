@@ -8,15 +8,22 @@ export function KaniProvider({ children }: { children: ReactNode }) {
   const [availability, setAvailability] = useState<Availability>(initialAvailability);
   const [slotOverrides, setSlotOverrides] = useState<SlotOverrides>(initialSlotOverrides);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [theme, setTheme] = useState<KaniTheme>(() => {
-    if (typeof document !== 'undefined' && document.documentElement.dataset['theme'] === 'light') return 'light';
-    if (typeof window !== 'undefined' && window.localStorage.getItem('kani-theme') === 'light') return 'light';
-    return 'dark';
-  });
+  const [theme, setTheme] = useState<KaniTheme>('dark');
+  const [themeReady, setThemeReady] = useState(false);
   useEffect(() => {
+    let saved: KaniTheme = 'dark';
+    try {
+      saved = window.localStorage.getItem('kani-theme') === 'light' ? 'light' : 'dark';
+    } catch { /* storage may be unavailable */ }
+    document.documentElement.dataset['theme'] = saved;
+    setTheme(saved);
+    setThemeReady(true);
+  }, []);
+  useEffect(() => {
+    if (!themeReady) return;
     document.documentElement.dataset['theme'] = theme;
     try { window.localStorage.setItem('kani-theme', theme); } catch { /* storage may be unavailable */ }
-  }, [theme]);
+  }, [theme, themeReady]);
   function addAppointment(a: Omit<Appointment, 'id' | 'status'>) {
     if (!availableSlots(a.service, a.barber, a.date, appointments, availability, slotOverrides).includes(a.time)) return null;
     const next: Appointment = { ...a, id: `K-${Date.now().toString().slice(-6)}`, status: 'Pendiente' };
