@@ -19,8 +19,8 @@
  */
 
 @theme inline {
-  --font-sans: 'Manrope', sans-serif;
-  --font-display: 'Barlow Condensed', sans-serif;
+  --font-sans: 'Noto Sans', sans-serif;
+  --font-display: 'Noto Serif JP', serif;
   --color-gold: var(--gold);
   --color-success: var(--success);
   --color-overlay: var(--overlay);
@@ -180,7 +180,7 @@
 .hero-shade { position: absolute; inset: 0; background: linear-gradient(90deg, color-mix(in oklch,var(--overlay) 90%,transparent), color-mix(in oklch,var(--overlay) 42%,transparent) 42%, transparent 72%), linear-gradient(0deg, color-mix(in oklch,var(--overlay) 58%,transparent), transparent 45%); }
 .hero-inner { position: relative; height: calc(100% - 72px); display: flex; align-items: center; justify-content: space-between; }
 .hero-content { padding-bottom: 8px; }
-.hero-content h1 { font-family: var(--font-display); font-size: 116px; font-weight: 800; line-height: .92; margin-top: 32px; }
+  .hero-content h1 { font-family: var(--font-display); font-size: 116px; font-weight: 800; line-height: .92; margin-top: 32px; }
 .hero-content h1 small { display: block; font-family: var(--font-sans); font-weight: 500; font-size: 13px; letter-spacing: 7px; margin-top: 17px; }
 .hero-tagline { font-size: 29px; margin-top: 27px; font-weight: 500; }
 .hero-copy { margin-top: 14px; color: var(--muted-foreground); font-size: 14px; line-height: 1.8; }
@@ -192,7 +192,7 @@
 .service-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 18px; }
 .service-item { border: 1px solid color-mix(in oklch, var(--gold) 18%, var(--border)); border-radius: 4px; padding: 26px; background: var(--surface); box-shadow: 0 12px 30px rgb(0 0 0 / 0.16); transition: border-color .2s, transform .2s; }
 .service-item:hover { border-color: var(--gold); transform: translateY(-3px); }
-.service-number { font-family: var(--font-display); font-size: 20px; color: var(--muted-foreground); }
+.service-number { font-family: var(--font-sans); font-size: 20px; color: var(--muted-foreground); }
 .service-item h3 { font-size: 23px; margin-top: 21px; }
 .studio-note { margin-top: 32px; padding-block: 26px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .studio-note-icon { display: grid; place-items: center; width: 42px; height: 42px; border: 1px solid var(--border); border-radius: 50%; flex-shrink: 0; color: var(--gold); }
@@ -215,11 +215,14 @@
 .booking-progress .complete > span { color: var(--gold); }
 .booking-layout { display: grid; grid-template-columns: minmax(0,1fr) 300px; gap: 72px; align-items: start; }
 .section-title { font-size: 29px; line-height: 1.2; font-weight: 500; margin-top: 4px; }
-.booking-page .section-title, .booking-page .field-label { font-family: var(--font-display); letter-spacing: .01em; }
+.section-title, .services-heading h2, .booking-aside > h2, .calendar-panel h2, .barber-choice-inline h2, .review-line h2, .confirmation h1, .studio-info-card h2 { font-family: var(--font-display); }
+.booking-page .section-title { letter-spacing: .01em; }
+.booking-page .field-label { font-family: var(--font-sans); }
+.admin-page, .admin-page h1, .admin-page h2, .admin-page h3, .admin-page button, .admin-page input, .admin-page select { font-family: var(--font-sans); }
 .booking-page .section-title { margin-bottom: 12px; }
 .booking-aside { margin-top: 9px; padding: 27px 0 27px 28px; border-left: 1px solid var(--border); }
 .booking-defer-option { width: 100%; height: 104px; min-height: 104px; display: flex; align-items: center; gap: 18px; padding: 20px 22px; background: var(--surface); box-shadow: 0 10px 26px rgb(0 0 0 / 0.14); text-align: left; white-space: normal; }
-.barber-defer-mark { width: 36px; height: 36px; display: grid; place-items: center; flex: 0 0 36px; border: 1px dashed color-mix(in oklch, var(--gold) 55%, var(--border)); border-radius: 50%; color: var(--gold); font-family: var(--font-display); font-size: 20px; }
+.barber-defer-mark { width: 36px; height: 36px; display: grid; place-items: center; flex: 0 0 36px; border: 1px dashed color-mix(in oklch, var(--gold) 55%, var(--border)); border-radius: 50%; color: var(--gold); font-family: var(--font-sans); font-size: 20px; }
 .booking-defer-copy { min-width: 0; overflow-wrap: anywhere; line-height: 1.25; }
 .barber-choice-inline { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); }
 .barber-choice-inline h2 { font-size: 17px; line-height: 1.2; font-weight: 500; margin-bottom: 8px; }
@@ -234,7 +237,7 @@
 .selected .selection-circle { background: var(--gold); border-color: var(--gold); color: var(--background); }
 .option-icon { width: 48px; height: 48px; border: 1px solid var(--border); display: grid; place-items: center; color: var(--gold); border-radius: 4px; }
 .option-icon img { width: 100%; height: 100%; object-fit: contain; }
-.barber-avatar { width: 48px; height: 48px; flex-shrink: 0; display: grid; place-items: center; font-family: var(--font-display); font-size: 25px; border-radius: 50%; background: var(--secondary); color: var(--gold); }
+.barber-avatar { width: 48px; height: 48px; flex-shrink: 0; display: grid; place-items: center; font-family: var(--font-sans); font-size: 25px; border-radius: 50%; background: var(--secondary); color: var(--gold); }
 .avatar-1 { background: color-mix(in oklch,var(--primary) 35%,var(--surface)); }
 .avatar-2 { background: color-mix(in oklch,var(--gold) 15%,var(--surface)); }
 .summary-list { display: flex; flex-direction: column; gap: 22px; font-size: 13px; }
