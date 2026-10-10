@@ -113,11 +113,11 @@ export async function createAvailabilitySlots({
 
   const [hoursText, minutesText] = startTime.split(':');
   const hours = Number(hoursText);
-  const minutes = Number(minutesText);
-  if (!Number.isInteger(hours) || !Number.isInteger(minutes) || hours < 10 || hours >= 20 || minutes % 5 !== 0) {
+  const minutesValue = Number(minutesText);
+  if (!Number.isInteger(hours) || !Number.isInteger(minutesValue) || hours < 10 || hours >= 20 || minutesValue % 5 !== 0) {
     throw new Error('El horario debe estar entre las 10:00 y las 19:55, en intervalos de 5 minutos.');
   }
-  const endMinutes = hours * 60 + minutes + 60;
+  const endMinutes = hours * 60 + minutesValue + 60;
   if (endMinutes > 20 * 60) throw new Error('El horario termina fuera del horario operativo.');
 
   const validDates = dates.filter(slotDate => isBookingDate(slotDate));
@@ -126,7 +126,7 @@ export async function createAvailabilitySlots({
   const rows = validDates.map(slotDate => ({
     barber_id: barberId,
     slot_date: slotDate,
-    start_time: `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:00`,
+    start_time: `${String(hours).padStart(2, '0')}:${String(minutesValue).padStart(2, '0')}:00`,
     end_time: `${String(Math.floor(endMinutes / 60)).padStart(2, '0')}:${String(endMinutes % 60).padStart(2, '0')}:00`,
     status: 'AVAILABLE' as const,
     updated_by: user.id,
@@ -140,4 +140,19 @@ export async function createAvailabilitySlots({
 
   if (error) throw error;
   return (data ?? []) as AvailabilitySlot[];
+}
+
+export type DashboardAvailabilitySlot = Pick<AvailabilitySlot, 'id' | 'barber_id' | 'slot_date' | 'start_time' | 'end_time' | 'status'>;
+
+export async function readDashboardAvailabilitySlots(fromDate: string, toDate: string) {
+  const { data, error } = await supabase
+    .from('barber_availability_slots')
+    .select('id, barber_id, slot_date, start_time, end_time, status')
+    .gte('slot_date', fromDate)
+    .lte('slot_date', toDate)
+    .order('slot_date', { ascending: true })
+    .order('start_time', { ascending: true });
+
+  if (error) throw error;
+  return (data ?? []) as DashboardAvailabilitySlot[];
 }

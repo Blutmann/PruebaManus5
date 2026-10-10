@@ -12,6 +12,7 @@ import { appointmentErrorMessage, readRealAppointments, retryRealAppointmentNoti
 import { markAllAdminActivityNotificationsRead, readAdminActivityNotifications, setAdminActivityNotificationRead, type AdminActivityEvent } from '@/lib/kani-admin-activity';
 import { AdminMaintenance } from './admin-maintenance';
 import { AdminAvailability } from './availability-admin';
+import { AdminDemandDashboard } from './admin-demand-dashboard';
 
 type View = 'upcoming' | 'pending' | 'cancelled' | 'availability' | 'maintenance';
 
@@ -79,17 +80,6 @@ export function Admin({ view }: { view: View }) {
     .filter(a => a.statusCode === listStatus)
     .filter(a => (view === 'cancelled' || a.date >= demoToday) && isAppointmentVisible(a) && (!dateFilter || a.date === dateFilter))
     .sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
-  const metricDates = new Set(appointments.filter(isAppointmentVisible).map(appointment => appointment.date));
-  metricDates.add(dateFilter || demoToday);
-  const metrics = [...metricDates].sort().map(metricDate => {
-    const values = { requested: 0, confirmed: 0, pending: 0 };
-    appointments.filter(appointment => isAppointmentVisible(appointment) && appointment.date === metricDate).forEach(appointment => {
-      values.requested += 1;
-      if (appointment.statusCode === 'CONFIRMED') values.confirmed += 1;
-      if (appointment.statusCode === 'PENDING') values.pending += 1;
-    });
-    return [metricDate, values] as const;
-  });
   const tabs: Array<{ to: '/admin' | '/admin/pendientes' | '/admin/cancelados' | '/admin/disponibilidad' | '/admin/mantenimiento'; label: string; icon: typeof Check; id: View }> = [
     { to: '/admin' as const, label: 'Confirmados', icon: Check, id: 'upcoming' as const },
     { to: '/admin/pendientes' as const, label: 'Pendientes', icon: Clock3, id: 'pending' as const },
@@ -160,7 +150,7 @@ export function Admin({ view }: { view: View }) {
       {loading && <div className="empty-state"><p className="text-sm text-muted-foreground">Cargando reservas reales…</p></div>}
       {!loading && list.length === 0 && <div className="empty-state"><CalendarDays size={32} /><h3 className="mt-4 text-lg">{view === 'cancelled' ? 'No hay turnos cancelados.' : view === 'pending' ? 'Todo al día.' : 'No hay turnos confirmados.'}</h3><p className="mt-2 text-sm text-muted-foreground">{view === 'cancelled' ? 'Las reservas canceladas aparecerán aquí como historial.' : 'Probá con otra fecha o barbero.'}</p></div>}
       {view === 'pending' && <div className="mt-6 flex items-center gap-2 text-xs text-muted-foreground"><CircleDot size={12} className="text-gold" />Los turnos pendientes mantienen el horario reservado hasta que sean confirmados o cancelados.</div>}
-      <section className="admin-metrics mt-10" aria-labelledby="admin-metrics-title"><div className="mb-4"><span className="eyebrow">RESUMEN</span><h2 id="admin-metrics-title" className="mt-1 text-xl">Estadísticas de turnos</h2></div><div className="metric-table"><div className="metric-row metric-header"><span>FECHA</span><span>TURNOS SOLICITADOS</span><span>TURNOS CONFIRMADOS</span><span>TURNOS PENDIENTES</span></div>{metrics.map(([metricDate, values]) => <div className="metric-row" key={metricDate}><span className="capitalize">{dateLabel(metricDate)}</span><strong>{values.requested}</strong><strong>{values.confirmed}</strong><strong>{values.pending}</strong></div>)}</div></section>
+      <AdminDemandDashboard appointments={appointments} loading={loading} role={profile.role} permittedRows={permittedRows} />
     </section> : <AdminAvailability profile={profile} permittedRows={permittedRows} permittedBarbers={permittedBarbers} />}
     <Dialog open={Boolean(cancel)} onOpenChange={open => { if (!open) setCancel(null); }}><DialogContent className="max-w-[calc(100%-32px)] sm:max-w-md"><DialogTitle>¿Cancelar este turno?</DialogTitle><DialogDescription>{cancel?.name} · {cancel?.service}<br />{cancel && dateLabel(cancel.date)} · {cancel?.time}<br /><br />El horario volverá a estar disponible para reservar.</DialogDescription><DialogFooter><Button variant="outline" onClick={() => setCancel(null)}>Mantener turno</Button><Button className="action-brand" onClick={() => { if (!cancel || !isAppointmentVisible(cancel)) return; void changeStatus(cancel, 'CANCELLED'); setCancel(null); }}>Cancelar turno</Button></DialogFooter></DialogContent></Dialog>
   </main>;

@@ -717,3 +717,74 @@ html[data-theme="light"] input[type=date], html[data-theme="light"] input[type=t
 .maintenance-availability-card > .notice {
   align-items: flex-start;
 }
+
+
+/* Demand dashboard */
+.demand-dashboard { margin-top: 56px; padding-top: 32px; border-top: 1px solid var(--border); }
+.demand-dashboard-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 24px; }
+.demand-dashboard-heading p { max-width: 620px; margin-top: 8px; color: var(--muted-foreground); font-size: 13px; line-height: 1.6; }
+.demand-dashboard-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 10px; }
+.demand-dashboard-controls label { color: var(--muted-foreground); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
+.demand-dashboard-controls select, .demand-dashboard-controls input { min-height: 42px; }
+.demand-custom-range { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.demand-custom-range span { color: var(--muted-foreground); font-size: 12px; }
+.demand-kpi-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+.demand-kpi-card { min-height: 142px; display: flex; flex-direction: column; justify-content: space-between; padding: 18px; border: 1px solid var(--border); background: var(--card); }
+.demand-kpi-card .demand-kpi-label { color: var(--muted-foreground); font-size: 10px; letter-spacing: .08em; line-height: 1.35; text-transform: uppercase; }
+.demand-kpi-card strong { color: var(--foreground); font-size: 30px; font-weight: 400; line-height: 1; }
+.demand-kpi-card .demand-kpi-helper { min-height: 30px; color: var(--muted-foreground); font-size: 11px; line-height: 1.45; }
+.demand-kpi-card.is-accent strong { color: var(--gold); }
+.demand-kpi-card.is-positive strong { color: var(--success); }
+.demand-kpi-card.is-warning strong { color: var(--primary); }
+.demand-kpi-delta { display: block; margin-top: 4px; color: var(--muted-foreground); font-size: 10px; }
+.demand-dashboard-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 18px; margin-top: 18px; }
+.demand-chart-card { min-width: 0; padding: 22px; border: 1px solid var(--border); background: var(--card); }
+.demand-chart-card h3 { font-size: 17px; font-weight: 400; }
+.demand-chart-card > p { margin-top: 6px; color: var(--muted-foreground); font-size: 12px; line-height: 1.5; }
+.demand-chart-shell { height: 290px; margin-top: 20px; }
+.demand-chart-empty { display: grid; min-height: 220px; place-items: center; gap: 10px; padding: 24px; color: var(--muted-foreground); text-align: center; }
+.demand-chart-empty strong { display: block; margin-bottom: 6px; color: var(--foreground); font-size: 15px; font-weight: 400; }
+.demand-legend { display: flex; flex-wrap: wrap; gap: 12px 18px; margin-top: 14px; color: var(--muted-foreground); font-size: 11px; }
+.demand-legend-item { display: inline-flex; align-items: center; gap: 7px; }
+.demand-legend-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--gold); }
+.demand-legend-dot.confirmed { background: var(--success); }
+.demand-legend-dot.pending { background: var(--gold); }
+.demand-legend-dot.available { background: color-mix(in oklch, var(--success) 42%, var(--background)); }
+.demand-legend-dot.unavailable { background: var(--primary); }
+.demand-heatmap-wrap { overflow-x: auto; margin-top: 20px; padding-bottom: 4px; }
+.demand-heatmap { display: grid; grid-template-columns: 58px repeat(6, minmax(76px, 1fr)); min-width: 520px; border-top: 1px solid var(--border); border-left: 1px solid var(--border); }
+.demand-heatmap > div { min-height: 60px; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.demand-heatmap-header { display: grid; place-items: center; color: var(--muted-foreground); font-size: 10px; letter-spacing: .04em; text-transform: uppercase; }
+.demand-heatmap-time { display: grid; place-items: center; color: var(--muted-foreground); font-size: 11px; }
+.demand-heatmap-cell { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding: 5px; background: color-mix(in oklch, var(--background) 88%, var(--card)); text-align: center; }
+.demand-heatmap-cell.has-confirmed { background: color-mix(in oklch, var(--success) 20%, var(--card)); }
+.demand-heatmap-cell.has-pending { background: color-mix(in oklch, var(--gold) 19%, var(--card)); }
+.demand-heatmap-cell.has-unavailable { background: color-mix(in oklch, var(--primary) 19%, var(--card)); }
+.demand-heatmap-cell strong { color: var(--foreground); font-size: 16px; font-weight: 400; line-height: 1; }
+.demand-heatmap-cell small { color: var(--muted-foreground); font-size: 9px; line-height: 1.2; }
+.demand-heatmap-counts { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 4px; color: var(--muted-foreground); font-size: 9px; }
+.demand-heatmap-counts .confirmed { color: var(--success); }
+.demand-heatmap-counts .pending { color: var(--gold); }
+.demand-heatmap-counts .available { color: var(--muted-foreground); }
+.demand-heatmap-counts .unavailable { color: var(--primary); }
+.demand-opportunity { margin-top: 18px; padding: 14px 16px; border-left: 2px solid var(--gold); background: color-mix(in oklch, var(--gold) 8%, var(--card)); color: var(--muted-foreground); font-size: 12px; line-height: 1.55; }
+.demand-opportunity strong { color: var(--foreground); font-weight: 400; }
+.demand-filter-note { color: var(--muted-foreground); font-size: 11px; }
+@media (max-width: 1100px) {
+  .demand-kpi-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .demand-dashboard-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .demand-dashboard { margin-top: 42px; padding-top: 24px; }
+  .demand-dashboard-heading { display: block; }
+  .demand-dashboard-controls { justify-content: flex-start; margin-top: 18px; }
+  .demand-dashboard-controls select, .demand-dashboard-controls input { flex: 1; min-width: 0; }
+  .demand-custom-range { width: 100%; }
+  .demand-custom-range input { width: calc(50% - 12px); }
+  .demand-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .demand-kpi-card { min-height: 126px; padding: 14px; }
+  .demand-kpi-card strong { font-size: 25px; }
+  .demand-chart-card { padding: 16px; }
+  .demand-chart-shell { height: 250px; margin-inline: -8px; }
+  .demand-heatmap { min-width: 520px; }
+}

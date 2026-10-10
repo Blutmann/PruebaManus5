@@ -26,3 +26,21 @@ Probar con datos sintéticos controlados en `iockpxtkflyjfagkvgnr`: acceso ADMIN
 Agregar en `/admin/mantenimiento` una sección titulada `Historial de disponibilidad` con el texto `Eliminá las notificaciones históricas de horarios bloqueados y liberados. Esta acción no modifica la disponibilidad actual de los barberos`, contador actualizado, botón `Eliminar notificaciones de disponibilidad`, confirmación con cantidad e irreversibilidad, resultado de cantidad eliminada o error, y estado vacío con botón deshabilitado cuando el contador es cero. La acción solo podrá ejecutarse tras confirmación explícita de un ADMIN; no se ejecutará automáticamente.
 
 Crear en Preview una operación backend transaccional y protegida que verifique perfil ADMIN activo, rechace anónimos/BARBER, utilice `SECURITY DEFINER`, `search_path` seguro, privilegios explícitos y lock de concurrencia, y elimine únicamente eventos `AVAILABILITY_UNAVAILABLE` y `AVAILABILITY_AVAILABLE`. Mantener intactos horarios reales, reservas, clientes, usuarios, perfiles, barberos, servicios, transferencias, notificaciones de turnos, secuencias, RLS ajenas, funciones ajenas y Resend. Registrar únicamente metadatos mínimos de la operación. No usar `TRUNCATE`, no borrar la tabla completa, no modificar Production ni publicar.
+
+
+## Dashboard visual de demanda y estadísticas
+
+Implementar exclusivamente en Preview un dashboard visual, moderno y útil dentro del panel ADMIN, sin publicar ni desplegar a Production ni activar publicación automática.
+
+- Mostrar tarjetas dependientes del período seleccionado para turnos solicitados, confirmados, pendientes, cancelados y tasa de confirmación.
+- Definir y documentar la tasa de confirmación de forma consistente; evitar porcentajes engañosos cuando el denominador sea cero y mostrar estado sin dato cuando corresponda.
+- Mostrar comparación con el período anterior equivalente únicamente cuando existan datos suficientes.
+- Implementar un gráfico de barras por día de la semana, de lunes a sábado, diferenciando turnos solicitados y confirmados con etiquetas, valores, leyenda y tooltips; no inventar datos.
+- Agregar filtros Esta semana, Últimos 30 días, Este mes y rango personalizado compatible con la estructura existente; actualizar indicadores y visualizaciones de forma coherente.
+- Permitir desglose por barbero cuando corresponda, respetando que un BARBER solo vea sus propios datos y que un ADMIN pueda ver los barberos autorizados.
+- Agregar una visualización secundaria por día y franja horaria que distinga turnos confirmados, pendientes, horarios disponibles y horarios bloqueados.
+- No contar disponibilidad como reserva ni interpretar automáticamente un horario bloqueado como falta de demanda; las oportunidades comerciales deben presentarse como potenciales, sin descuentos automáticos ni cambios de precios.
+- Utilizar datos reales de Supabase, respetar las fuentes existentes, fechas y zonas horarias, evitar duplicados y no exponer nombres, emails ni teléfonos de clientes en gráficos agregados.
+- Mantener RLS, autenticación, permisos administrativos, lógica de reservas, disponibilidad, depósitos, notificaciones y Resend sin cambios.
+- Verificar totales contra los registros de origen, filtros, estados vacíos, desktop/mobile y rechazo de acceso administrativo para usuarios sin permisos.
+- Ejecutar TypeScript, tests y build; dejar identificado cualquier caso que no pueda probarse por falta de datos reales.

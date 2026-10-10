@@ -1,59 +1,36 @@
-# Kani Barber Studio — Mantenimiento en Preview
-
-## Alcance aprobado
-
-Implementar en Preview una sección `Mantenimiento`, visible únicamente para perfiles activos `ADMIN`, que permita seleccionar uno o varios estados de turnos (`PENDING`, `CONFIRMED`, `COMPLETED`, `CANCELLED`) y eliminar únicamente los turnos que correspondan a esos estados junto con sus registros derivados.
-
-Production (`vmhxwxxidgfbczxtkqge`) no se modifica ni se publica.
-
-## Diseño de implementación
-
-- **Autorización doble:** la interfaz se muestra solo para `ADMIN`, pero la RPC vuelve a verificar `auth.uid()`, `staff_profiles.active` y `staff_profiles.role = ADMIN`.
-- **Reautenticación:** antes de habilitar la confirmación final, el administrador ingresa nuevamente su contraseña actual mediante Supabase Auth. La contraseña vive únicamente en memoria del formulario y no se envía a servicios propios.
-- **Confirmación explícita:** se informa el alcance, los estados elegidos, lo que se elimina y lo que se conserva. La acción final utiliza la etiqueta `Eliminar registros`.
-- **Operación atómica:** una función SQL `SECURITY DEFINER` elimina primero notificaciones administrativas vinculadas a los turnos y eventos de email, luego los turnos. La función usa una única transacción lógica, no usa `TRUNCATE`, no reinicia la secuencia y mantiene un lock para impedir concurrencia.
-- **Auditoría separada:** una tabla append-only `maintenance_operations` conserva actor, fechas, estados, resultado y cantidades, sin datos personales de clientes. RLS permite lectura únicamente a ADMIN; el cliente no puede insertar, actualizar ni borrar registros directamente.
-- **Datos preservados:** clientes, Auth, staff_profiles, roles, barberos, servicios, disponibilidad y notas internas, datos de transferencia, notificaciones de disponibilidad, secuencia, políticas, triggers y funciones existentes.
-- **Email:** Preview no recibe `RESEND_API_KEY` ni `RESEND_FROM_EMAIL`; las pruebas no deben enviar emails reales.
-
-## Estructura del proyecto
-
-- `supabase/migrations/20261010001100_kani_admin_maintenance.sql`: tabla de auditoría, RLS, privilegios y RPC transaccional.
-- `src/lib/kani-maintenance.ts`: tipos y llamadas de reautenticación/limpieza.
-- `src/components/kani/admin-maintenance.tsx`: selección de estados, reautenticación, confirmación y resultado.
-- `src/components/kani/admin.tsx`: pestaña y montaje de la sección solo para ADMIN.
-- `src/routes/admin.mantenimiento.tsx`: ruta protegida por el layout administrativo.
-- `src/integrations/supabase/types.ts`: tipos de la tabla, función y resultado RPC.
-- `public/manus-routes.json`: declaración de la nueva ruta.
-
-## Dirección visual
-
-- **Movimiento:** minimalismo japonés contemporáneo con carácter editorial de barbería premium.
-- **Principios:** claridad antes que ornamentación; jerarquía sobria; confirmaciones pausadas; estados destructivos inequívocos.
-- **Color:** conservar tokens claro/oscuro existentes; usar bordó/marca para la acción irreversible y dorado para el foco de marca, manteniendo contraste.
-- **Layout:** sección contenida dentro del panel existente, con bloques apilados y resumen visible antes de los diálogos.
-- **Motivos:** líneas finas, superficies sobrias, iconografía Lucide y acentos dorados.
-- **Interacción:** progresión de selección → reautenticación → confirmación final; cancelar en cualquier etapa no ejecuta operaciones.
-- **Animación:** transiciones discretas y breves; no usar animaciones que oculten el alcance o retrasen la acción destructiva.
-- **Tipografía:** Zen Antique global, respetando escala y tokens actuales.
-- **Esencia:** control operativo seguro para que Kani Barber Studio pueda probar el MVP sin tocar la configuración del negocio.
-- **Voz:** clara, directa, cercana y explícita. Ejemplos: “Elegí qué estados querés eliminar.” / “Esta acción no se puede deshacer.”
-- **Marca:** mantener el wordmark y logo existentes de Kani Barber Studio.
-- **Color distintivo:** dorado de marca existente, reservado para foco y acciones positivas; la acción destructiva usa el token bordó correspondiente.
-
-## Restricciones
-
-- No modificar `/reservar` ni su lógica.
-- No cambiar RLS existentes salvo agregar la protección específica de la nueva auditoría/RPC.
-- No aplicar migraciones a Production.
-- No publicar.
-- No reiniciar ni modificar secuencias.
 
 
-## Extensión aprobada — Historial de disponibilidad
+## Extensión aprobada — Dashboard visual de demanda
 
-- Agregar en `/admin/mantenimiento` una sección independiente con contador, estado vacío, confirmación irreversible y resultado de la operación.
-- Crear en Preview una auditoría append-only separada para la operación, con actor, estado, fecha/hora, cantidad y error mínimo.
-- Exponer únicamente dos RPC `SECURITY DEFINER` para `authenticated`: una de conteo y otra de eliminación; ambas verifican ADMIN activo, `search_path` seguro y privilegios explícitos.
-- Eliminar exclusivamente `AVAILABILITY_UNAVAILABLE` y `AVAILABILITY_AVAILABLE` con lock advisory; conservar notificaciones de turnos, disponibilidad real, reservas, clientes, perfiles, configuraciones, secuencias y Resend.
-- No ejecutar la eliminación automáticamente, no modificar Production y no publicar.
+### Alcance
+
+Implementar exclusivamente en Preview un dashboard visual dentro del panel ADMIN, reemplazando la tabla simple de `Estadísticas de turnos`. Production (`vmhxwxxidgfbczxtkqge`) no se modifica ni se publica; no se activa la publicación automática.
+
+### Fuente de datos y definiciones
+
+- Turnos: reutilizar `readRealAppointments()` y su aislamiento RLS existente. El dashboard nunca renderiza nombres, emails ni teléfonos de clientes.
+- Disponibilidad: consultar `barber_availability_slots` con las columnas públicas de estado, fecha, hora y barbero; la consulta queda sujeta a las RLS actuales y al barbero propio cuando el perfil sea BARBER.
+- Turnos solicitados: todos los registros de `appointments` cuyo `booking_date` cae en el período, sin duplicar por estado.
+- Confirmados, pendientes y cancelados: conteo por el estado persistido de cada turno dentro del período.
+- Tasa de confirmación: `CONFIRMED / (CONFIRMED + CANCELLED + COMPLETED)`. Si no hay turnos resueltos, se muestra `—` y no se inventa un porcentaje.
+- Comparación: solo se muestra frente al período equivalente anterior cuando ambos períodos tienen datos resueltos suficientes; en caso contrario se omite.
+- Ocupación: cada slot se clasifica como confirmado o pendiente si se solapa con un turno no cancelado; si no, conserva `AVAILABLE` o `UNAVAILABLE`. La disponibilidad no se cuenta como reserva y un bloqueo no se interpreta como falta de demanda.
+
+### Implementación
+
+- `src/lib/kani-dashboard.ts`: rangos de período, agregaciones deterministas, métricas, demanda por día y celdas de ocupación.
+- `src/lib/kani-availability.ts`: lectura acotada de slots de disponibilidad para el período seleccionado.
+- `src/components/kani/admin-demand-dashboard.tsx`: filtros Esta semana / Últimos 30 días / Este mes / rango personalizado, tarjetas de KPI, gráfico de barras Recharts, selector por barbero ADMIN, heatmap de día/franja y oportunidades potenciales.
+- `src/components/kani/admin.tsx`: montaje del dashboard en las vistas de turnos, conservando los filtros y acciones existentes.
+- `src/styles.css`: tarjetas, leyenda, gráfico, heatmap, estados vacíos y responsive en desktop/mobile con tokens existentes.
+
+### Dirección visual
+
+Dashboard editorial japonés contemporáneo: tarjetas de superficie sobria con acentos dorados, bordó y verde semántico; cifras grandes pero contenidas; gráfico de barras legible; heatmap compacto con leyenda redundante por color, texto y etiquetas; Zen Antique se conserva globalmente. El layout prioriza una lectura vertical clara en mobile y dos columnas equilibradas en desktop.
+
+### Restricciones
+
+- No crear migraciones: el esquema y las consultas existentes son suficientes.
+- No crear turnos ni datos ficticios para completar gráficos.
+- No modificar reservas, disponibilidad, depósitos, notificaciones, Resend, autenticación, roles o RLS.
+- No modificar `/reservar` ni publicar Production.
