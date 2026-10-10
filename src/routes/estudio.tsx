@@ -10,9 +10,9 @@ const instagramUrl = "https://www.instagram.com/kanibarberstudio/";
 export const Route = createFileRoute("/estudio")({
   head: () =>
     pageHead(
-      "Conocé Kani",
-      "Conocé Kani Barber Studio, nuestra ubicación y horarios de atención.",
-      "Kani Barber Studio - Conocé Kani",
+      "Contacto",
+      "Contacto de Kani Barber Studio, ubicación y horarios de atención.",
+      "Kani Barber Studio - Contacto",
     ),
   component: StudioPage,
 });
@@ -23,9 +23,9 @@ function StudioPage() {
       <div className="studio-page-header">
         <div>
           <p className="eyebrow">KANI BARBER STUDIO</p>
-          <h1 className="section-title">Conocé Kani</h1>
+          <h1 className="section-title">Contacto</h1>
           <p className="studio-page-lead">
-            Un espacio para bajar un cambio, cuidar tu estilo y salir sintiéndote vos.
+            Un espacio para bajar un cambio, cuidar tu estilo y sentirte vos.
           </p>
         </div>
         <Button asChild className="action-positive studio-booking-cta">
@@ -40,8 +40,8 @@ function StudioPage() {
           <div>
             <h2>Ubicación</h2>
             <p>
-              San Isidro Labrador 7<br />
-              Martínez, Provincia de Buenos Aires
+              San Isidro Labrador 7, Martínez<br />
+              Provincia de Buenos Aires
             </p>
             <a href={mapsUrl} target="_blank" rel="noreferrer">
               Ver ubicación en Google Maps
@@ -63,7 +63,7 @@ function StudioPage() {
           <Instagram className="studio-info-icon" size={22} />
           <div>
             <h2>Instagram</h2>
-            <p>Seguinos para conocer el trabajo del estudio.</p>
+            <p>Seguinos en Instagram.</p>
             <a href={instagramUrl} target="_blank" rel="noreferrer">
               @kanibarberstudio
             </a>
