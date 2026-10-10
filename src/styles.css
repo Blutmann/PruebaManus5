@@ -618,3 +618,20 @@ html[data-theme="light"] input[type=date], html[data-theme="light"] input[type=t
  .exit-dialog-actions > button { width: 100%; min-height: 44px; }
 }
 @media(prefers-reduced-motion:reduce) { *,*::before,*::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
+
+/* Form values: slightly more compact without changing labels or placeholders. */
+.booking-page form input[name="name"],
+.booking-page form input[name="phone"],
+.booking-page form input[name="email"],
+.booking-page form textarea[name="notes"] {
+  font-family: var(--font-sans);
+  font-size: 15px;
+}
+
+.booking-page form input[name="name"]::placeholder,
+.booking-page form input[name="phone"]::placeholder,
+.booking-page form input[name="email"]::placeholder,
+.booking-page form textarea[name="notes"]::placeholder {
+  font-family: var(--font-sans);
+  font-size: 16px;
+}
