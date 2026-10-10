@@ -28,11 +28,6 @@ function StudioPage() {
             Bajá un cambio. Sentite vos.
           </p>
         </div>
-        <Button asChild className="action-positive studio-booking-cta">
-          <Link to="/reservar">
-            Solicitar turno <ArrowRight />
-          </Link>
-        </Button>
       </div>
       <div className="studio-info-grid">
         <a className="studio-info-card studio-info-link" href={mapsUrl} target="_blank" rel="noreferrer" aria-label="Abrir ubicación de Kani Barber Studio en Google Maps">
@@ -59,6 +54,13 @@ function StudioPage() {
             <span className="studio-card-action">@kanibarberstudio <ArrowRight size={15} /></span>
           </div>
         </a>
+      </div>
+      <div className="studio-booking-cta-wrap">
+        <Button asChild variant="outline" className="studio-booking-cta">
+          <Link to="/reservar">
+            Solicitar turno <ArrowRight />
+          </Link>
+        </Button>
       </div>
     </main>
   );

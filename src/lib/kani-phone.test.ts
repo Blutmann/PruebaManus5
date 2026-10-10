@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatPhoneInput, normalizePhone, phoneCountries } from "./kani-phone";
+import { formatPhoneInput, normalizeCountrySearch, normalizePhone, otherPhoneCountries, phoneCountries, primaryPhoneCountries } from "./kani-phone";
 
 describe("phone normalization", () => {
   it("normalizes an Argentine mobile number to E.164", () => {
@@ -22,5 +22,18 @@ describe("phone country labels", () => {
     expect(phoneCountries.find(country => country.code === "AR")?.shortCode).toBe("ARG");
     expect(phoneCountries.find(country => country.code === "US")?.shortCode).toBe("USA");
     expect(phoneCountries.find(country => country.code === "BR")?.shortCode).toBe("BRA");
+  });
+
+  it("prioritizes the requested countries without losing the complete catalog", () => {
+    expect(primaryPhoneCountries.map(country => country.code)).toEqual(["AR", "CL", "BR", "UY", "PY", "VE", "PE", "CO", "EC", "MX", "ES", "US"]);
+    expect(new Set([...primaryPhoneCountries, ...otherPhoneCountries]).size).toBe(phoneCountries.length);
+    expect(otherPhoneCountries.map(country => country.name).join("|"))
+      .toBe([...otherPhoneCountries].sort((a, b) => a.name.localeCompare(b.name, "es", { sensitivity: "base" })).map(country => country.name).join("|"));
+  });
+
+  it("normalizes country searches with or without accents", () => {
+    expect(normalizeCountrySearch("España")).toBe("espana");
+    expect(normalizeCountrySearch("esPANA")).toBe("espana");
+    expect(normalizeCountrySearch("Perú")).toBe("peru");
   });
 });
