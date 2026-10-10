@@ -329,6 +329,9 @@ html[data-theme="light"] {
 .admin-account-identity span { color: var(--gold); font-size: 10px; letter-spacing: .12em; }
 .admin-signout { color: var(--muted-foreground); }
 .admin-signout:hover { color: var(--foreground); }
+.mobile-account-section { display: none; }
+.mobile-account-identity { min-width: 0; }
+.mobile-signout { white-space: nowrap; }
 .admin-heading { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: 25px; }
 .admin-date { font-size: 12px; color: var(--muted-foreground); display: flex; gap: 10px; }
 .admin-tabs { display: flex; gap: 28px; margin-top: 42px; border-bottom: 1px solid var(--border); }
@@ -503,6 +506,10 @@ html[data-theme="light"] input[type=date], html[data-theme="light"] input[type=t
  .mobile-menu a { display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 0 8px; border-bottom: 1px solid color-mix(in oklch, var(--gold) 28%, var(--border)); color: var(--foreground); font-size: 15px; }
  .mobile-menu a:hover, .mobile-menu a:focus-visible { background: color-mix(in oklch, var(--gold) 12%, transparent); color: var(--gold); outline: none; }
  .mobile-menu svg { width: 17px; height: 17px; color: var(--gold); }
+ .mobile-account-section { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 72px; padding: 12px 8px; border-bottom: 1px solid color-mix(in oklch, var(--gold) 28%, var(--border)); }
+ .mobile-account-identity { align-items: flex-start; flex: 1 1 auto; gap: 3px; font-size: 11px; }
+ .mobile-account-identity strong { max-width: 100%; overflow-wrap: anywhere; }
+ .mobile-signout { flex: 0 0 auto; min-height: 44px; padding-inline: 10px; font-size: 11px; }
  .booking-menu-return { width: 100%; justify-content: center; }
  .mobile-menu-cta { display: block; z-index: 110; }
  .booking-cta.menu-open { background: var(--chrome); }

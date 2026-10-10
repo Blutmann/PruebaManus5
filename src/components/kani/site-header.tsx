@@ -5,6 +5,7 @@ import { ArrowUpRight, Building2, Instagram, LogOut, MapPin, Menu, Moon, Sun, X 
 import { Button } from '@/components/ui/button';
 import kaniLogo from '@/assets/kani-logo.webp';
 import { getAuthenticatedStaff, signOut, type AuthenticatedStaff } from '@/lib/kani-auth';
+import { supabase } from '@/integrations/supabase/client';
 import { useKani } from '@/components/kani/store';
 
 export function Wordmark() {
@@ -35,10 +36,19 @@ export function SiteHeader() {
   const { mobileMenuOpen: menuOpen, setMobileMenuOpen: onMenuOpenChange } = useKani();
   const [staff, setStaff] = useState<AuthenticatedStaff | null>(null);
   useEffect(() => {
-    if (!admin) return;
+    if (!admin) {
+      setStaff(null);
+      return;
+    }
     let cancelled = false;
-    void getAuthenticatedStaff().then(next => { if (!cancelled) setStaff(next); });
-    return () => { cancelled = true; };
+    const refreshStaff = () => {
+      void getAuthenticatedStaff().then(next => { if (!cancelled) setStaff(next); });
+    };
+    refreshStaff();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
+      window.setTimeout(refreshStaff, 0);
+    });
+    return () => { cancelled = true; subscription.unsubscribe(); };
   }, [admin]);
   useEffect(() => { onMenuOpenChange(false); }, [path, onMenuOpenChange]);
   useEffect(() => {
@@ -52,7 +62,12 @@ export function SiteHeader() {
       closeMenu();
     }
   };
-  const mobileMenu = menuOpen ? <nav className="mobile-menu" aria-label="Menú principal" aria-modal="true" role="dialog"><Link to="/reservar" onClick={continueBooking}><ArrowUpRight />Solicitar turno</Link><Link to="/estudio" onClick={closeMenu}><Building2 />Contacto</Link><Link to="/admin" onClick={closeMenu}><LogOut />Administración</Link></nav> : null;
+  const handleMobileSignOut = async () => {
+    closeMenu();
+    setStaff(null);
+    await signOut();
+  };
+  const mobileMenu = menuOpen ? <nav className="mobile-menu" aria-label="Menú principal" aria-modal="true" role="dialog">{admin && staff && <div className="mobile-account-section"><div className="admin-account-identity mobile-account-identity"><strong>{staff.profile.role === 'ADMIN' ? 'KANI Admin' : staff.profile.display_name}</strong><span>{staff.profile.role}</span></div><Button variant="ghost" className="admin-signout mobile-signout" onClick={() => void handleMobileSignOut()}><LogOut />Cerrar sesión</Button></div>}<Link to="/reservar" onClick={continueBooking}><ArrowUpRight />Solicitar turno</Link><Link to="/estudio" onClick={closeMenu}><Building2 />Contacto</Link><Link to="/admin" onClick={closeMenu}><LogOut />Administración</Link></nav> : null;
   return <>
     <header className="site-header"><div className="site-container flex items-center gap-4"><div className="admin-header-left"><Link to="/" aria-label="Kani Barber Studio, inicio" className="w-fit"><Wordmark /></Link></div><nav className="desktop-primary-nav ml-auto flex shrink-0 items-center gap-4 sm:gap-8" aria-label="Navegación principal">{!admin && <Link to="/estudio" className="text-xs text-muted-foreground transition-colors hover:text-foreground sm:text-sm">Contacto</Link>}{!admin && <Link to="/admin" className="text-xs text-muted-foreground transition-colors hover:text-foreground sm:text-sm">Administración</Link>}{!admin && <Button asChild className="action-positive h-10 px-4 sm:px-5"><Link to="/reservar">Solicitar turno <ArrowUpRight /></Link></Button>}{admin && <Button asChild variant="outline" className="admin-public-cta action-positive h-10 px-4 sm:px-5"><Link to="/reservar">Turnos <ArrowUpRight /></Link></Button>}{admin && staff && <><div className="admin-account-identity"><strong>{staff.profile.role === 'ADMIN' ? 'KANI Admin' : staff.profile.display_name}</strong><span>{staff.profile.role}</span></div><Button variant="ghost" className="admin-signout" onClick={() => void signOut()}><LogOut />Cerrar sesión</Button></>}</nav><div className="header-controls"><ThemeToggle /><Button variant="outline" size="icon" className={`mobile-menu-trigger header-control-button ${admin ? 'admin-menu-trigger' : ''}`} aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'} aria-expanded={menuOpen} onClick={() => onMenuOpenChange(!menuOpen)}>{menuOpen ? <X /> : <Menu />}</Button></div></div></header>
     {typeof document !== 'undefined' && mobileMenu ? createPortal(mobileMenu, document.body) : null}
