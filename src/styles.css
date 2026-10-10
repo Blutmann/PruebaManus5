@@ -387,8 +387,9 @@ input[type=date], input[type=time] { color-scheme: dark; }
  body::before { background-image: url('/kani-background-mobile.webp'); }
  .site-container,.site-header > div { width: calc(100% - 40px); }
  .site-footer > .site-container { width: calc(100% - 40px); padding-inline: 0; }
- .site-header { height: 80px; }
- .wordmark-img { height: 42px; }
+ .site-header { height: 72px; }
+ .site-header > div { gap: 10px; }
+ .wordmark-img { height: 38px; }
  .home-hero { height: 620px; }
  .hero-image { object-position: 61% center; }
  .hero-shade { background: linear-gradient(90deg,color-mix(in oklch,var(--overlay) 85%,transparent),color-mix(in oklch,var(--overlay) 25%,transparent)),linear-gradient(0deg,var(--overlay),transparent 40%); }
@@ -408,6 +409,18 @@ input[type=date], input[type=time] { color-scheme: dark; }
  .studio-note > div { align-items: flex-start; }
  .studio-note > a { margin-left: 45px; }
  .booking-page { padding-top: 8px; min-height: 720px; padding-bottom: 120px; }
+ .booking-summary-page { padding-top: 0; padding-bottom: calc(104px + env(safe-area-inset-bottom)); }
+ .booking-summary-page .booking-progress { margin-bottom: 8px; }
+ .booking-summary-page .section-title { margin-bottom: 4px; font-size: 22px; }
+ .booking-summary-page .review-line { gap: 8px; padding-block: 8px; }
+ .booking-summary-page .review-line h2 { font-size: 16px; line-height: 1.2; }
+ .booking-summary-page .review-line p { margin-top: 2px; line-height: 1.25; }
+ .booking-summary-page .summary-list { gap: 8px; font-size: 12px; }
+ .booking-summary-page .summary-list > div { gap: 8px; }
+ .booking-summary-page .summary-list.border-b { padding-block: 10px; }
+ .booking-summary-page .summary-list + div { margin-top: 10px !important; gap: 8px; font-size: 12px; line-height: 1.35; }
+ .booking-summary-page .booking-cta-inner { padding-block: 8px; }
+ .booking-summary-page .booking-next-button, .booking-summary-page .booking-back-button { height: 44px; }
  .site-footer { padding-bottom: calc(120px + env(safe-area-inset-bottom)); }
  .booking-progress { gap: 5px; margin-top: 10px; margin-bottom: 16px; }
  .booking-progress > button { flex-direction: column; gap: 8px; padding-bottom: 13px; }
