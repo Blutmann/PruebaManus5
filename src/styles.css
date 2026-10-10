@@ -219,9 +219,9 @@
 .booking-aside { margin-top: 9px; padding: 27px 0 27px 28px; border-left: 1px solid var(--border); }
 .booking-defer-option { width: 100%; min-height: 74px; display: flex; align-items: center; gap: 14px; padding: 14px 20px; background: color-mix(in oklch, var(--surface) 70%, transparent); text-align: left; }
 .barber-defer-mark { width: 36px; height: 36px; display: grid; place-items: center; flex-shrink: 0; border: 1px dashed color-mix(in oklch, var(--gold) 55%, var(--border)); border-radius: 50%; color: var(--gold); font-family: var(--font-display); font-size: 20px; }
-.barber-choice-inline { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border); }
-.barber-choice-inline h2 { font-size: 18px; font-weight: 500; margin-bottom: 5px; }
-.barber-choice-list { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; margin-top: 13px; }
+.barber-choice-inline { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); }
+.barber-choice-inline h2 { font-size: 17px; line-height: 1.2; font-weight: 500; margin-bottom: 8px; }
+.barber-choice-list { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; }
 .barber-choice-list > button { min-height: 48px; justify-content: space-between; padding-inline: 13px; }
 
 .booking-aside .eyebrow { font-size: 9px; }
@@ -416,8 +416,9 @@ input[type=date], input[type=time] { color-scheme: dark; }
  .booking-option { gap: 12px; padding: 12px; height: 82px; }
  .booking-defer-option { min-height: 82px; padding: 12px; gap: 10px; }
  .barber-defer-mark { width: 32px; height: 32px; }
- .barber-choice-list { grid-template-columns: 1fr; }
- .barber-choice-inline { margin-top: 18px; padding-top: 15px; }
+ .barber-choice-list { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 6px; }
+ .barber-choice-list > button { min-height: 48px; padding-inline: 6px; font-size: 12px; }
+ .barber-choice-inline { margin-top: 12px; padding-top: 10px; }
  .booking-option .option-icon { width: 32px; height: 32px; }
  .booking-option .text-lg { font-size: 1rem; }
  .calendar-panel { padding: 18px; }
