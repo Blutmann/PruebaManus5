@@ -3,13 +3,13 @@ import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from 'r
 import { createPortal } from 'react-dom';
 import { ArrowUpRight, Building2, CalendarClock, Instagram, LogOut, MapPin, Menu, Moon, Sun, Wrench, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import kaniLogo from '@/assets/kani-logo.webp';
+import kaniLogo from '@/assets/kani-logo-transparent.webp';
 import { getAuthenticatedStaff, signOut, type AuthenticatedStaff } from '@/lib/kani-auth';
 import { supabase } from '@/integrations/supabase/client';
 import { useKani } from '@/components/kani/store';
 
 export function Wordmark() {
-  return <img src={kaniLogo} alt="Kani Barber Studio" width={2048} height={890} className="wordmark-img" />;
+  return <img src={kaniLogo} alt="Kani Barber Studio" width={2048} height={958} className="wordmark-img" />;
 }
 
 export function MobileMenuAction() {

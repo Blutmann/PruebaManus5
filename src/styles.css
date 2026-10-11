@@ -200,6 +200,10 @@ html[data-theme="light"] {
     pointer-events: none;
     background: var(--page-background);
   }
+
+  html[data-theme="light"] body::before {
+    background: var(--page-background) url('/kani-fondo-claro-mobile.webp') center top / cover fixed no-repeat;
+  }
 }
 
 .site-shell { display: flex; min-height: 100vh; flex-direction: column; padding-top: 98px; padding-bottom: var(--site-footer-height, 170px); }

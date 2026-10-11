@@ -216,3 +216,8 @@ La agenda iniciará en `Hoy`, con calendario anclado a `America/Argentina/Buenos
 Las acciones se limitarán a las transiciones solicitadas: PENDING permite Confirmar/Rechazar/Reenviar notificación; CONFIRMED permite Cancelar turno/Reenviar notificación; CANCELLED permite Reenviar notificación; COMPLETED no agrega acción nueva. Se reutilizan las RPC/RLS existentes.
 
 Los emails server-side de confirmación y cancelación mostrarán fecha `DD/MM/AAAA`, horario `HH:MM a HH:MM hs`, el barbero responsable, dirección exacta y enlace de Google Maps. No se modifica `/reservar`, la lógica de reservas, Supabase, credenciales ni datos.
+
+
+## Logo transparente y fondo de modo claro — Preview
+
+Se incorporan los assets suministrados como archivos locales del proyecto. El logo transparente reemplaza el wordmark del header y de la pantalla de acceso administrativo en ambos temas, conservando enlaces, tamaños funcionales y accesibilidad. El fondo japonés vertical se aplica únicamente sobre `html[data-theme="light"]` en el fondo global; el modo oscuro conserva su superficie oscura sin esa imagen. El render inicial y la preferencia persistida siguen iniciando en modo claro salvo que el usuario haya elegido oscuro.
