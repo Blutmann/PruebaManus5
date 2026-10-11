@@ -747,8 +747,10 @@ html[data-theme="light"] .admin-section-nav-link.is-active:active { background: 
   transition: border-color .2s ease, background-color .2s ease, transform .2s ease;
 }
 
-.admin-mobile-summary-card:hover,
-.admin-mobile-summary-card.is-active { border-color: var(--gold); background: var(--card); transform: translateY(-1px); }
+.admin-mobile-summary-card:hover { border-color: var(--gold); background: var(--card); transform: translateY(-1px); }
+.admin-mobile-summary-card.is-active { border-color: #702B3A; background: #702B3A; color: #FFFFFF; transform: translateY(-1px); }
+.admin-mobile-summary-card.is-active span,
+.admin-mobile-summary-card.is-active strong { color: #FFFFFF !important; }
 .admin-mobile-summary-card span { font-size: .75rem; }
 .admin-mobile-summary-card strong { color: var(--foreground); font-size: 1.5rem; font-weight: 500; line-height: 1; }
 .admin-mobile-summary-card.pending strong { color: var(--gold); }
