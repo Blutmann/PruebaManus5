@@ -53,3 +53,20 @@ El cambio se aplica únicamente desde `min-width: 768px`; mobile mantiene sus re
 El Header pasa a ser fijo en el borde superior y el Footer pasa a ser fijo en el borde inferior. La NavBar de reservas permanece fija, pero su `bottom` se calcula con la altura real del Footer, por lo que queda inmediatamente por encima de este. `ResizeObserver` publica `--site-footer-height` y `--booking-cta-height` en el documento para coordinar alturas variables sin márgenes arbitrarios.
 
 El shell reserva el espacio de Header en la parte superior y la suma Footer + NavBar en la parte inferior; el Footer no recibe padding artificial para alojar la NavBar. Desktop conserva fondo opaco, tokens de tema y z-index ordenado: Header 120, NavBar 30, Footer 20. Mobile mantiene el Header relativo, Footer oculto en el flujo de reservas y NavBar al borde inferior.
+
+
+## Ajuste aprobado — Footer compacto (Preview)
+
+### Alcance
+
+Modificar exclusivamente el footer visual. En desktop se mantienen dos columnas: izquierda con exactamente `San Isidro Labrador 7, Martínez, Provincia de Buenos Aires` y `Lunes a sábados de 10:00 a 20:00 hs`, sin saltos artificiales; derecha con Contacto, Ver ubicación, Instagram en una fila flexible y el copyright debajo. Se conservan los destinos existentes: `/estudio`, Google Maps e Instagram.
+
+### Implementación
+
+- `src/components/kani/site-header.tsx`: reemplazar únicamente el markup del footer para eliminar el título adicional y convertir dirección/horario en dos líneas semánticas.
+- `src/styles.css`: reducir padding y gap, equilibrar columnas con grid, mantener wrapping seguro de enlaces y mostrar el footer en mobile en páginas que no contienen la NavBar de reservas; el footer de `/reservar` conserva su comportamiento mobile actual.
+- No se modifican Header, NavBar, flujo de reservas, panel, Supabase, Auth, disponibilidad, notificaciones, Resend ni Production fuera del checkpoint de este ajuste.
+
+### Dirección visual
+
+Minimalismo editorial japonés: densidad vertical contenida, alineación serena, Zen Antique intacta, colores y fondos tomados de los tokens de tema existentes. El bloque derecho se alinea al extremo y el bloque izquierdo conserva aire suficiente para evitar compresión o desbordamiento.

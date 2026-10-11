@@ -208,6 +208,13 @@ html[data-theme="light"] {
 .site-container { width: min(1184px, calc(100% - 80px)); margin-inline: auto; }
 .site-header { position: fixed; inset: 0 0 auto; z-index: 120; height: 98px; display: flex; align-items: center; border-bottom: 1px solid color-mix(in oklch, var(--gold) 22%, var(--border)); background: color-mix(in oklch, var(--chrome) 86%, transparent); backdrop-filter: blur(10px); }
 .site-footer { position: fixed; inset: auto 0 0; z-index: 20; width: 100%; background-color: color-mix(in oklch, var(--chrome) 88%, transparent); box-sizing: border-box; backdrop-filter: blur(10px); }
+.site-footer-inner { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 32px; padding-block: 12px; }
+.site-footer-study { min-width: 0; display: grid; gap: 4px; }
+.site-footer-study p { margin: 0; line-height: 1.35; white-space: nowrap; }
+.site-footer-links { min-width: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+.site-footer-link-row { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px 16px; }
+.site-footer-link-row a { white-space: nowrap; }
+.site-footer-copyright { white-space: nowrap; }
 .site-header > div { width: min(1184px, calc(100% - 80px)); }
 .wordmark-img { display: block; width: auto; height: 54px; filter: drop-shadow(0 1px 8px rgb(0 0 0 / 0.35)); }
 .eyebrow { font-size: 10px; font-weight: 600; letter-spacing: 2px; color: var(--gold); }
@@ -543,6 +550,12 @@ html[data-theme="light"] input[type=date], html[data-theme="light"] input[type=t
  .booking-summary-page .booking-cta-inner { padding-block: 8px; }
  .booking-summary-page .booking-next-button, .booking-summary-page .booking-back-button { height: 44px; }
  .site-footer { display: none; }
+ .site-shell:not(:has(.booking-cta)) .site-footer { position: static; display: block; }
+ .site-shell:not(:has(.booking-cta)) .site-footer-inner { display: flex; flex-direction: column; align-items: stretch; gap: 16px; padding-block: 20px; }
+ .site-shell:not(:has(.booking-cta)) .site-footer-study p { white-space: normal; line-height: 1.45; }
+ .site-shell:not(:has(.booking-cta)) .site-footer-links { align-items: flex-start; gap: 8px; }
+ .site-shell:not(:has(.booking-cta)) .site-footer-link-row { justify-content: flex-start; gap: 8px 16px; }
+ .site-shell:not(:has(.booking-cta)) .site-footer-copyright { white-space: normal; }
  .booking-progress { gap: 5px; margin-top: 10px; margin-bottom: 16px; }
  .booking-progress > button { flex-direction: column; gap: 8px; padding-bottom: 13px; }
  .booking-progress small { font-size: 9px; }
