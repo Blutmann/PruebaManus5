@@ -141,3 +141,14 @@ Implementar exclusivamente en Preview una sección independiente `/admin/horario
 - Mantener la disponibilidad pública basada en configuración válida, servicio activo, duración real de Supabase, agenda y reservas; conservar los valores actuales auditados: Corte 45, Corte + barba 60 y Barba 30.
 - Garantizar que `end = start + duration`, que el solapamiento sea `new_start < existing_end AND new_end > existing_start`, que los intervalos contiguos estén permitidos, que CANCELLED no bloquee, que los estados activos bloqueen según regla vigente y que la operación sea atómica ante solicitudes simultáneas.
 - No alterar turnos existentes, no ejecutar migraciones destructivas, no tocar Production y verificar antes de publicar panel mobile/desktop, filtros, acciones, cápsulas, flujo público, reservas de 30/45/60 minutos, concurrencia, roles, notificaciones, emails, TypeScript, tests y build.
+
+
+## Iteración UX/UI de panel, horarios y reservas — Preview
+
+- Mostrar solo `Todos`, `Pendientes`, `Confirmados` y `Cancelados` como accesos rápidos; conservar `COMPLETED` en Estado.
+- Mantener cantidades reales, filtros de Período/Estado/Barbero/Calendario, aislamiento BARBER por `barber_id` y selección ADMIN de las tres agendas.
+- Usar cápsulas compactas para horarios con Disponible, No disponible y Con reserva; no alterar slots ocupados.
+- Permitir alta administrativa desde 00:00 hasta 23:55 cada 5 minutos y fechas futuras más allá de 21 días, manteniendo domingos cerrados y sin ampliar el horario público 10:00–20:00.
+- Mantener servicios, duraciones y precios configurados en Supabase; no inventar datos ni alterar pasos públicos.
+- Centralizar paletas claro/oscuro, conservar Zen Antique, foco visible, etiquetas accesibles, áreas táctiles y sin scroll horizontal.
+- Trabajar solo en Preview con `auto_publish: false`; no publicar Production, crear reservas, enviar emails, tocar credenciales, Auth, RLS ni eliminar datos.

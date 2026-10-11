@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle } f
 import { Input } from '@/components/ui/input';
 import { useAdminStaff } from '@/lib/kani-admin-context';
 import { businessDateToday, dateRangeForMobilePreset, mobileDatePresetLabels, type MobileDatePreset } from '@/lib/kani-mobile-appointments';
-import { bookingEndDateFor, dateLabel, minutes, type Barber } from '@/lib/kani-model';
+import { dateLabel, minutes, type Barber } from '@/lib/kani-model';
 import { createAvailabilitySlots, readAvailabilitySlotsForRange, updateAvailabilitySlot, type AvailabilitySlot } from '@/lib/kani-availability';
 import { readRealAppointments, type RealAppointment } from '@/lib/kani-appointments';
 import { permittedBarberNames } from '@/lib/kani-role-scope';
@@ -21,7 +21,7 @@ function errorMessage(cause: unknown) {
   const message = cause instanceof Error ? cause.message : '';
   if (message.includes('AVAILABILITY_OVERLAP')) return 'Ese horario se superpone con otro horario existente.';
   if (message.includes('AVAILABILITY_APPOINTMENT_CONFLICT')) return 'Ese horario se superpone con una reserva existente.';
-  if (message.includes('AVAILABILITY_DATE_INVALID')) return 'Elegí una fecha de atención dentro del período permitido.';
+  if (message.includes('AVAILABILITY_DATE_INVALID')) return 'Elegí una fecha futura de atención; los domingos permanecen cerrados.';
   if (message.includes('AVAILABILITY_NOT_ALLOWED')) return 'No tenés permiso para modificar esa agenda.';
   if (message.includes('INTERNAL_NOTE_TOO_LONG')) return 'El comentario no puede superar los 500 caracteres.';
   return message || 'No se pudo completar la operación.';
@@ -160,7 +160,6 @@ export function AdminScheduleManager() {
     return [...groups.entries()];
   }, [slots]);
   const contextLabel = profile.role === 'BARBER' ? 'Tu agenda' : barberFilter === 'Todos' ? 'Agenda de todos los barberos' : `Agenda de ${barberFilter}`;
-  const manualEndDate = bookingEndDateFor(businessToday);
 
   return <main className="site-container admin-schedule-page">
     <div className="admin-schedule-shell">
@@ -171,7 +170,7 @@ export function AdminScheduleManager() {
       {error && <div role="alert" className="admin-mobile-notice is-error"><XCircle size={16} />{error}</div>}
       <section className="admin-schedule-list" aria-label="Disponibilidad horaria">
         {loading && <div className="admin-mobile-empty"><Clock3 size={28} /><p>Cargando horarios…</p></div>}
-        {!loading && groupedSlots.length === 0 && <div className="admin-mobile-empty"><SlidersHorizontal size={28} /><h2>No hay horarios para estos filtros.</h2><p>Podés agregar una disponibilidad dentro del período de atención.</p></div>}
+        {!loading && groupedSlots.length === 0 && <div className="admin-mobile-empty"><SlidersHorizontal size={28} /><h2>No hay horarios para estos filtros.</h2><p>Podés agregar una disponibilidad en cualquier fecha futura de atención.</p></div>}
         {!loading && groupedSlots.map(([date, dateSlots]) => <section key={date} className="admin-schedule-day"><div className="admin-schedule-day-heading"><div><span className="eyebrow">FECHA</span><h2>{dateLabel(date)}</h2></div><span>{dateSlots.length} {dateSlots.length === 1 ? 'horario' : 'horarios'}</span></div><div className="admin-schedule-cards">{dateSlots.map(slot => {
           const available = slot.status === 'AVAILABLE';
           const existingNote = slot.internal_note?.trim() ?? '';
@@ -179,7 +178,7 @@ export function AdminScheduleManager() {
           const editing = editingNoteId === slot.id;
           const saving = savingId === slot.id;
           const slotTone = slot.occupied ? 'occupied' : available ? 'available' : 'unavailable';
-          return <article key={slot.id} className={`admin-schedule-card is-${slotTone}`}>
+          return <article key={slot.id} className={`admin-schedule-card admin-schedule-capsule booking-time-slot is-${slotTone}`}>
             <div className="admin-schedule-card-top"><div className="admin-schedule-time"><strong>{slot.start_time.slice(0, 5)}</strong><span>hasta {slot.end_time.slice(0, 5)}</span></div><span className={`admin-schedule-status ${slotTone}`}>{slot.occupied ? <Clock3 size={14} /> : available ? <CircleDot size={14} /> : <XCircle size={14} />}{slot.occupied ? 'Con reserva' : available ? 'Disponible' : 'No disponible'}</span></div>
             {profile.role === 'ADMIN' && <p className="admin-schedule-barber"><span className="small-avatar">{slot.barberName[0]}</span>{slot.barberName}</p>}
             <div className="admin-schedule-toggle"><Button type="button" disabled={saving || slot.occupied} className={available && !slot.occupied ? 'selected available' : 'available'} aria-pressed={available && !slot.occupied} onClick={() => void saveSlot(slot, { status: 'AVAILABLE' })}><Check size={14} />Habilitar</Button><Button type="button" disabled={saving || slot.occupied} className={!available && !slot.occupied ? 'selected unavailable' : 'unavailable'} aria-pressed={!available && !slot.occupied} onClick={() => void saveSlot(slot, { status: 'UNAVAILABLE' })}><XCircle size={14} />Deshabilitar</Button></div>
@@ -189,6 +188,6 @@ export function AdminScheduleManager() {
       </section>
     </div>
 
-    <Dialog open={manualOpen} onOpenChange={open => { if (!open && savingId !== 'manual') setManualOpen(false); }}><DialogContent className="manual-dialog admin-schedule-dialog"><DialogTitle>Agregar horario</DialogTitle><DialogDescription>Elegí una fecha y un inicio entre 00:00 y 23:55, en intervalos de 5 minutos. La agenda pública conserva el horario comercial vigente.</DialogDescription><div className="admin-schedule-manual-fields">{profile.role === 'ADMIN' && <div><label htmlFor="schedule-manual-barber">Agenda</label><select id="schedule-manual-barber" className="select-control w-full" value={manualBarberId} onChange={event => setManualBarberId(event.target.value)}>{permittedRows.map(row => <option key={row.id} value={row.id}>{row.name}</option>)}</select></div>}<div><label htmlFor="schedule-manual-date">Fecha</label><Input id="schedule-manual-date" type="date" min={businessToday} max={manualEndDate} value={manualDate} onChange={event => setManualDate(event.target.value)} /></div><div className="admin-schedule-time-pair"><div><label htmlFor="schedule-manual-hour">Hora</label><select id="schedule-manual-hour" className="select-control w-full" value={manualHour} onChange={event => setManualHour(event.target.value)}>{hours.map(hour => <option key={hour} value={String(hour)}>{String(hour).padStart(2, '0')}</option>)}</select></div><span>:</span><div><label htmlFor="schedule-manual-minute">Minutos</label><select id="schedule-manual-minute" className="select-control w-full" value={manualMinute} onChange={event => setManualMinute(event.target.value)}>{manualMinutes.map(minute => <option key={minute} value={String(minute).padStart(2, '0')}>{String(minute).padStart(2, '0')}</option>)}</select></div></div></div><p className="manual-dialog-date text-xs text-muted-foreground">La fecha debe ser un día de atención entre {businessToday} y {manualEndDate}. Domingos cerrados.</p><DialogFooter className="manual-dialog-footer"><Button variant="outline" disabled={savingId === 'manual'} onClick={() => setManualOpen(false)}>Cancelar</Button><Button className="action-positive" disabled={savingId === 'manual' || !manualBarberId} onClick={() => void saveManualSlot()}>Guardar horario</Button></DialogFooter></DialogContent></Dialog>
+    <Dialog open={manualOpen} onOpenChange={open => { if (!open && savingId !== 'manual') setManualOpen(false); }}><DialogContent className="manual-dialog admin-schedule-dialog"><DialogTitle>Agregar horario</DialogTitle><DialogDescription>Elegí una fecha y un inicio entre 00:00 y 23:55, en intervalos de 5 minutos. La agenda pública conserva el horario comercial vigente.</DialogDescription><div className="admin-schedule-manual-fields">{profile.role === 'ADMIN' && <div><label htmlFor="schedule-manual-barber">Agenda</label><select id="schedule-manual-barber" className="select-control w-full" value={manualBarberId} onChange={event => setManualBarberId(event.target.value)}>{permittedRows.map(row => <option key={row.id} value={row.id}>{row.name}</option>)}</select></div>}<div><label htmlFor="schedule-manual-date">Fecha</label><Input id="schedule-manual-date" type="date" min={businessToday} value={manualDate} onChange={event => setManualDate(event.target.value)} /></div><div className="admin-schedule-time-pair"><div><label htmlFor="schedule-manual-hour">Hora</label><select id="schedule-manual-hour" className="select-control w-full" value={manualHour} onChange={event => setManualHour(event.target.value)}>{hours.map(hour => <option key={hour} value={String(hour)}>{String(hour).padStart(2, '0')}</option>)}</select></div><span>:</span><div><label htmlFor="schedule-manual-minute">Minutos</label><select id="schedule-manual-minute" className="select-control w-full" value={manualMinute} onChange={event => setManualMinute(event.target.value)}>{manualMinutes.map(minute => <option key={minute} value={String(minute).padStart(2, '0')}>{String(minute).padStart(2, '0')}</option>)}</select></div></div></div><p className="manual-dialog-date text-xs text-muted-foreground">La fecha debe ser igual o posterior a {businessToday}. Los domingos permanecen cerrados.</p><DialogFooter className="manual-dialog-footer"><Button variant="outline" disabled={savingId === 'manual'} onClick={() => setManualOpen(false)}>Cancelar</Button><Button className="action-positive" disabled={savingId === 'manual' || !manualBarberId} onClick={() => void saveManualSlot()}>Guardar horario</Button></DialogFooter></DialogContent></Dialog>
   </main>;
 }

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   availableTimesForServiceDate,
   eligibleBarbersForServiceSlot,
+  isManageableScheduleDate,
   type PublicAvailabilitySlot,
 } from "./kani-availability";
 
@@ -76,5 +77,14 @@ describe("public booking availability helpers", () => {
     });
     expect(availableTimesForServiceDate([shortSlot], "2026-10-08", 60, now)).toEqual([]);
     expect(eligibleBarbersForServiceSlot([shortSlot], "2026-10-08", "12:00", 60, now)).toEqual([]);
+  });
+});
+
+
+describe("fechas administrables de horarios", () => {
+  it("permite fechas futuras más allá de 21 días y bloquea domingos", () => {
+    expect(isManageableScheduleDate("2026-11-16", "2026-10-11")).toBe(true);
+    expect(isManageableScheduleDate("2026-10-11", "2026-10-11")).toBe(false);
+    expect(isManageableScheduleDate("2026-10-10", "2026-10-11")).toBe(false);
   });
 });

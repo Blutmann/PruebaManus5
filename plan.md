@@ -196,3 +196,12 @@ No se realizan migraciones destructivas, deletes de datos, cambios de Supabase, 
 - Migración no destructiva para revocar DML directo de `appointments` a `anon`/`authenticated`, manteniendo la creación y actualización mediante RPCs existentes.
 - Corrección mínima del RPC `request_appointment` para usar la fecha de negocio argentina, conservar el advisory lock y los intervalos basados en `duration_minutes`.
 - Si la auditoría final confirma la necesidad de almacenar configuraciones fuera del horario público, cualquier relajación de constraints se mantendrá separada de la vista pública, del RPC de reservas y de las reglas 10:00–20:00; no se aplicará una ampliación silenciosa del horario reservable.
+
+
+## Iteración UX/UI del panel y reservas — Preview
+
+Se mantiene la implementación existente y se ajustan únicamente presentación, filtros y límites administrativos. El panel móvil muestra cuatro accesos rápidos (`Todos`, `Pendientes`, `Confirmados`, `Cancelados`), conserva `COMPLETED` en el filtro Estado y presenta Período, Estado, Barbero y Calendario con controles equivalentes. Para BARBER, Barbero es informativo y no editable. La gestión de horarios usa cápsulas compactas con Disponible, No disponible y Con reserva, mantiene comentarios internos y bloquea acciones sobre slots ocupados.
+
+La consulta administrativa de horarios acepta fechas futuras más allá de 21 días y el alta usa 00:00–23:55 en pasos de 5 minutos; los domingos siguen cerrados y la agenda pública conserva 10:00–20:00, duración configurada y sus límites de reserva. La migración `20261011145000_kani_schedule_future_management.sql` se aplicó solo al proyecto Preview `iockpxtkflyjfagkvgnr` y mantiene `SECURITY DEFINER`, `search_path`, validación por rol, locks y revocación de escritura directa. No se crean turnos ni se toca Production.
+
+Los tokens de tema se centralizan en CSS para fondos, superficies, texto, bordes, foco, dorado, bordó, verde y estados semánticos; se conserva Zen Antique. Se corrigen el badge de novedades, los contenedores del calendario, el overflow horizontal y los tamaños responsive sin ocultar contenido. Los servicios, duraciones y precios continúan viniendo de Supabase; el flujo público no se reconstruye ni cambia de pasos.

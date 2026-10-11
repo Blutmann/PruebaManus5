@@ -32,6 +32,8 @@ const statusFilters: Array<{ value: StatusFilter; label: string }> = [
   { value: 'COMPLETED', label: 'Completados' },
 ];
 
+const summaryFilters = statusFilters.filter(filter => filter.value !== 'COMPLETED');
+
 const datePresets: MobileDatePreset[] = ['ALL', 'TODAY', 'TOMORROW', 'NEXT_10_DAYS', 'THIS_WEEK', 'SPECIFIC'];
 
 function statusTone(value: StatusFilter) {
@@ -151,23 +153,14 @@ export function AdminMobileAppointments() {
       </header>
 
       <section className="admin-mobile-summary" aria-label="Resumen de turnos">
-        {statusFilters.map(filter => <button key={filter.value} type="button" className={`admin-mobile-summary-card ${statusTone(filter.value)} ${statusFilter === filter.value ? 'is-active' : ''}`} aria-pressed={statusFilter === filter.value} onClick={() => setStatusFilter(filter.value)}><span>{filter.label}</span><strong>{counts[filter.value]}</strong></button>)}
+        {summaryFilters.map(filter => <button key={filter.value} type="button" className={`admin-mobile-summary-card ${statusTone(filter.value)} ${statusFilter === filter.value ? 'is-active' : ''}`} aria-pressed={statusFilter === filter.value} onClick={() => setStatusFilter(filter.value)}><span>{filter.label}</span><strong>{counts[filter.value]}</strong></button>)}
       </section>
 
       <section className="admin-mobile-filters" aria-label="Filtros de agenda">
-        <div className="admin-mobile-date-filter">
-          <label htmlFor="mobile-date-preset">Período</label>
-          <div className="admin-mobile-date-controls">
-            <select id="mobile-date-preset" value={datePreset} onChange={event => selectDatePreset(event.target.value as MobileDatePreset)} aria-label="Filtrar por período">
-              {datePresets.map(preset => <option key={preset} value={preset}>{mobileDatePresetLabels[preset]}</option>)}
-            </select>
-            <input id="mobile-date-filter" type="date" value={specificDate} onChange={event => selectSpecificDate(event.target.value)} aria-label="Elegir fecha específica" />
-          </div>
-        </div>
-        <div className={`admin-mobile-secondary-filters ${profile.role === 'ADMIN' ? 'has-barber' : 'single-filter'}`}>
-          <div className="admin-mobile-filter-field"><label htmlFor="mobile-status-filter">Estado</label><select id="mobile-status-filter" value={statusFilter} onChange={event => setStatusFilter(event.target.value as StatusFilter)}>{statusFilters.map(filter => <option key={filter.value} value={filter.value}>{filter.label}</option>)}</select></div>
-          {profile.role === 'ADMIN' && <div className="admin-mobile-filter-field"><label htmlFor="mobile-barber-filter">Barbero</label><select id="mobile-barber-filter" value={barberFilter} onChange={event => setBarberFilter(event.target.value)}><option value="Todos">Todos</option>{permittedBarbers.map(barber => <option key={barber} value={barber}>{barber}</option>)}</select></div>}
-        </div>
+        <div className="admin-mobile-filter-field"><label htmlFor="mobile-date-preset">Período</label><select id="mobile-date-preset" value={datePreset} onChange={event => selectDatePreset(event.target.value as MobileDatePreset)} aria-label="Filtrar por período">{datePresets.map(preset => <option key={preset} value={preset}>{mobileDatePresetLabels[preset]}</option>)}</select></div>
+        <div className="admin-mobile-filter-field"><label htmlFor="mobile-status-filter">Estado</label><select id="mobile-status-filter" value={statusFilter} onChange={event => setStatusFilter(event.target.value as StatusFilter)}>{statusFilters.map(filter => <option key={filter.value} value={filter.value}>{filter.label}</option>)}</select></div>
+        <div className="admin-mobile-filter-field"><label htmlFor="mobile-barber-filter">Barbero</label>{profile.role === 'ADMIN' ? <select id="mobile-barber-filter" value={barberFilter} onChange={event => setBarberFilter(event.target.value)}><option value="Todos">Todos</option>{permittedBarbers.map(barber => <option key={barber} value={barber}>{barber}</option>)}</select> : <output id="mobile-barber-filter" className="admin-mobile-filter-readonly">{permittedBarbers[0] ?? 'Tu agenda'}</output>}</div>
+        <div className="admin-mobile-filter-field"><label htmlFor="mobile-date-filter">Calendario</label><input id="mobile-date-filter" type="date" value={specificDate} onChange={event => selectSpecificDate(event.target.value)} aria-label="Elegir fecha específica" /></div>
       </section>
 
       {notice && <div role="status" className="admin-mobile-notice"><Check size={16} />{notice}<Button variant="ghost" size="icon" aria-label="Cerrar aviso" onClick={() => setNotice('')}><X /></Button></div>}
