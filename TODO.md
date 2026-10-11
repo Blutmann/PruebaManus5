@@ -152,3 +152,16 @@ Implementar exclusivamente en Preview una sección independiente `/admin/horario
 - Mantener servicios, duraciones y precios configurados en Supabase; no inventar datos ni alterar pasos públicos.
 - Centralizar paletas claro/oscuro, conservar Zen Antique, foco visible, etiquetas accesibles, áreas táctiles y sin scroll horizontal.
 - Trabajar solo en Preview con `auto_publish: false`; no publicar Production, crear reservas, enviar emails, tocar credenciales, Auth, RLS ni eliminar datos.
+
+
+## Simplificación de Turnos y notificaciones — Production
+
+`/admin` es la entrada visible de Turnos y, tras autenticarse, muestra directamente la agenda sin panel intermedio. No se muestran `Panel completo` ni `Agenda móvil`; el menú autenticado muestra `Turnos`.
+
+Turnos inicia en Hoy, usa `America/Argentina/Buenos_Aires` y ofrece únicamente Hoy, Mañana, Próximos 10 días, Esta semana y Fecha específica.
+
+PENDING: Confirmar, Rechazar y Reenviar notificación. CONFIRMED: Cancelar turno y Reenviar notificación. CANCELLED: Reenviar notificación. COMPLETED: sin acción nueva.
+
+Confirmación y cancelación incluyen fecha DD/MM/AAAA, horario, barbero responsable, dirección San Isidro Labrador 7, Martínez, Provincia de Buenos Aires y Google Maps.
+
+Mantener aislamiento ADMIN/BARBER, RLS, RPCs, `/reservar`, reservas, credenciales y datos sin cambios.

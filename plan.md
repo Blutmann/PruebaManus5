@@ -205,3 +205,14 @@ Se mantiene la implementación existente y se ajustan únicamente presentación,
 La consulta administrativa de horarios acepta fechas futuras más allá de 21 días y el alta usa 00:00–23:55 en pasos de 5 minutos; los domingos siguen cerrados y la agenda pública conserva 10:00–20:00, duración configurada y sus límites de reserva. La migración `20261011145000_kani_schedule_future_management.sql` se aplicó solo al proyecto Preview `iockpxtkflyjfagkvgnr` y mantiene `SECURITY DEFINER`, `search_path`, validación por rol, locks y revocación de escritura directa. No se crean turnos ni se toca Production.
 
 Los tokens de tema se centralizan en CSS para fondos, superficies, texto, bordes, foco, dorado, bordó, verde y estados semánticos; se conserva Zen Antique. Se corrigen el badge de novedades, los contenedores del calendario, el overflow horizontal y los tamaños responsive sin ocultar contenido. Los servicios, duraciones y precios continúan viniendo de Supabase; el flujo público no se reconstruye ni cambia de pasos.
+
+
+## Simplificación de Turnos y notificaciones — Production
+
+`/admin` seguirá siendo la entrada visible de Turnos y, tras autenticarse, mostrará directamente la agenda sin panel intermedio. Se retirarán únicamente las referencias visibles `Panel completo` y `Agenda móvil`; el acceso autenticado del menú será `Turnos` y apuntará a `/admin`.
+
+La agenda iniciará en `Hoy`, con calendario anclado a `America/Argentina/Buenos_Aires`; se conservarán solo `Hoy`, `Mañana`, `Próximos 10 días`, `Esta semana` y `Fecha específica` en el filtro de Turnos. Las agendas de horarios también iniciarán en Hoy y bloquearán fechas anteriores en el selector manual.
+
+Las acciones se limitarán a las transiciones solicitadas: PENDING permite Confirmar/Rechazar/Reenviar notificación; CONFIRMED permite Cancelar turno/Reenviar notificación; CANCELLED permite Reenviar notificación; COMPLETED no agrega acción nueva. Se reutilizan las RPC/RLS existentes.
+
+Los emails server-side de confirmación y cancelación mostrarán fecha `DD/MM/AAAA`, horario `HH:MM a HH:MM hs`, el barbero responsable, dirección exacta y enlace de Google Maps. No se modifica `/reservar`, la lógica de reservas, Supabase, credenciales ni datos.

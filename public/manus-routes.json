@@ -5,7 +5,7 @@
     { "path": "/estudio", "title": "Kani Barber Studio - Conocé Kani" },
     { "path": "/admin", "title": "Kani Barber Studio - Panel de control" },
     { "path": "/admin/mantenimiento", "title": "Kani Barber Studio - Panel de control" },
-    { "path": "/admin/movil", "title": "Kani Barber Studio - Agenda móvil" },
+    { "path": "/admin/movil", "title": "Kani Barber Studio - Turnos" },
     { "path": "/admin/horarios", "title": "Kani Barber Studio - Gestiona tus horarios" }
   ]
 }

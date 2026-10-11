@@ -1,12 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ArrowLeft, ArrowUp, CalendarDays, Check, CircleDot, Clock3, Mail, Phone, X, XCircle } from 'lucide-react';
-import { Link } from '@tanstack/react-router';
+import { ArrowUp, CalendarDays, Check, CircleDot, Clock3, RefreshCw, X, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle } from '@/components/ui/dialog';
 import { dateLabel, money, serviceFor } from '@/lib/kani-model';
 import { useAdminStaff } from '@/lib/kani-admin-context';
-import { appointmentErrorMessage, readRealAppointments, updateRealAppointmentStatus, type RealAppointment, type RealAppointmentStatus } from '@/lib/kani-appointments';
-import { businessDateToday, dateRangeForMobilePreset, filterMobileAppointments, mobileDatePresetLabels, type MobileDatePreset, type MobileStatusFilter } from '@/lib/kani-mobile-appointments';
+import { appointmentErrorMessage, readRealAppointments, retryRealAppointmentNotification, updateRealAppointmentStatus, type RealAppointment, type RealAppointmentStatus } from '@/lib/kani-appointments';
+import { addCalendarDays, businessDateToday, dateRangeForMobilePreset, filterMobileAppointments, mobileDatePresetLabels, type MobileDatePreset, type MobileStatusFilter } from '@/lib/kani-mobile-appointments';
 import { permittedBarberNames } from '@/lib/kani-role-scope';
 import { AdminActivityPopover } from '@/components/kani/admin-activity-popover';
 
@@ -34,7 +33,7 @@ const statusFilters: Array<{ value: StatusFilter; label: string }> = [
 
 const summaryFilters = statusFilters.filter(filter => filter.value !== 'COMPLETED');
 
-const datePresets: MobileDatePreset[] = ['ALL', 'TODAY', 'TOMORROW', 'NEXT_10_DAYS', 'THIS_WEEK', 'SPECIFIC'];
+const datePresets: MobileDatePreset[] = ['TODAY', 'TOMORROW', 'NEXT_10_DAYS', 'THIS_WEEK', 'SPECIFIC'];
 
 function statusTone(value: StatusFilter) {
   return value === 'ALL' ? 'all' : statusMeta[value].tone;
@@ -44,9 +43,9 @@ export function AdminMobileAppointments() {
   const { profile, barbers: permittedRows } = useAdminStaff();
   const permittedBarbers = useMemo(() => permittedBarberNames(profile, permittedRows), [profile, permittedRows]);
   const [appointments, setAppointments] = useState<RealAppointment[]>([]);
-  const [datePreset, setDatePreset] = useState<MobileDatePreset>('ALL');
-  const [specificDate, setSpecificDate] = useState('');
   const [businessToday, setBusinessToday] = useState(() => businessDateToday());
+  const [datePreset, setDatePreset] = useState<MobileDatePreset>('TODAY');
+  const [specificDate, setSpecificDate] = useState(() => businessDateToday());
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('ALL');
   const [barberFilter, setBarberFilter] = useState('Todos');
   const [cancelTarget, setCancelTarget] = useState<RealAppointment | null>(null);
@@ -110,23 +109,39 @@ export function AdminMobileAppointments() {
   const activeDateLabel = datePreset === 'SPECIFIC' && specificDate ? dateLabel(specificDate) : mobileDatePresetLabels[datePreset];
 
   function selectDatePreset(next: MobileDatePreset) {
-    if (next === 'SPECIFIC') setSpecificDate(current => current || businessToday);
-    else setSpecificDate('');
+    if (next === 'TODAY') setSpecificDate(businessToday);
+    else if (next === 'TOMORROW') setSpecificDate(addCalendarDays(businessToday, 1));
+    else if (next === 'SPECIFIC') setSpecificDate(current => current || businessToday);
+    else setSpecificDate(businessToday);
     setDatePreset(next);
   }
 
   function selectSpecificDate(next: string) {
-    setSpecificDate(next);
-    setDatePreset(next ? 'SPECIFIC' : 'ALL');
+    const safeDate = next && next >= businessToday ? next : businessToday;
+    setSpecificDate(safeDate);
+    setDatePreset('SPECIFIC');
   }
 
-  async function changeStatus(appointment: RealAppointment, next: 'CONFIRMED' | 'CANCELLED' | 'COMPLETED') {
+  async function changeStatus(appointment: RealAppointment, next: 'CONFIRMED' | 'CANCELLED') {
     setBusyId(appointment.id);
     try {
       await updateRealAppointmentStatus(appointment.id, next);
       await reload();
       setNotice(`Turno de ${appointment.name}: ${statusMeta[next].label.toLowerCase()}.`);
       setCancelTarget(null);
+    } catch (cause) {
+      setError(appointmentErrorMessage(cause));
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  async function retryNotification(appointment: RealAppointment) {
+    setBusyId(appointment.id);
+    setError('');
+    try {
+      const result = await retryRealAppointmentNotification(appointment.id);
+      setNotice(result === 'ALREADY_SENT' ? 'La notificación ya había sido enviada.' : 'Notificación reenviada correctamente.');
     } catch (cause) {
       setError(appointmentErrorMessage(cause));
     } finally {
@@ -144,8 +159,7 @@ export function AdminMobileAppointments() {
     <div className="admin-mobile-shell">
       <header className="admin-mobile-heading">
         <div>
-          <Link to="/admin" className="admin-mobile-back"><ArrowLeft size={16} />Panel completo</Link>
-          <span className="eyebrow">AGENDA MÓVIL</span>
+          <span className="eyebrow">TURNOS</span>
           <h1 className="section-title">Turnos</h1>
           <p className="admin-mobile-date"><CalendarDays size={16} />{activeDateLabel}</p>
         </div>
@@ -163,7 +177,7 @@ export function AdminMobileAppointments() {
             <select id="mobile-date-preset" value={datePreset} onChange={event => selectDatePreset(event.target.value as MobileDatePreset)} aria-label="Filtrar por período">
               {datePresets.map(preset => <option key={preset} value={preset}>{mobileDatePresetLabels[preset]}</option>)}
             </select>
-            <input id="mobile-date-filter" type="date" value={specificDate} onChange={event => selectSpecificDate(event.target.value)} aria-label="Elegir fecha específica" />
+            <input id="mobile-date-filter" type="date" min={businessToday} value={specificDate} onChange={event => selectSpecificDate(event.target.value)} aria-label="Elegir fecha específica" />
           </div>
         </div>
         <div className="admin-mobile-filter-field"><label htmlFor="mobile-status-filter">Estado</label><select id="mobile-status-filter" value={statusFilter} onChange={event => setStatusFilter(event.target.value as StatusFilter)}>{statusFilters.map(filter => <option key={filter.value} value={filter.value}>{filter.label}</option>)}</select></div>
@@ -174,7 +188,7 @@ export function AdminMobileAppointments() {
       {error && <div role="alert" className="admin-mobile-notice is-error"><XCircle size={16} />{error}</div>}
 
       <section className="admin-mobile-agenda" aria-labelledby="mobile-agenda-title">
-        <div className="admin-mobile-section-heading"><div><span className="eyebrow">{datePreset === 'ALL' ? 'AGENDA' : 'AGENDA FILTRADA'}</span><h2 id="mobile-agenda-title">{filteredAppointments.length} {filteredAppointments.length === 1 ? 'turno' : 'turnos'}</h2></div><span className="text-sm text-muted-foreground">{statusFilter === 'ALL' ? 'Todos los estados' : statusMeta[statusFilter].label}</span></div>
+        <div className="admin-mobile-section-heading"><div><span className="eyebrow">AGENDA FILTRADA</span><h2 id="mobile-agenda-title">{filteredAppointments.length} {filteredAppointments.length === 1 ? 'turno' : 'turnos'}</h2></div><span className="text-sm text-muted-foreground">{statusFilter === 'ALL' ? 'Todos los estados' : statusMeta[statusFilter].label}</span></div>
         {loading && <div className="admin-mobile-empty"><Clock3 size={28} /><p>Cargando turnos…</p></div>}
         {!loading && filteredAppointments.length === 0 && <div className="admin-mobile-empty"><CalendarDays size={28} /><h3>No hay turnos para estos filtros.</h3><p>Probá con otro período, fecha o estado. Los turnos cancelados permanecen en el historial.</p></div>}
         <div className="admin-mobile-list">{filteredAppointments.map(appointment => {
@@ -192,7 +206,7 @@ export function AdminMobileAppointments() {
               {appointment.servicePrice !== undefined && <div><span>Importe total</span><strong>{money(appointment.servicePrice)}</strong></div>}
               {appointment.notes?.trim() && <div className="admin-mobile-detail-notes"><span>Observaciones</span><p>{appointment.notes.trim()}</p></div>}
             </div></div>
-            {(appointment.statusCode === 'PENDING' || appointment.statusCode === 'CONFIRMED') && <div className="admin-mobile-card-actions">{appointment.statusCode === 'PENDING' && <><Button className="action-positive" disabled={busyId === appointment.id} onClick={() => void changeStatus(appointment, 'CONFIRMED')}><Check size={16} />Confirmar</Button><Button variant="outline" className="action-brand-outline" disabled={busyId === appointment.id} onClick={() => setCancelTarget(appointment)}><X size={16} />Rechazar</Button></>}{appointment.statusCode === 'CONFIRMED' && <><Button className="action-positive" disabled={busyId === appointment.id} onClick={() => void changeStatus(appointment, 'COMPLETED')}><Check size={16} />Completar</Button><Button variant="outline" className="action-brand-outline" disabled={busyId === appointment.id} onClick={() => setCancelTarget(appointment)}><X size={16} />Cancelar</Button></>}</div>}
+            {(appointment.statusCode === 'PENDING' || appointment.statusCode === 'CONFIRMED' || appointment.statusCode === 'CANCELLED') && <div className="admin-mobile-card-actions">{appointment.statusCode === 'PENDING' && <><Button className="action-positive" disabled={busyId === appointment.id} onClick={() => void changeStatus(appointment, 'CONFIRMED')}><Check size={16} />Confirmar</Button><Button variant="outline" className="action-brand-outline" disabled={busyId === appointment.id} onClick={() => setCancelTarget(appointment)}><X size={16} />Rechazar</Button></>}{appointment.statusCode === 'CONFIRMED' && <Button variant="outline" className="action-brand-outline" disabled={busyId === appointment.id} onClick={() => setCancelTarget(appointment)}><X size={16} />Cancelar turno</Button>}<Button variant="outline" disabled={busyId === appointment.id} onClick={() => void retryNotification(appointment)}><RefreshCw size={16} />Reenviar notificación</Button></div>}
           </article>;
         })}</div>
       </section>

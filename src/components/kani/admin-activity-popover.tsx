@@ -6,7 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { useAdminStaff } from '@/lib/kani-admin-context';
 import { markAllAdminActivityNotificationsRead, readAdminActivityNotifications, setAdminActivityNotificationRead, type AdminActivityEvent } from '@/lib/kani-admin-activity';
 
-type NotificationHref = '/admin/movil' | '/admin/horarios';
+type NotificationHref = '/admin' | '/admin/horarios';
 type AdminNotification = {
   id: string;
   type: 'availability' | 'appointment';
@@ -38,7 +38,7 @@ function toAdminNotification(event: AdminActivityEvent): AdminNotification {
     message,
     time: new Date(event.created_at).toLocaleString('es-AR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }),
     readAt: event.read_at,
-    href: isAvailability ? '/admin/horarios' : '/admin/movil',
+    href: isAvailability ? '/admin/horarios' : '/admin',
   };
 }
 

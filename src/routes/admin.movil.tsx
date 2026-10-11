@@ -3,6 +3,6 @@ import { AdminMobileAppointments } from '@/components/kani/admin-mobile-appointm
 import { pageHead } from '@/lib/kani-head';
 
 export const Route = createFileRoute('/admin/movil')({
-  head: () => pageHead('Agenda móvil', 'Gestión móvil de turnos para Kani Barber Studio.', 'Kani Barber Studio - Agenda móvil'),
+  head: () => pageHead('Turnos', 'Gestión de turnos para Kani Barber Studio.', 'Kani Barber Studio - Turnos'),
   component: AdminMobileAppointments,
 });
