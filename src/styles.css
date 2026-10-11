@@ -729,10 +729,6 @@ html[data-theme="light"] input[type=date], html[data-theme="light"] input[type=t
   background: var(--surface);
 }
 
-.admin-mobile-date-filter { display: grid; grid-column: 1 / -1; gap: .4rem; min-width: 0; }
-.admin-mobile-date-controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .55rem; min-width: 0; }
-.admin-mobile-secondary-filters { display: grid; grid-column: 1 / -1; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem; min-width: 0; }
-.admin-mobile-secondary-filters.single-filter { grid-template-columns: 1fr; }
 .admin-mobile-filter-field { display: grid; gap: .4rem; min-width: 0; }
 
 .admin-mobile-filters label { color: var(--muted-foreground); font-size: .78rem; }
@@ -943,14 +939,24 @@ html[data-theme="light"] input[type=date], html[data-theme="light"] input[type=t
 }
 
 
-/* UX/UI refinement: compact mobile controls, schedule capsules and accessible notifications. */
-.admin-mobile-filters { grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: stretch; }
+/* Final visual system: one source of truth for compact admin controls, capsules and focus states. */
+.admin-mobile-filters {
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
+  align-items: stretch;
+}
+
 .admin-mobile-filter-field { min-width: 0; }
-.admin-mobile-filters input, .admin-mobile-filters select, .admin-mobile-filter-readonly { box-sizing: border-box; max-width: 100%; min-width: 0; }
+.admin-mobile-filter-period { grid-column: span 2; }
+.admin-mobile-period-control { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(7.25rem, .7fr); gap: .55rem; min-width: 0; }
+.admin-mobile-filters input,
+.admin-mobile-filters select,
+.admin-mobile-filter-readonly { box-sizing: border-box; max-width: 100%; min-width: 0; }
 .admin-mobile-filter-readonly { display: flex; min-height: 2.65rem; align-items: center; padding: .5rem .7rem; border: 1px solid var(--input); border-radius: .7rem; background: var(--secondary); color: var(--foreground); font: inherit; font-size: .9rem; overflow-wrap: anywhere; }
 .admin-mobile-summary { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .admin-mobile-summary-card span { white-space: nowrap; }
-.admin-mobile-filters select:focus-visible, .admin-mobile-filters input:focus-visible, .admin-mobile-filter-readonly:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.admin-mobile-filters select:focus-visible,
+.admin-mobile-filters input:focus-visible,
+.admin-mobile-filter-readonly:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
 .admin-mobile-scroll-top { right: max(1rem, env(safe-area-inset-right)); bottom: calc(1rem + env(safe-area-inset-bottom)); }
 .notification-trigger { overflow: visible; margin-inline-end: .3rem; }
 .notification-count { top: -4px; right: -4px; min-width: 1.25rem; height: 1.25rem; padding-inline: .25rem; font-size: .64rem; }
@@ -961,5 +967,32 @@ html[data-theme="light"] input[type=date], html[data-theme="light"] input[type=t
 .admin-schedule-capsule.is-unavailable { border-color: color-mix(in srgb, var(--destructive) 48%, var(--border)); background: color-mix(in srgb, var(--destructive) 5%, var(--surface)); }
 .admin-schedule-capsule.is-occupied { border-color: color-mix(in srgb, var(--gold) 55%, var(--border)); background: color-mix(in srgb, var(--gold) 7%, var(--surface)); }
 .admin-schedule-capsule .admin-schedule-time strong { font-size: 1.45rem; }
-@media (max-width: 767px) { .admin-mobile-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); } .admin-mobile-summary { grid-template-columns: repeat(4, minmax(0, 1fr)); } .admin-schedule-filters { grid-template-columns: 1fr; } }
-@media (max-width: 420px) { .admin-mobile-summary-card span { font-size: .56rem; } .admin-mobile-summary-card strong { font-size: 1.08rem; } .admin-mobile-filters { gap: .5rem; padding: .7rem; } .admin-mobile-filters select, .admin-mobile-filters input, .admin-mobile-filter-readonly { font-size: .78rem; padding-inline: .5rem; } }
+
+/* Keep each control usable by keyboard and touch without changing behavior. */
+button,
+a,
+input,
+select,
+textarea { -webkit-tap-highlight-color: transparent; }
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
+
+@media (max-width: 767px) {
+  .admin-mobile-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .admin-mobile-filter-period { grid-column: 1 / -1; }
+  .admin-mobile-summary { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .admin-schedule-filters { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 420px) {
+  .admin-mobile-summary-card span { font-size: .56rem; }
+  .admin-mobile-summary-card strong { font-size: 1.08rem; }
+  .admin-mobile-filters { gap: .5rem; padding: .7rem; }
+  .admin-mobile-period-control { grid-template-columns: minmax(0, 1fr) 6.25rem; gap: .35rem; }
+  .admin-mobile-filters select,
+  .admin-mobile-filters input,
+  .admin-mobile-filter-readonly { font-size: .78rem; padding-inline: .5rem; }
+}
