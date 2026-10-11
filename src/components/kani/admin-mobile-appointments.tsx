@@ -3,12 +3,13 @@ import { ArrowLeft, CalendarDays, Check, ChevronRight, CircleDot, Clock3, Info, 
 import { Link } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle } from '@/components/ui/dialog';
-import { dateLabel, demoToday, serviceFor } from '@/lib/kani-model';
+import { dateLabel, serviceFor } from '@/lib/kani-model';
 import { useAdminStaff } from '@/lib/kani-admin-context';
 import { appointmentErrorMessage, readRealAppointments, updateRealAppointmentStatus, type RealAppointment, type RealAppointmentStatus } from '@/lib/kani-appointments';
+import { filterMobileAppointments, type MobileStatusFilter } from '@/lib/kani-mobile-appointments';
 import { permittedBarberNames } from '@/lib/kani-role-scope';
 
-type StatusFilter = 'ALL' | RealAppointmentStatus;
+type StatusFilter = MobileStatusFilter;
 
 type StatusMeta = {
   label: string;
@@ -34,7 +35,7 @@ export function AdminMobileAppointments() {
   const { profile, barbers: permittedRows } = useAdminStaff();
   const permittedBarbers = useMemo(() => permittedBarberNames(profile, permittedRows), [profile, permittedRows]);
   const [appointments, setAppointments] = useState<RealAppointment[]>([]);
-  const [selectedDate, setSelectedDate] = useState(demoToday);
+  const [selectedDate, setSelectedDate] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('ALL');
   const [barberFilter, setBarberFilter] = useState('Todos');
   const [detailAppointment, setDetailAppointment] = useState<RealAppointment | null>(null);
@@ -62,15 +63,17 @@ export function AdminMobileAppointments() {
   }, [profile.role, permittedBarbers]);
 
   const permittedBarberIds = useMemo(() => new Set(permittedRows.map(barber => barber.id)), [permittedRows]);
-  const visibleAppointments = useMemo(() => appointments.filter(appointment => {
-    if (!permittedBarberIds.has(appointment.barberId)) return false;
-    if (profile.role === 'BARBER') return appointment.barberId === profile.barber_id;
-    return barberFilter === 'Todos' || appointment.barber === barberFilter;
-  }), [appointments, barberFilter, permittedBarberIds, profile.barber_id, profile.role]);
-  const dayAppointments = useMemo(() => visibleAppointments
-    .filter(appointment => appointment.date === selectedDate)
-    .sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time)), [selectedDate, visibleAppointments]);
-  const filteredAppointments = useMemo(() => dayAppointments.filter(appointment => statusFilter === 'ALL' || appointment.statusCode === statusFilter), [dayAppointments, statusFilter]);
+  const dayAppointments = useMemo(() => filterMobileAppointments(appointments, {
+    selectedDate,
+    statusFilter: 'ALL',
+    barberFilter,
+    role: profile.role,
+    profileBarberId: profile.barber_id,
+    permittedBarberIds,
+  }), [appointments, barberFilter, permittedBarberIds, profile.barber_id, profile.role, selectedDate]);
+  const filteredAppointments = useMemo(() => statusFilter === 'ALL'
+    ? dayAppointments
+    : dayAppointments.filter(appointment => appointment.statusCode === statusFilter), [dayAppointments, statusFilter]);
   const counts = useMemo(() => ({
     PENDING: dayAppointments.filter(appointment => appointment.statusCode === 'PENDING').length,
     CONFIRMED: dayAppointments.filter(appointment => appointment.statusCode === 'CONFIRMED').length,
@@ -106,7 +109,7 @@ export function AdminMobileAppointments() {
           <Link to="/admin" className="admin-mobile-back"><ArrowLeft size={16} />Panel completo</Link>
           <span className="eyebrow">AGENDA MÓVIL</span>
           <h1 className="section-title">Turnos</h1>
-          <p className="admin-mobile-date"><CalendarDays size={16} />{dateLabel(selectedDate)}</p>
+          <p className="admin-mobile-date"><CalendarDays size={16} />{selectedDate ? dateLabel(selectedDate) : 'Todos los días'}</p>
         </div>
       </header>
 
@@ -126,7 +129,7 @@ export function AdminMobileAppointments() {
       {error && <div role="alert" className="admin-mobile-notice is-error"><XCircle size={16} />{error}</div>}
 
       <section className="admin-mobile-agenda" aria-labelledby="mobile-agenda-title">
-        <div className="admin-mobile-section-heading"><div><span className="eyebrow">AGENDA DEL DÍA</span><h2 id="mobile-agenda-title">{filteredAppointments.length} {filteredAppointments.length === 1 ? 'turno' : 'turnos'}</h2></div><span className="text-sm text-muted-foreground">{statusFilter === 'ALL' ? 'Todos los estados' : statusMeta[statusFilter].label}</span></div>
+        <div className="admin-mobile-section-heading"><div><span className="eyebrow">{selectedDate ? 'AGENDA DEL DÍA' : 'AGENDA'}</span><h2 id="mobile-agenda-title">{filteredAppointments.length} {filteredAppointments.length === 1 ? 'turno' : 'turnos'}</h2></div><span className="text-sm text-muted-foreground">{statusFilter === 'ALL' ? 'Todos los estados' : statusMeta[statusFilter].label}</span></div>
         {loading && <div className="admin-mobile-empty"><Clock3 size={28} /><p>Cargando turnos…</p></div>}
         {!loading && filteredAppointments.length === 0 && <div className="admin-mobile-empty"><CalendarDays size={28} /><h3>No hay turnos para estos filtros.</h3><p>Probá con otra fecha o estado. Los turnos cancelados permanecen en el historial.</p></div>}
         <div className="admin-mobile-list">{filteredAppointments.map(appointment => <article className="admin-mobile-appointment" key={appointment.id}>

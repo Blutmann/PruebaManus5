@@ -78,3 +78,12 @@ Crear una ruta independiente para el panel móvil, accesible únicamente a usuar
 - Alinear visualmente el calendario de Fecha y las flechas de Estado/Barbero; agregar espaciado interno adecuado en los controles sin cambiar opciones, lógica ni componentes.
 - Mantener el alcance exclusivamente en Preview; no modificar autenticación, Supabase, RLS, estados, operaciones de negocio, reservas públicas, Resend ni notificaciones; no publicar Production.
 - Validar acceso ADMIN, ausencia del enlace para perfiles no ADMIN, filtros intactos, menor ocupación visual, responsive y ausencia de scroll horizontal; ejecutar TypeScript, tests y build.
+
+
+## Corregir turnos faltantes en el panel móvil — Preview
+
+- Comparar consultas, tablas, filtros por fecha/estado/barbero, estados, zona horaria, permisos y postfiltrado entre `/admin` y `/admin/movil`, sin modificar la base sin evidencia.
+- Corregir la causa exacta para que la fecha inicial no oculte turnos legítimos: una fecha vacía representa ausencia de filtro; el selector debe seguir permitiendo acotar por fecha.
+- Mantener visibles los cuatro estados (`PENDING`, `CONFIRMED`, `CANCELLED`, `COMPLETED`), los filtros de estado y barbero y el aislamiento de BARBER por `barber_id` frente al acceso ADMIN.
+- Añadir pruebas autónomas para múltiples fechas, los cuatro estados, filtro ADMIN por barbero y aislamiento BARBER; no crear ni modificar datos de Preview.
+- Verificar TypeScript, tests, build, rutas y Preview; no publicar Production ni modificar reservas, autenticación, RLS, disponibilidad, Resend o notificaciones.

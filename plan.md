@@ -102,3 +102,8 @@ La aplicación conserva el shell global y el árbol de rutas TanStack. La nueva 
 ## Ajustes puntuales de navegación y UI del panel móvil — Preview
 
 Se agrega una pestaña `Panel móvil de turnos` en el panel ADMIN existente únicamente cuando el perfil activo tiene rol `ADMIN`; la ruta destino es `/admin/movil` y conserva la protección del layout administrativo. El panel móvil existente se mantiene sin cambios funcionales: solo se compactan moderadamente las tarjetas de estados y se ajustan los paddings de los controles nativos de fecha y selección para equilibrar calendario y flechas sin cambiar sus opciones ni su lógica. No se modifica Production, autenticación, Supabase, RLS, reservas, disponibilidad, Resend ni notificaciones.
+
+
+## Diagnóstico y corrección de turnos faltantes en `/admin/movil`
+
+La consulta `readRealAppointments()` y el guard de autenticación son compartidos por ambos paneles; la discrepancia se originaba en `AdminMobileAppointments`, que inicializaba `selectedDate` con `demoToday` y exigía `appointment.date === selectedDate`. El panel `/admin`, en cambio, abre pendientes y confirmados sin completar el filtro de fecha. La corrección extrae `filterMobileAppointments` a `src/lib/kani-mobile-appointments.ts`, usa una fecha vacía como ausencia de filtro y conserva el selector para acotar por fecha. El mismo helper mantiene el alcance por `permittedBarberIds`, `barber_id`, estado y barbero, y se cubre con pruebas unitarias para ADMIN, BARBER, fechas y los cuatro estados. No se cambia Supabase, RLS, autenticación, reservas ni datos.
