@@ -70,3 +70,30 @@ Modificar exclusivamente el footer visual. En desktop se mantienen dos columnas:
 ### Dirección visual
 
 Minimalismo editorial japonés: densidad vertical contenida, alineación serena, Zen Antique intacta, colores y fondos tomados de los tokens de tema existentes. El bloque derecho se alinea al extremo y el bloque izquierdo conserva aire suficiente para evitar compresión o desbordamiento.
+
+
+## Panel móvil de gestión de turnos — Preview
+
+### Alcance
+
+Crear una ruta independiente `/admin/movil`, protegida por el layout administrativo existente. No se modificará ni reemplazará el panel actual, `/reservar`, Supabase, RLS, autenticación, disponibilidad, notificaciones ni Resend. No se crearán tablas ni reservas nuevas.
+
+### Arquitectura
+
+- `src/routes/admin.movil.tsx`: entrada de la nueva ruta, reutilizando el guard de `/admin` y el `AdminStaffProvider` del layout padre.
+- `src/components/kani/admin-mobile-appointments.tsx`: interfaz mobile-first de una sola columna; filtros por fecha/estado y por barbero solo para ADMIN; tarjetas con detalle bajo demanda y acciones según estado.
+- `src/lib/kani-appointments.ts`: fuente única existente para lectura y transiciones de estado; no duplicar consultas ni RPCs.
+- `public/manus-routes.json`: declaración de la nueva ruta.
+- `src/styles.css`: estilos aislados y responsive del panel móvil; el panel administrativo actual conserva sus clases y comportamiento.
+
+### Seguridad y datos
+
+La lectura utiliza `readRealAppointments()`, que consulta `appointments` y sus entidades relacionadas bajo las RLS actuales. El frontend aplica además el alcance de `AuthenticatedStaff`: BARBER queda limitado a su `barber_id` y ADMIN puede seleccionar los barberos autorizados. Las acciones llaman a `updateRealAppointmentStatus()`, reutilizando la RPC existente y sus notificaciones actuales; no se agregan emails ni efectos secundarios nuevos.
+
+### Diseño
+
+Estética `editorial zen` coherente con Kani: fondo profundo/ivory según tema, Zen Antique, tarjetas verticales con horario y estado como anclas visuales, controles táctiles de 44px o mayores, acentos dorados sobrios, una sola columna y scroll vertical. Las animaciones serán discretas y no bloquearán la operación rápida desde una mano. Los datos sensibles del cliente (teléfono, email y observaciones) aparecen únicamente en el diálogo de detalle.
+
+### Estructura del proyecto
+
+La aplicación conserva el shell global y el árbol de rutas TanStack. La nueva ruta es hija de `/admin`; el componente móvil vive junto al componente administrativo existente, y la lógica de datos permanece en la capa `kani-appointments` compartida. No se introduce backend adicional ni una segunda agenda.

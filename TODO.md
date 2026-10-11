@@ -54,3 +54,18 @@ Implementar exclusivamente en Preview una composición donde Header, NavBar y Fo
 ## Simplificar y equilibrar el footer
 
 Modificar exclusivamente el diseño y la distribución del footer. En desktop mostrar en el bloque izquierdo únicamente `San Isidro Labrador 7, Martínez, Provincia de Buenos Aires` y `Lunes a sábados de 10:00 a 20:00 hs`, preferentemente cada uno en un solo renglón cuando el ancho lo permita. En el bloque derecho mantener Contacto hacia `https://kanibarber.com/estudio`, Ver ubicación hacia el enlace exacto de Google Maps existente, Instagram hacia `https://www.instagram.com/kanibarberstudio/` y `© 2026 Kani Barber Studio`; preferir los tres enlaces en una sola fila y el copyright debajo, permitiendo wrapping seguro si el ancho no alcanza. Mantener dos columnas equilibradas, tipografía, colores, enlaces funcionales e identidad visual; no agregar información nueva. En mobile adaptar las columnas sin superposición ni scroll horizontal y mantener todos los enlaces accesibles. Verificar visualmente desktop/mobile, temas claro/oscuro, enlaces, TypeScript, tests y build. No modificar Header, NavBar, reservas, panel, Supabase, Auth, disponibilidad, notificaciones ni Resend. Publicar solo este cambio si todas las validaciones son satisfactorias.
+
+
+## Panel móvil de gestión de turnos — Preview
+
+Crear una ruta independiente para el panel móvil, accesible únicamente a usuarios autenticados y autorizados, sin modificar ni reemplazar el panel administrativo actual, `/reservar`, Supabase, RLS, autenticación, disponibilidad, notificaciones ni Resend; no duplicar tablas, reservas ni lógica de negocio.
+
+- La interfaz debe ser mobile-first, de una sola columna, con desplazamiento exclusivamente vertical, sin scroll horizontal, tipografía legible, jerarquía clara y controles cómodos para usar con una mano.
+- Mostrar la agenda del día, la fecha seleccionada y un resumen de turnos por estado.
+- Permitir consultar y filtrar Pendientes, Confirmados, Cancelados y Completados; los cancelados deben permanecer visibles en el historial.
+- Cada tarjeta debe mostrar horario, cliente, servicio y duración, estado y acciones correspondientes; teléfono, email y notas solo deben aparecer al abrir el detalle.
+- Incluir selector de fecha y filtro por estado; el filtro por barbero solo debe estar disponible para ADMIN.
+- Pendiente: permitir confirmar o cancelar/rechazar respetando las transiciones existentes. Confirmado: permitir consultar, marcar como completado y cancelar según las reglas actuales. Cancelado y Completado: permitir consultar el detalle sin acciones que reactiven o alteren accidentalmente el historial.
+- Reutilizar la fuente de datos y operaciones existentes; los cambios deben reflejarse en el panel actual sin duplicar registros y sin agregar emails ni notificaciones nuevas.
+- BARBER solo puede consultar y gestionar turnos de su propio `barber_id`, incluidos los cancelados. ADMIN puede consultar y gestionar los tres barberos. La separación debe depender de la autenticación/RLS además de los filtros visuales.
+- Verificar en Preview el panel actual, autenticación, roles, cuatro estados, cancelados, acciones, fuente compartida y responsive en iPhone/Android; no crear datos destructivos o ficticios.
