@@ -8,6 +8,7 @@
     { "path": "/admin/cancelados", "title": "Kani Barber Studio - Panel de control" },
     { "path": "/admin/disponibilidad", "title": "Kani Barber Studio - Panel de control" },
     { "path": "/admin/mantenimiento", "title": "Kani Barber Studio - Panel de control" },
-    { "path": "/admin/movil", "title": "Kani Barber Studio - Agenda móvil" }
+    { "path": "/admin/movil", "title": "Kani Barber Studio - Agenda móvil" },
+    { "path": "/admin/horarios", "title": "Kani Barber Studio - Gestiona tus horarios" }
   ]
 }

@@ -16,6 +16,7 @@ import { Route as ReservarRouteImport } from './routes/reservar'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminCanceladosRouteImport } from './routes/admin.cancelados'
 import { Route as AdminDisponibilidadRouteImport } from './routes/admin.disponibilidad'
+import { Route as AdminHorariosRouteImport } from './routes/admin.horarios'
 import { Route as AdminMantenimientoRouteImport } from './routes/admin.mantenimiento'
 import { Route as AdminMovilRouteImport } from './routes/admin.movil'
 import { Route as AdminPendientesRouteImport } from './routes/admin.pendientes'
@@ -55,6 +56,11 @@ const AdminDisponibilidadRoute = AdminDisponibilidadRouteImport.update({
   path: '/disponibilidad',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminHorariosRoute = AdminHorariosRouteImport.update({
+  id: '/horarios',
+  path: '/horarios',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminMantenimientoRoute = AdminMantenimientoRouteImport.update({
   id: '/mantenimiento',
   path: '/mantenimiento',
@@ -78,6 +84,7 @@ export interface FileRoutesByFullPath {
   '/reservar': typeof ReservarRoute
   '/admin/cancelados': typeof AdminCanceladosRoute
   '/admin/disponibilidad': typeof AdminDisponibilidadRoute
+  '/admin/horarios': typeof AdminHorariosRoute
   '/admin/mantenimiento': typeof AdminMantenimientoRoute
   '/admin/movil': typeof AdminMovilRoute
   '/admin/pendientes': typeof AdminPendientesRoute
@@ -89,6 +96,7 @@ export interface FileRoutesByTo {
   '/reservar': typeof ReservarRoute
   '/admin/cancelados': typeof AdminCanceladosRoute
   '/admin/disponibilidad': typeof AdminDisponibilidadRoute
+  '/admin/horarios': typeof AdminHorariosRoute
   '/admin/mantenimiento': typeof AdminMantenimientoRoute
   '/admin/movil': typeof AdminMovilRoute
   '/admin/pendientes': typeof AdminPendientesRoute
@@ -102,6 +110,7 @@ export interface FileRoutesById {
   '/reservar': typeof ReservarRoute
   '/admin/cancelados': typeof AdminCanceladosRoute
   '/admin/disponibilidad': typeof AdminDisponibilidadRoute
+  '/admin/horarios': typeof AdminHorariosRoute
   '/admin/mantenimiento': typeof AdminMantenimientoRoute
   '/admin/movil': typeof AdminMovilRoute
   '/admin/pendientes': typeof AdminPendientesRoute
@@ -116,6 +125,7 @@ export interface FileRouteTypes {
     | '/reservar'
     | '/admin/cancelados'
     | '/admin/disponibilidad'
+    | '/admin/horarios'
     | '/admin/mantenimiento'
     | '/admin/movil'
     | '/admin/pendientes'
@@ -127,6 +137,7 @@ export interface FileRouteTypes {
     | '/reservar'
     | '/admin/cancelados'
     | '/admin/disponibilidad'
+    | '/admin/horarios'
     | '/admin/mantenimiento'
     | '/admin/movil'
     | '/admin/pendientes'
@@ -139,6 +150,7 @@ export interface FileRouteTypes {
     | '/reservar'
     | '/admin/cancelados'
     | '/admin/disponibilidad'
+    | '/admin/horarios'
     | '/admin/mantenimiento'
     | '/admin/movil'
     | '/admin/pendientes'
@@ -203,6 +215,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDisponibilidadRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/horarios': {
+      id: '/admin/horarios'
+      path: '/horarios'
+      fullPath: '/admin/horarios'
+      preLoaderRoute: typeof AdminHorariosRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/mantenimiento': {
       id: '/admin/mantenimiento'
       path: '/mantenimiento'
@@ -230,6 +249,7 @@ declare module '@tanstack/react-router' {
 interface AdminRouteChildren {
   AdminCanceladosRoute: typeof AdminCanceladosRoute
   AdminDisponibilidadRoute: typeof AdminDisponibilidadRoute
+  AdminHorariosRoute: typeof AdminHorariosRoute
   AdminMantenimientoRoute: typeof AdminMantenimientoRoute
   AdminMovilRoute: typeof AdminMovilRoute
   AdminPendientesRoute: typeof AdminPendientesRoute
@@ -239,6 +259,7 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminCanceladosRoute: AdminCanceladosRoute,
   AdminDisponibilidadRoute: AdminDisponibilidadRoute,
+  AdminHorariosRoute: AdminHorariosRoute,
   AdminMantenimientoRoute: AdminMantenimientoRoute,
   AdminMovilRoute: AdminMovilRoute,
   AdminPendientesRoute: AdminPendientesRoute,

@@ -112,3 +112,36 @@ La consulta `readRealAppointments()` y el guard de autenticación son compartido
 ## Selector rápido de fechas para `/admin/movil` — Preview
 
 La consulta de turnos seguirá siendo `readRealAppointments()` y continuará cargando los registros permitidos por la sesión; el filtrado por fecha ocurrirá en una única capa frontend reutilizable, sin una segunda fuente de verdad ni cambios de base de datos. `src/lib/kani-mobile-appointments.ts` será responsable de los modos `ALL`, `TODAY`, `TOMORROW`, `NEXT_10_DAYS`, `THIS_WEEK` y `SPECIFIC`, incluidos rangos inclusivos y aritmética de fechas calendario. La fecha de negocio se calculará con `America/Argentina/Buenos_Aires` mediante `Intl`, y se refrescará mientras el panel permanece abierto para que los rangos relativos avancen automáticamente. El selector rápido y el calendario actualizarán el mismo estado de filtro: al elegir una fecha puntual se activa `SPECIFIC`; al elegir un modo rápido se descarta la fecha puntual activa. Estado, barbero y alcance por rol se aplican después del rango, preservando ADMIN/BARBER y los cuatro estados.
+
+## Gestiona tus horarios — diagnóstico e implementación en Preview
+
+### Diagnóstico técnico previo
+
+- La fuente única de disponibilidad es `public.barber_availability_slots`, con `barber_id`, `slot_date`, `start_time`, `end_time`, `status` e `internal_note`. Cada registro representa actualmente un intervalo de una hora; la unicidad efectiva es `(barber_id, slot_date, start_time)`.
+- La base de Preview `iockpxtkflyjfagkvgnr` tiene 570 slots, tres barberos y las 24 migraciones del repositorio aplicadas. La tabla mantiene RLS activa.
+- El flujo público consulta `available_barber_slots`, que expone únicamente columnas públicas y excluye horarios ocupados por reservas mediante `is_public_slot_booked`; `internal_note` no forma parte de la vista pública.
+- `request_appointment` valida el intervalo elegido contra una disponibilidad `AVAILABLE`, calcula la duración del servicio, bloquea por barbero/fecha y rechaza solapamientos con reservas no canceladas. Los horarios manuales con minutos arbitrarios son compatibles siempre que sigan siendo intervalos de una hora y respeten 10:00–20:00.
+- El frontend antiguo restringe innecesariamente los minutos a múltiplos de cinco; se eliminará solo esa restricción. No se relajará la regla de una hora ni el rango operativo.
+- Las RLS actuales aíslan la lectura de un BARBER a `current_staff_barber_id()` y permiten a ADMIN consultar todos los slots. Sin embargo, las políticas directas de INSERT/UPDATE/DELETE dejan mutar más campos de los necesarios o eliminar slots mediante una llamada directa. Para cumplir la protección de operaciones, la implementación reemplazará esas mutaciones directas por RPCs `SECURITY DEFINER` con `search_path` explícito, validación de rol, lock por barbero/fecha, chequeo de duplicados/solapamientos/reservas y mutación limitada a estado/notas; se revocarán los privilegios directos de escritura en Preview. La lectura y las políticas SELECT permanecerán intactas.
+- No se eliminarán reservas, disponibilidad existente, clientes, configuraciones, usuarios, notificaciones ni secuencias. No se modificará Production.
+
+### Alcance de implementación
+
+- `src/routes/admin.horarios.tsx`: nueva ruta protegida `/admin/horarios`, independiente del panel anterior `/admin/disponibilidad`.
+- `src/components/kani/admin-schedule-manager.tsx`: pantalla mobile-first de una columna, selector de período compartido con el helper existente, filtro de barbero para ADMIN, alcance propio para BARBER, tarjetas cronológicas, estado persistente, comentarios internos CRUD y diálogo compacto para agregar un slot.
+- `src/lib/kani-availability.ts`: reutilizar lectura de slots por rango y RPCs seguras de actualización/creación; aceptar cualquier minuto válido sin alterar duración, horario operativo ni reglas públicas.
+- `src/components/kani/site-header.tsx`: menú autenticado con Solicitar turno, Contacto, Panel móvil y Gestiona tus horarios; menú sin sesión con Solicitar turno, Contacto y Administración.
+- `src/integrations/supabase/types.ts`: tipos de las RPCs nuevas.
+- `src/styles.css`: estilos aislados de la pantalla nueva y correcciones del filtro Período/Fecha del panel móvil para igualar anchos y evitar overflow horizontal.
+- `public/manus-routes.json`: declarar `/admin/horarios`.
+- `supabase/migrations/20261011001300_kani_schedule_management_secure_mutations.sql`: RPCs y revocación de mutaciones directas exclusivamente en Preview; no se aplicará en Production.
+- `supabase/migrations/20261011001301_kani_schedule_update_lock_order.sql`: corrección de concurrencia para verificar alcance antes del lock de fila y mantener el lock por agenda/fecha.
+- `supabase/migrations/20261011001302_kani_schedule_table_privileges.sql`: deja únicamente `SELECT` directo para `anon` y `authenticated` sobre la tabla de disponibilidad.
+
+### Dirección visual
+
+La sección seguirá la estética editorial zen del panel móvil: superficies sobrias, acentos dorados, estados diferenciados por color y texto, tipografía Zen Antique, controles táctiles amplios y lectura vertical rápida. Las fechas se agruparán por día; cuando ADMIN consulte todos, cada tarjeta identificará inequívocamente al barbero. Los comentarios se rotularán como internos y nunca aparecerán en el flujo público.
+
+### Estructura y permisos
+
+La ruta será hija de `/admin`, por lo que reutilizará `AdminLayout` y `AdminStaffProvider`. `BARBER` solo podrá seleccionar su perfil real y la base rechazará cualquier `barber_id` ajeno. `ADMIN` podrá seleccionar un barbero o todos y al agregar deberá elegir explícitamente la agenda. La nueva UI no será la única barrera: las RPCs y RLS de Preview serán la segunda capa.

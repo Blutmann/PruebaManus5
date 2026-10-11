@@ -155,16 +155,16 @@ export function AdminMobileAppointments() {
       <section className="admin-mobile-filters" aria-label="Filtros de agenda">
         <div className="admin-mobile-date-filter">
           <label htmlFor="mobile-date-preset">Período</label>
-          <div className="admin-mobile-date-controls">
-            <select id="mobile-date-preset" value={datePreset} onChange={event => selectDatePreset(event.target.value as MobileDatePreset)} aria-label="Filtrar por período">
-              {datePresets.map(preset => <option key={preset} value={preset}>{mobileDatePresetLabels[preset]}</option>)}
-            </select>
+            <div className="admin-mobile-date-controls">
+              <select id="mobile-date-preset" value={datePreset} onChange={event => selectDatePreset(event.target.value as MobileDatePreset)} aria-label="Filtrar por período">
+                {datePresets.map(preset => <option key={preset} value={preset}>{mobileDatePresetLabels[preset]}</option>)}
+              </select>
             <input id="mobile-date-filter" type="date" value={specificDate} onChange={event => selectSpecificDate(event.target.value)} aria-label="Elegir fecha específica" />
           </div>
         </div>
         <div className={`admin-mobile-secondary-filters ${profile.role === 'ADMIN' ? 'has-barber' : 'single-filter'}`}>
           <div className="admin-mobile-filter-field"><label htmlFor="mobile-status-filter">Estado</label><select id="mobile-status-filter" value={statusFilter} onChange={event => setStatusFilter(event.target.value as StatusFilter)}>{statusFilters.map(filter => <option key={filter.value} value={filter.value}>{filter.label}</option>)}</select></div>
-          {profile.role === 'ADMIN' && <div className="admin-mobile-filter-field"><label htmlFor="mobile-barber-filter">Barbero</label><select id="mobile-barber-filter" value={barberFilter} onChange={event => setBarberFilter(event.target.value)}><option value="Todos">Todos los barberos</option>{permittedBarbers.map(barber => <option key={barber} value={barber}>{barber}</option>)}</select></div>}
+          {profile.role === 'ADMIN' && <div className="admin-mobile-filter-field"><label htmlFor="mobile-barber-filter">Barbero</label><select id="mobile-barber-filter" value={barberFilter} onChange={event => setBarberFilter(event.target.value)}><option value="Todos">Todos</option>{permittedBarbers.map(barber => <option key={barber} value={barber}>{barber}</option>)}</select></div>}
         </div>
       </section>
 

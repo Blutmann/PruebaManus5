@@ -1,6 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables } from '@/integrations/supabase/types';
-import { bookingEndDate, isBookingDate, minutes, type Barber } from '@/lib/kani-model';
+import { bookingEndDateFor, isBookingDate, minutes, type Barber } from '@/lib/kani-model';
+import { businessDateToday } from '@/lib/kani-mobile-appointments';
 
 export type AvailabilitySlot = Tables<'barber_availability_slots'>;
 export type PublicAvailabilitySlot = Omit<Tables<'available_barber_slots'>, 'status'> & {
@@ -58,15 +59,26 @@ export function eligibleBarbersForServiceSlot(slots: PublicAvailabilitySlot[], d
 }
 
 export async function readAvailabilitySlots(barberId: string, slotDate: string) {
-  const { data, error } = await supabase
+  return readAvailabilitySlotsForRange(barberId, { start: slotDate, end: slotDate });
+}
+
+export async function readAvailabilitySlotsForRange(
+  barberId: string,
+  range: { start?: string; end?: string } | null = null,
+) {
+  let query = supabase
     .from('barber_availability_slots')
     .select(slotFields)
-    .eq('barber_id', barberId)
-    .eq('slot_date', slotDate)
+    .eq('barber_id', barberId);
+
+  if (range?.start) query = query.gte('slot_date', range.start);
+  if (range?.end) query = query.lte('slot_date', range.end);
+
+  const { data: rangedData, error: rangedError } = await query
     .order('start_time', { ascending: true });
 
-  if (error) throw error;
-  return data as AvailabilitySlot[];
+  if (rangedError) throw rangedError;
+  return rangedData as AvailabilitySlot[];
 }
 
 export async function updateAvailabilitySlot({
@@ -83,20 +95,16 @@ export async function updateAvailabilitySlot({
   const { data: { user }, error: userError } = await supabase.auth.getUser();
   if (userError || !user) throw userError ?? new Error('Sesión no disponible');
 
-  const { data, error } = await supabase
-    .from('barber_availability_slots')
-    .update({
-      status,
-      internal_note: internalNote?.trim() || null,
-      updated_by: user.id,
-    })
-    .eq('id', id)
-    .eq('barber_id', barberId)
-    .select(slotFields)
-    .single();
+  const { data, error } = await supabase.rpc('update_availability_slot', {
+    p_slot_id: id,
+    p_status: status,
+    p_internal_note: internalNote?.trim() || null,
+  });
 
   if (error) throw error;
-  return data as AvailabilitySlot;
+  const updated = data?.[0];
+  if (!updated || updated.barber_id !== barberId) throw new Error('El slot no pertenece al barbero autorizado.');
+  return updated as AvailabilitySlot;
 }
 
 export async function createAvailabilitySlots({
@@ -114,29 +122,24 @@ export async function createAvailabilitySlots({
   const [hoursText, minutesText] = startTime.split(':');
   const hours = Number(hoursText);
   const minutesValue = Number(minutesText);
-  if (!Number.isInteger(hours) || !Number.isInteger(minutesValue) || hours < 10 || hours >= 20 || minutesValue % 5 !== 0) {
-    throw new Error('El horario debe estar entre las 10:00 y las 19:55, en intervalos de 5 minutos.');
+  if (!Number.isInteger(hours) || !Number.isInteger(minutesValue) || hours < 10 || hours >= 20 || minutesValue < 0 || minutesValue > 59) {
+    throw new Error('El horario debe estar entre las 10:00 y las 19:00, con cualquier minuto válido.');
   }
   const endMinutes = hours * 60 + minutesValue + 60;
   if (endMinutes > 20 * 60) throw new Error('El horario termina fuera del horario operativo.');
 
-  const validDates = dates.filter(slotDate => isBookingDate(slotDate));
+  const businessToday = businessDateToday();
+  const bookingEndDate = bookingEndDateFor(businessToday);
+  const validDates = dates.filter(slotDate => isBookingDate(slotDate, businessToday, bookingEndDate));
   if (validDates.length !== dates.filter(Boolean).length) throw new Error(`La fecha debe estar entre ${new Date(`${bookingEndDate}T12:00:00`).toLocaleDateString('es-AR')} y dentro de los días de atención.`);
 
-  const rows = validDates.map(slotDate => ({
-    barber_id: barberId,
-    slot_date: slotDate,
-    start_time: `${String(hours).padStart(2, '0')}:${String(minutesValue).padStart(2, '0')}:00`,
-    end_time: `${String(Math.floor(endMinutes / 60)).padStart(2, '0')}:${String(endMinutes % 60).padStart(2, '0')}:00`,
-    status: 'AVAILABLE' as const,
-    updated_by: user.id,
-  }));
-  if (rows.length === 0) throw new Error('Elegí al menos una fecha.');
+  if (validDates.length === 0) throw new Error('Elegí al menos una fecha.');
 
-  const { data, error } = await supabase
-    .from('barber_availability_slots')
-    .upsert(rows, { onConflict: 'barber_id,slot_date,start_time', ignoreDuplicates: true })
-    .select(slotFields);
+  const { data, error } = await supabase.rpc('create_availability_slots', {
+    p_barber_id: barberId,
+    p_slot_dates: validDates,
+    p_start_time: `${String(hours).padStart(2, '0')}:${String(minutesValue).padStart(2, '0')}:00`,
+  });
 
   if (error) throw error;
   return (data ?? []) as AvailabilitySlot[];

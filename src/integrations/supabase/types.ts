@@ -557,6 +557,44 @@ export type Database = {
           error_code: string | null
         }[]
       }
+      create_availability_slots: {
+        Args: {
+          p_barber_id: string
+          p_slot_dates: string[]
+          p_start_time: string
+        }
+        Returns: {
+          id: string
+          barber_id: string
+          slot_date: string
+          start_time: string
+          end_time: string
+          status: "AVAILABLE" | "UNAVAILABLE"
+          internal_note: string | null
+          created_at: string
+          updated_at: string
+          updated_by: string | null
+        }[]
+      }
+      update_availability_slot: {
+        Args: {
+          p_slot_id: string
+          p_status: "AVAILABLE" | "UNAVAILABLE"
+          p_internal_note: string | null
+        }
+        Returns: {
+          id: string
+          barber_id: string
+          slot_date: string
+          start_time: string
+          end_time: string
+          status: "AVAILABLE" | "UNAVAILABLE"
+          internal_note: string | null
+          created_at: string
+          updated_at: string
+          updated_by: string | null
+        }[]
+      }
     }
     Enums: {
       appointment_status: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED"
