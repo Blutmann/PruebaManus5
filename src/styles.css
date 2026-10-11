@@ -266,21 +266,23 @@ html[data-theme="light"] {
 .confirmation-secondary { min-height: 44px; color: var(--muted-foreground) !important; }
 .confirmation-secondary:hover { color: var(--foreground) !important; border-color: var(--gold) !important; background: transparent !important; }
 .back-link { display: inline-flex; gap: 9px; align-items: center; font-size: 12px; color: var(--muted-foreground); }
-.booking-page { max-width: 1020px; padding-top: 12px; padding-bottom: 110px; min-height: 780px; }
-.booking-progress { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); margin-top: 12px; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
+.booking-page { max-width: 860px; padding-top: 12px; padding-bottom: 110px; min-height: 780px; }
+.booking-progress { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); margin-top: 12px; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
 .booking-progress > button { display: flex; align-items: center; gap: 10px; height: auto; justify-content: flex-start; padding: 0 0 19px; border-radius: 0; color: var(--muted-foreground); border-bottom: 2px solid transparent; }
 .booking-progress > button > span { width: 24px; height: 24px; border: 1px solid var(--border); border-radius: 50%; font-size: 9px; display: grid; place-items: center; flex-shrink: 0; }
 .booking-progress small { font-size: 11px; }
 .booking-progress .current { color: var(--foreground); border-bottom-color: var(--gold); }
 .booking-progress .current > span { border-color: var(--gold); color: var(--gold); }
 .booking-progress .complete > span { color: var(--gold); }
-.booking-layout { display: grid; grid-template-columns: minmax(0,1fr) 300px; gap: 72px; align-items: start; }
+.booking-layout { display: block; max-width: 860px; margin-inline: auto; }
 .section-title { font-size: 29px; line-height: 1.2; font-weight: 500; margin-top: 4px; }
 .section-title, .services-heading h2, .booking-aside > h2, .calendar-panel h2, .barber-choice-inline h2, .review-line h2, .confirmation h1, .studio-info-card h2 { font-family: var(--font-display); }
 .booking-page .section-title { font-family: var(--font-display); letter-spacing: .01em; font-size: 26px; }
 .booking-page .field-label { font-family: var(--font-sans); }
 .admin-page, .admin-page h1, .admin-page h2, .admin-page h3, .admin-page button, .admin-page input, .admin-page select { font-family: var(--font-sans); }
 .booking-page .section-title { margin-bottom: 12px; }
+.booking-deposit-notice { display: flex; align-items: flex-start; gap: 9px; max-width: 720px; margin: 0 auto 22px; padding: 10px 12px; border: 1px solid color-mix(in oklch, var(--gold) 24%, var(--border)); border-radius: 4px; background: color-mix(in oklch, var(--surface) 88%, transparent); color: var(--muted-foreground); font-size: 11px; line-height: 1.45; }
+.booking-deposit-notice svg { flex: 0 0 auto; margin-top: 1px; color: var(--gold); }
 .booking-aside { margin-top: 9px; padding: 27px 0 27px 28px; border-left: 1px solid var(--border); }
 .booking-defer-option { width: 100%; height: 104px; min-height: 104px; display: flex; align-items: center; gap: 18px; padding: 20px 22px; background: var(--surface); box-shadow: 0 10px 26px rgb(0 0 0 / 0.14); text-align: left; white-space: normal; }
 .barber-defer-mark { width: 36px; height: 36px; display: grid; place-items: center; flex: 0 0 36px; border: 1px dashed color-mix(in oklch, var(--gold) 55%, var(--border)); border-radius: 50%; color: var(--gold); font-family: var(--font-sans); font-size: 20px; }
@@ -309,6 +311,7 @@ html[data-theme="light"] {
 .summary-list > div { display: flex; justify-content: space-between; gap: 20px; }
 .summary-list dt { color: var(--muted-foreground); display: flex; gap: 9px; align-items: center; }
 .summary-list dd { text-align: right; }
+.summary-payment-note { margin-top: 12px; color: var(--success); font-size: 12px; }
 .summary-contact { min-width: 0; padding-top: 1px; }
 .summary-contact h2 { max-width: 100%; overflow-wrap: anywhere; font-size: 17px; line-height: 1.25; font-weight: 600; }
 .summary-contact p { margin-top: 3px; max-width: 100%; overflow-wrap: anywhere; font-size: 11px; line-height: 1.35; }
@@ -327,6 +330,8 @@ html[data-theme="light"] {
 .confirmation-mark { width: 62px; height: 62px; border: 1px solid var(--gold); color: var(--gold); display: grid; place-items: center; border-radius: 50%; margin: 0 auto 20px; }
 .confirmation h1 { font-size: 32px; margin-block: 11px 14px; }
 .confirmation p { line-height: 1.8; }
+.confirmation-deposit-title { margin-top: 24px; color: var(--foreground); font-weight: 600; }
+.confirmation-deposit-copy, .confirmation-pending-copy { max-width: 500px; margin: 8px auto 0; }
 .confirmation-details { text-align: left; margin-block: 24px 18px; border: 1px solid color-mix(in oklch, var(--gold) 15%, var(--border)); padding: 20px; border-radius: 4px; background: var(--surface); box-shadow: 0 12px 30px rgb(0 0 0 / 0.16); }
 .confirmation-details .summary-list { margin-top: 18px; gap: 14px; }
 .button-primary, .action-positive { border: 1px solid var(--button-primary-border) !important; background: var(--button-primary-bg) !important; color: var(--button-primary-text) !important; box-shadow: 0 1px 2px rgb(0 0 0 / 18%); }
