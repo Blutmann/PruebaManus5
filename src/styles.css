@@ -895,6 +895,12 @@ html[data-theme="light"] input[type=date], html[data-theme="light"] input[type=t
   background: var(--surface);
 }
 
+.admin-mobile-date-filter { display: grid; grid-column: 1 / -1; gap: .4rem; min-width: 0; }
+.admin-mobile-date-controls { display: grid; grid-template-columns: minmax(0, 1fr) minmax(8rem, .32fr); gap: .55rem; min-width: 0; }
+.admin-mobile-secondary-filters { display: grid; grid-column: 1 / -1; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem; min-width: 0; }
+.admin-mobile-secondary-filters.single-filter { grid-template-columns: 1fr; }
+.admin-mobile-filter-field { display: grid; gap: .4rem; min-width: 0; }
+
 .admin-mobile-filters label { color: var(--muted-foreground); font-size: .78rem; }
 .admin-mobile-filters input,
 .admin-mobile-filters select {
