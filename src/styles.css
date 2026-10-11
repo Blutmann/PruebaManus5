@@ -359,7 +359,7 @@ html[data-theme="light"] {
 .exit-dialog { max-width: 420px; }
 .exit-dialog-actions { gap: 8px; }
 .booking-time-slot.time-unavailable { border-color: color-mix(in oklch, var(--primary) 55%, transparent); color: color-mix(in oklch, var(--primary) 75%, var(--muted-foreground)); background: color-mix(in oklch, var(--primary) 8%, transparent); opacity: 1; text-decoration: line-through; cursor: not-allowed; }
-.notification-trigger { position: relative; color: var(--muted-foreground); }
+.notification-trigger { position: relative; width: 2.75rem; height: 2.75rem; min-width: 2.75rem; color: var(--muted-foreground); }
 .notification-trigger:hover { color: var(--foreground); }
 .notification-count { position: absolute; top: -7px; right: -7px; min-width: 19px; height: 19px; padding-inline: 4px; display: grid; place-items: center; border: 2px solid var(--background); border-radius: 999px; background: var(--primary); color: var(--primary-foreground); font-size: 9px; line-height: 1; font-weight: 700; }
 .notification-popover { width: min(400px, calc(100vw - 24px)); max-width: calc(100vw - 24px); max-height: min(520px, calc(100vh - 120px)); overflow-y: auto; z-index: 50; }
@@ -950,13 +950,13 @@ html[data-theme="light"] input[type=date], html[data-theme="light"] input[type=t
 
 /* Final visual system: one source of truth for compact admin controls, capsules and focus states. */
 .admin-mobile-filters {
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: stretch;
 }
 
 .admin-mobile-filter-field { min-width: 0; }
-.admin-mobile-filter-period { grid-column: span 2; }
-.admin-mobile-period-control { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(7.25rem, .7fr); gap: .55rem; min-width: 0; }
+.admin-mobile-filter-period { grid-column: span 1; }
+.admin-mobile-period-control { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .55rem; min-width: 0; }
 .admin-mobile-filters input,
 .admin-mobile-filters select,
 .admin-mobile-filter-readonly { box-sizing: border-box; max-width: 100%; min-width: 0; }
@@ -1010,7 +1010,7 @@ textarea:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
   .admin-mobile-summary-card span { font-size: .56rem; }
   .admin-mobile-summary-card strong { font-size: 1.08rem; }
   .admin-mobile-filters { gap: .5rem; padding: .7rem; }
-  .admin-mobile-period-control { grid-template-columns: minmax(0, 1fr) 6.25rem; gap: .35rem; }
+  .admin-mobile-period-control { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .35rem; }
   .admin-mobile-filters select,
   .admin-mobile-filters input,
   .admin-mobile-filter-readonly { font-size: .78rem; padding-inline: .5rem; }

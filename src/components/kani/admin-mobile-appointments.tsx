@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ArrowUp, CalendarDays, Check, CircleDot, Clock3, RefreshCw, X, XCircle } from 'lucide-react';
+import { ArrowUp, Check, CircleDot, Clock3, RefreshCw, X, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle } from '@/components/ui/dialog';
 import { dateLabel, money, serviceFor } from '@/lib/kani-model';
@@ -7,7 +7,6 @@ import { useAdminStaff } from '@/lib/kani-admin-context';
 import { appointmentErrorMessage, readRealAppointments, retryRealAppointmentNotification, updateRealAppointmentStatus, type RealAppointment, type RealAppointmentStatus } from '@/lib/kani-appointments';
 import { addCalendarDays, businessDateToday, dateRangeForMobilePreset, filterMobileAppointments, mobileDatePresetLabels, type MobileDatePreset, type MobileStatusFilter } from '@/lib/kani-mobile-appointments';
 import { permittedBarberNames } from '@/lib/kani-role-scope';
-import { AdminActivityPopover } from '@/components/kani/admin-activity-popover';
 
 type StatusFilter = MobileStatusFilter;
 
@@ -106,7 +105,10 @@ export function AdminMobileAppointments() {
     CANCELLED: dayAppointments.filter(appointment => appointment.statusCode === 'CANCELLED').length,
     COMPLETED: dayAppointments.filter(appointment => appointment.statusCode === 'COMPLETED').length,
   }), [dayAppointments]);
-  const activeDateLabel = datePreset === 'SPECIFIC' && specificDate ? dateLabel(specificDate) : mobileDatePresetLabels[datePreset];
+  const countContext = datePreset === 'SPECIFIC' && specificDate
+    ? `el ${specificDate.split('-').reverse().join('/')}`
+    : datePreset === 'ALL' ? 'en todos los días' : mobileDatePresetLabels[datePreset].toLowerCase();
+  const appointmentCountLabel = `${filteredAppointments.length} ${filteredAppointments.length === 1 ? 'turno' : 'turnos'} ${countContext}`;
 
   function selectDatePreset(next: MobileDatePreset) {
     if (next === 'TODAY') setSpecificDate(businessToday);
@@ -161,9 +163,7 @@ export function AdminMobileAppointments() {
         <div>
           <span className="eyebrow">TURNOS</span>
           <h1 className="section-title">Turnos</h1>
-          <p className="admin-mobile-date"><CalendarDays size={16} />{activeDateLabel}</p>
         </div>
-        <AdminActivityPopover />
       </header>
 
       <section className="admin-mobile-summary" aria-label="Resumen de turnos">
@@ -188,9 +188,9 @@ export function AdminMobileAppointments() {
       {error && <div role="alert" className="admin-mobile-notice is-error"><XCircle size={16} />{error}</div>}
 
       <section className="admin-mobile-agenda" aria-labelledby="mobile-agenda-title">
-        <div className="admin-mobile-section-heading"><div><span className="eyebrow">AGENDA FILTRADA</span><h2 id="mobile-agenda-title">{filteredAppointments.length} {filteredAppointments.length === 1 ? 'turno' : 'turnos'}</h2></div><span className="text-sm text-muted-foreground">{statusFilter === 'ALL' ? 'Todos los estados' : statusMeta[statusFilter].label}</span></div>
+        <div className="admin-mobile-section-heading"><div><h2 id="mobile-agenda-title">{appointmentCountLabel}</h2></div><span className="text-sm text-muted-foreground">{statusFilter === 'ALL' ? 'Todos los estados' : statusMeta[statusFilter].label}</span></div>
         {loading && <div className="admin-mobile-empty"><Clock3 size={28} /><p>Cargando turnos…</p></div>}
-        {!loading && filteredAppointments.length === 0 && <div className="admin-mobile-empty"><CalendarDays size={28} /><h3>No hay turnos para estos filtros.</h3><p>Probá con otro período, fecha o estado. Los turnos cancelados permanecen en el historial.</p></div>}
+        {!loading && filteredAppointments.length === 0 && <div className="admin-mobile-empty"><Clock3 size={28} /><h3>No hay turnos para estos filtros.</h3><p>Probá con otro período, fecha o estado. Los turnos cancelados permanecen en el historial.</p></div>}
         <div className="admin-mobile-list">{filteredAppointments.map(appointment => {
           const fallbackService = serviceFor(appointment.service);
           const serviceName = appointment.serviceName ?? fallbackService.name;

@@ -3,7 +3,6 @@ import { Bell, CalendarDays, Mail, MailOpen, SlidersHorizontal } from 'lucide-re
 import { Link } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { useAdminStaff } from '@/lib/kani-admin-context';
 import { markAllAdminActivityNotificationsRead, readAdminActivityNotifications, setAdminActivityNotificationRead, type AdminActivityEvent } from '@/lib/kani-admin-activity';
 
 type NotificationHref = '/admin' | '/admin/horarios';
@@ -42,22 +41,19 @@ function toAdminNotification(event: AdminActivityEvent): AdminNotification {
   };
 }
 
-export function AdminActivityPopover() {
-  const { profile } = useAdminStaff();
+export function AdminActivityPopover({ role = 'ADMIN' }: { role?: 'ADMIN' | 'BARBER' }) {
   const [notifications, setNotifications] = useState<AdminNotification[]>([]);
   const [error, setError] = useState('');
   const unreadNotifications = notifications.filter(notification => !notification.readAt);
 
   useEffect(() => {
-    if (profile.role !== 'ADMIN') return;
+    if (role !== 'ADMIN') return;
     let cancelled = false;
     void readAdminActivityNotifications()
       .then(events => { if (!cancelled) setNotifications(events.map(toAdminNotification)); })
       .catch(cause => { if (!cancelled) setError(cause instanceof Error ? cause.message : 'No se pudieron cargar las novedades.'); });
     return () => { cancelled = true; };
-  }, [profile.role]);
-
-  if (profile.role !== 'ADMIN') return null;
+  }, [role]);
 
   async function toggleNotificationRead(notification: AdminNotification) {
     const readAt = notification.readAt ? null : new Date().toISOString();
