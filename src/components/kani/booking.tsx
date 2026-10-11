@@ -2,8 +2,9 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, Check, Clock3, Scissors, CalendarDays, UserRound, ChevronLeft, ChevronRight, CircleCheck, CircleAlert, MapPin, Instagram } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { services, barbers, serviceFor, money, demoToday, bookingEndDateFor, parseDate, isoDate, dateLabel, isBookingDate, minutes, type ServiceId, type Barber, type Appointment } from '@/lib/kani-model';
-import { availableTimesForServiceDate, eligibleBarbersForServiceSlot, readPublicAvailabilitySlots, slotCanStillBeBooked, type PublicAvailabilitySlot } from '@/lib/kani-availability';
+import { services, barbers, serviceFor, money, bookingEndDateFor, parseDate, isoDate, dateLabel, isBookingDate, minutes, type ServiceId, type Barber, type Appointment } from '@/lib/kani-model';
+import { availableTimesForServiceDate, eligibleBarbersForServiceSlot, readConfiguredServices, readPublicAvailabilitySlots, slotCanStillBeBooked, type ConfiguredService, type PublicAvailabilitySlot } from '@/lib/kani-availability';
+import { businessDateToday } from '@/lib/kani-mobile-appointments';
 import { appointmentErrorMessage, createRealAppointment } from '@/lib/kani-appointments';
 import { formatPhoneInput, normalizeCountrySearch, normalizePhone, otherPhoneCountries, phoneCountries, phonePlaceholder, primaryPhoneCountries, type PhoneCountry, type PhoneCountryOption } from '@/lib/kani-phone';
 import { MobileMenuAction } from '@/components/kani/site-header';
@@ -40,7 +41,8 @@ export function Booking() {
   const [barberDeferred, setBarberDeferred] = useState(false);
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
-  const [month, setMonth] = useState(parseDate(demoToday));
+  const [businessToday, setBusinessToday] = useState(() => businessDateToday());
+  const [month, setMonth] = useState(() => parseDate(businessDateToday()));
   const [contact, setContact] = useState({ name: '', email: '', phone: '', notes: '' });
   const [touched, setTouched] = useState<Record<ContactField, boolean>>({ name: false, phone: false, email: false, notes: false });
   const [phoneCountry, setPhoneCountry] = useState<PhoneCountry>('AR');
@@ -52,6 +54,7 @@ export function Booking() {
   const [publicSlots, setPublicSlots] = useState<PublicAvailabilitySlot[]>([]);
   const [availabilityLoading, setAvailabilityLoading] = useState(false);
   const [availabilityError, setAvailabilityError] = useState('');
+  const [configuredServices, setConfiguredServices] = useState<ConfiguredService[]>(() => services.map(service => ({ ...service })));
   const [submitting, setSubmitting] = useState(false);
   const [clock, setClock] = useState(() => new Date());
   const formRef = useRef<HTMLFormElement>(null);
@@ -74,7 +77,24 @@ export function Booking() {
     document.addEventListener('pointerdown', closeOnOutsidePointer);
     return () => document.removeEventListener('pointerdown', closeOnOutsidePointer);
   }, [phoneCountryOpen]);
-  const selected = service ? serviceFor(service) : null;
+  useEffect(() => {
+    let cancelled = false;
+    void readConfiguredServices().then(next => {
+      if (!cancelled && next.length) setConfiguredServices(next);
+    }).catch(() => {
+      // Conservamos la configuración inicial mientras la consulta remota se recupera.
+    });
+    return () => { cancelled = true; };
+  }, []);
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      const next = businessDateToday();
+      setBusinessToday(current => current === next ? current : next);
+      setClock(new Date());
+    }, 30_000);
+    return () => window.clearInterval(timer);
+  }, []);
+  const selected = service ? configuredServices.find(item => item.id === service) ?? serviceFor(service) : null;
   const filteredPhoneCountries = useMemo(() => {
     const query = normalizeCountrySearch(phoneCountryQuery.trim());
     const filter = (countries: PhoneCountryOption[]) => query
@@ -83,12 +103,12 @@ export function Booking() {
     return { primary: filter(primaryPhoneCountries), other: filter(otherPhoneCountries) };
   }, [phoneCountryQuery]);
   const downPaymentArs = 10000;
-  const todayValue = isoDate(clock);
+  const todayValue = businessToday;
   const bookingEndValue = bookingEndDateFor(todayValue);
   const availabilityBarber = barberDeferred ? null : barber;
   const visibleSlots = useMemo(() => {
     if (!service || !date || !availabilityBarber && !barberDeferred) return [];
-    const duration = serviceFor(service).duration;
+    const duration = selected?.duration ?? serviceFor(service).duration;
     const grouped = new Map<string, PublicAvailabilitySlot[]>();
     publicSlots
       .filter(slot => slot.slot_date === date)
@@ -103,17 +123,13 @@ export function Booking() {
       time,
       status: groupedSlots.some(slot => slot.status === 'AVAILABLE') ? 'AVAILABLE' as const : 'UNAVAILABLE' as const,
     }));
-  }, [availabilityBarber, barberDeferred, clock, date, publicSlots, service]);
+  }, [availabilityBarber, barberDeferred, clock, date, publicSlots, selected, service]);
   const slots = visibleSlots.filter(slot => slot.status === 'AVAILABLE').map(slot => slot.time);
   const availableDates = useMemo(() => {
     if (!service || !availabilityBarber && !barberDeferred) return [];
-    const duration = serviceFor(service).duration;
+    const duration = selected?.duration ?? serviceFor(service).duration;
     return [...new Set(publicSlots.filter(slot => availableTimesForServiceDate(publicSlots, slot.slot_date, duration, clock, availabilityBarber).length > 0).map(slot => slot.slot_date))].sort();
-  }, [availabilityBarber, barberDeferred, clock, publicSlots, service]);
-  useEffect(() => {
-    const timer = window.setInterval(() => setClock(new Date()), 30_000);
-    return () => window.clearInterval(timer);
-  }, []);
+  }, [availabilityBarber, barberDeferred, clock, publicSlots, selected, service]);
   useEffect(() => {
     let cancelled = false;
     async function loadAvailability() {
@@ -177,7 +193,7 @@ export function Booking() {
     if (!normalizedPhone) { move(4); setError('Ingresá un número de teléfono válido para el país seleccionado.'); return; }
     setSubmitting(true);
     try {
-      const created = await createRealAppointment({ barber, serviceName: serviceFor(service).name, date, time, name: contact.name.trim(), phone: normalizedPhone.e164, email: contact.email.trim(), notes: contact.notes });
+      const created = await createRealAppointment({ barber, serviceName: selected?.name ?? serviceFor(service).name, date, time, name: contact.name.trim(), phone: normalizedPhone.e164, email: contact.email.trim(), notes: contact.notes });
       setResult({ id: created.appointment_id, requestNumber: created.request_number, service, barber, date, time, name: contact.name.trim(), email: contact.email.trim(), phone: contact.phone.trim(), notes: contact.notes, status: 'Pendiente' });
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (cause) {
@@ -226,14 +242,14 @@ export function Booking() {
   const canNext = [Boolean(service), Boolean(barber || barberDeferred), Boolean(date), Boolean(time && barber), true, true][step];
   const today = parseDate(todayValue);
   const lastBookingDay = parseDate(bookingEndValue);
-  const candidateBarbers = service && date && time && barberDeferred ? eligibleBarbersForServiceSlot(publicSlots, date, time, serviceFor(service).duration, clock) : [];
+  const candidateBarbers = service && date && time && barberDeferred ? eligibleBarbersForServiceSlot(publicSlots, date, time, selected?.duration ?? serviceFor(service).duration, clock) : [];
   const timeSlots = visibleSlots;
   const daysInMonth = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate();
   const offset = (new Date(month.getFullYear(), month.getMonth(), 1).getDay() + 6) % 7;
   return <main className={`site-container booking-page ${step === 5 ? 'booking-summary-page' : ''}`}><div className="booking-progress" aria-label={`Paso ${step + 1} de 6: ${steps[step]}`}>{steps.map((name, i) => <Button key={name} variant="ghost" disabled={i > step} aria-current={i === step ? 'step' : undefined} onClick={() => move(i)} className={i === step ? 'current' : i < step ? 'complete' : ''}><span>{i < step ? <Check size={13} /> : String(i + 1).padStart(2, '0')}</span><small>{name}</small></Button>)}</div><div className="booking-layout"><section className="min-w-0"><div className="booking-title-row"><h1 className="section-title">{titles[step]}</h1></div>{subtitles[step] && <p className="mb-8 mt-3 text-muted-foreground">{subtitles[step]}</p>}
-    {step === 0 && <div className="space-y-3">{services.map(s => <Button key={s.id} variant="outline" aria-pressed={service === s.id} className={`booking-option ${service === s.id ? 'selected' : ''}`} onClick={() => { if (service !== s.id) { setService(s.id); setTime(''); if (barberDeferred) setBarber(null); if (date && availableTimesForServiceDate(publicSlots, date, s.duration, clock, barberDeferred ? null : barber).length === 0) setDate(''); } }}><span className="option-icon"><img src={serviceIconById[s.id]} alt="" aria-hidden="true" /></span><span className="min-w-0 flex-1 text-left"><span className="block text-lg font-medium">{s.name}</span><span className="mt-1 block text-sm text-muted-foreground">{s.duration} minutos</span></span><span className="text-base">{money(s.price)}</span><span className="selection-circle">{service === s.id && <Check size={12} />}</span></Button>)}</div>}
+    {step === 0 && <div className="space-y-3">{configuredServices.map(s => <Button key={s.id} variant="outline" aria-pressed={service === s.id} className={`booking-option ${service === s.id ? 'selected' : ''}`} onClick={() => { if (service !== s.id) { setService(s.id); setTime(''); if (barberDeferred) setBarber(null); if (date && availableTimesForServiceDate(publicSlots, date, s.duration, clock, barberDeferred ? null : barber).length === 0) setDate(''); } }}><span className="option-icon"><img src={serviceIconById[s.id]} alt="" aria-hidden="true" /></span><span className="min-w-0 flex-1 text-left"><span className="block text-lg font-medium">{s.name}</span><span className="mt-1 block text-sm text-muted-foreground">{s.duration} minutos</span></span><span className="text-base">{money(s.price)}</span><span className="selection-circle">{service === s.id && <Check size={12} />}</span></Button>)}</div>}
     {step === 1 && <div className="space-y-3">{barbers.map((b, i) => <Button key={b} variant="outline" aria-pressed={barber === b && !barberDeferred} className={`booking-option ${barber === b && !barberDeferred ? 'selected' : ''}`} onClick={() => { setBarber(b); setBarberDeferred(false); setDate(''); setTime(''); }}><span className={`barber-avatar avatar-${i}`}>{b.charAt(0)}</span><span className="flex-1 text-left"><span className="block text-lg">{b}</span><span className="mt-1 block text-sm text-muted-foreground">{({ Lautaro: '@lautarodejesus_', Gonzalo: '@gonzalopierucci', 'Valentín': '@valentincarrizo_' } as Record<Barber, string>)[b]}</span></span><span className="selection-circle">{barber === b && !barberDeferred && <Check size={12} />}</span></Button>)}<Button variant="outline" aria-pressed={barberDeferred} className={`booking-defer-option ${barberDeferred ? 'selected' : ''}`} onClick={() => { setBarber(null); setBarberDeferred(true); setDate(''); setTime(''); }}><span className="barber-defer-mark">?</span><span className="booking-defer-copy flex-1 text-left"><span className="block text-base font-medium">Elegir más adelante</span><span className="mt-1 block text-xs text-muted-foreground">Elegir según disponibilidad</span></span><span className="selection-circle">{barberDeferred && <Check size={12} />}</span></Button></div>}
-    {step === 2 && <div className="calendar-panel"><div className="mb-7 flex items-center justify-between"><h2 className="capitalize">{month.toLocaleDateString('es-AR', { month: 'long', year: 'numeric' })}</h2><div className="flex gap-2"><Button variant="ghost" size="icon" aria-label="Mes anterior" disabled={month.getFullYear() === today.getFullYear() && month.getMonth() === today.getMonth()} onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))}><ChevronLeft /></Button><Button variant="ghost" size="icon" aria-label="Mes siguiente" disabled={month.getFullYear() === lastBookingDay.getFullYear() && month.getMonth() === lastBookingDay.getMonth()} onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))}><ChevronRight /></Button></div></div><div className="calendar-grid">{['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((d, i) => <span key={i} className="calendar-weekday">{d}</span>)}{Array.from({ length: offset }, (_, i) => <span key={`blank-${i}`} />)}{Array.from({ length: daysInMonth }, (_, i) => { const day = new Date(month.getFullYear(), month.getMonth(), i + 1); const value = isoDate(day); const disabled = availabilityLoading || !service || !availabilityBarber && !barberDeferred || !isBookingDate(value, todayValue, bookingEndValue) || availableTimesForServiceDate(publicSlots, value, serviceFor(service).duration, clock, availabilityBarber).length === 0; return <Button key={value} variant="ghost" className={`calendar-day ${date === value ? 'selected' : ''} ${value === todayValue ? 'today' : ''}`} disabled={disabled} aria-label={dateLabel(value)} aria-pressed={date === value} onClick={() => { if (date !== value) { setDate(value); setTime(''); if (barberDeferred) setBarber(null); } }}>{i + 1}</Button>; })}</div>{availabilityError && <p role="alert" className="mt-5 text-sm text-destructive">{availabilityError}</p>}<p className="mt-6 flex items-center gap-2 text-xs text-muted-foreground"><span className="h-1 w-1 rounded-full bg-gold" /> Atendemos de lunes a sábado. Podés elegir una fecha dentro de los próximos 21 días.</p></div>}
+    {step === 2 && <div className="calendar-panel"><div className="mb-7 flex items-center justify-between"><h2 className="capitalize">{month.toLocaleDateString('es-AR', { month: 'long', year: 'numeric' })}</h2><div className="flex gap-2"><Button variant="ghost" size="icon" aria-label="Mes anterior" disabled={month.getFullYear() === today.getFullYear() && month.getMonth() === today.getMonth()} onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))}><ChevronLeft /></Button><Button variant="ghost" size="icon" aria-label="Mes siguiente" disabled={month.getFullYear() === lastBookingDay.getFullYear() && month.getMonth() === lastBookingDay.getMonth()} onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))}><ChevronRight /></Button></div></div><div className="calendar-grid">{['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((d, i) => <span key={i} className="calendar-weekday">{d}</span>)}{Array.from({ length: offset }, (_, i) => <span key={`blank-${i}`} />)}{Array.from({ length: daysInMonth }, (_, i) => { const day = new Date(month.getFullYear(), month.getMonth(), i + 1); const value = isoDate(day); const disabled = availabilityLoading || !service || !availabilityBarber && !barberDeferred || !isBookingDate(value, todayValue, bookingEndValue) || availableTimesForServiceDate(publicSlots, value, selected?.duration ?? serviceFor(service).duration, clock, availabilityBarber).length === 0; return <Button key={value} variant="ghost" className={`calendar-day ${date === value ? 'selected' : ''} ${value === todayValue ? 'today' : ''}`} disabled={disabled} aria-label={dateLabel(value)} aria-pressed={date === value} onClick={() => { if (date !== value) { setDate(value); setTime(''); if (barberDeferred) setBarber(null); } }}>{i + 1}</Button>; })}</div>{availabilityError && <p role="alert" className="mt-5 text-sm text-destructive">{availabilityError}</p>}<p className="mt-6 flex items-center gap-2 text-xs text-muted-foreground"><span className="h-1 w-1 rounded-full bg-gold" /> Atendemos de lunes a sábado. Podés elegir una fecha dentro de los próximos 21 días.</p></div>}
     {step === 3 && <div><div className="mb-2 flex items-center gap-2 text-sm capitalize text-gold"><CalendarDays size={16} /> {dateLabel(date)}</div><div className="booking-time-grid grid grid-cols-3 gap-2 sm:grid-cols-4">{timeSlots.map(slot => <Button key={slot.time} variant="outline" disabled={slot.status !== 'AVAILABLE'} className={`booking-time-slot h-12 ${slot.status === 'UNAVAILABLE' ? 'time-unavailable' : ''} ${time === slot.time ? 'selected' : ''}`} aria-pressed={time === slot.time} aria-label={slot.status === 'UNAVAILABLE' ? `${slot.time}, no disponible` : slot.time} onClick={() => { setTime(slot.time); if (barberDeferred) setBarber(null); }}>{slot.time}{slot.status === 'UNAVAILABLE' && <span className="sr-only">No disponible</span>}</Button>)}</div>{barberDeferred && time && <div className="barber-choice-inline"><h2>¿Quién te va a atender?</h2><div className="barber-choice-list">{candidateBarbers.map(candidate => <Button key={candidate} variant="outline" aria-pressed={barber === candidate} className={barber === candidate ? 'selected' : ''} onClick={() => setBarber(candidate)}>{candidate}</Button>)}</div></div>}{availabilityError && <p role="alert" className="py-3 text-sm text-destructive">{availabilityError}</p>}{slots.length === 0 && !availabilityLoading && <p className="py-6 text-muted-foreground">No hay horarios disponibles. Elegí otra fecha.</p>}</div>}
     {step === 4 && <form ref={formRef} className="space-y-6" onSubmit={e => { e.preventDefault(); next(); }}><label className="field-label">Nombre y apellido<span className={`field-control ${statusFor('name')}`}><Input name="name" required minLength={3} autoComplete="name" value={contact.name} onBlur={() => markTouched('name')} onChange={e => setContact({ ...contact, name: e.target.value })} placeholder="Tu nombre completo" aria-invalid={statusFor('name') === 'invalid'} aria-describedby={statusFor('name') === 'invalid' ? 'name-error' : undefined} />{feedbackFor('name')}</span>{statusFor('name') === 'invalid' && <span id="name-error" className="field-validation-message" role="alert">{fieldMessage('name')}</span>}</label><label className="field-label">Celular<span className="phone-input-row"><div className="phone-country-picker" ref={phoneCountryPickerRef}>
   <button type="button" className="phone-country-trigger" aria-haspopup="listbox" aria-expanded={phoneCountryOpen} aria-label={`País: ${phoneCountries.find(country => country.code === phoneCountry)?.name}, ${phoneCountries.find(country => country.code === phoneCountry)?.shortCode}, ${phoneCountries.find(country => country.code === phoneCountry)?.dialCode}`} onClick={() => { setPhoneCountryOpen(open => !open); setPhoneCountryQuery(''); }}>

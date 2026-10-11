@@ -1,16 +1,35 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables } from '@/integrations/supabase/types';
-import { bookingEndDateFor, isBookingDate, minutes, type Barber } from '@/lib/kani-model';
-import { businessDateToday } from '@/lib/kani-mobile-appointments';
+import { bookingEndDateFor, isBookingDate, minutes, services, type Barber } from '@/lib/kani-model';
+import { BUSINESS_TIME_ZONE, businessDateToday } from '@/lib/kani-mobile-appointments';
 
 export type AvailabilitySlot = Tables<'barber_availability_slots'>;
 export type PublicAvailabilitySlot = Omit<Tables<'available_barber_slots'>, 'status'> & {
   status: AvailabilitySlot['status'];
   barber_name: Barber;
 };
+export type ConfiguredService = Omit<(typeof services)[number], 'price' | 'duration'> & {
+  price: number;
+  duration: number;
+};
 
 const slotFields = 'id, barber_id, slot_date, start_time, end_time, status, internal_note, created_at, updated_at, updated_by';
 const publicSlotFields = 'id, barber_id, slot_date, start_time, end_time, status';
+
+export async function readConfiguredServices(): Promise<ConfiguredService[]> {
+  const { data, error } = await supabase
+    .from('services')
+    .select('name, duration_minutes, price_ars')
+    .eq('active', true)
+    .order('name', { ascending: true });
+  if (error) throw error;
+
+  const byName = new Map((data ?? []).map(row => [row.name, row]));
+  return services.flatMap(service => {
+    const configured = byName.get(service.name);
+    return configured ? [{ ...service, price: configured.price_ars, duration: configured.duration_minutes }] : [];
+  });
+}
 
 export async function readPublicAvailabilitySlots(barber: Barber | null, fromDate: string, toDate: string) {
   let barberQuery = supabase.from('barbers').select('id, name').eq('active', true);
@@ -36,9 +55,21 @@ export async function readPublicAvailabilitySlots(barber: Barber | null, fromDat
   }) as PublicAvailabilitySlot[];
 }
 
+function businessClockMinutes(now: Date) {
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: BUSINESS_TIME_ZONE,
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+  }).formatToParts(now);
+  const hour = Number(parts.find(part => part.type === 'hour')?.value ?? 0);
+  const minute = Number(parts.find(part => part.type === 'minute')?.value ?? 0);
+  return hour * 60 + minute;
+}
+
 export function slotCanStillBeBooked(slotDate: string, startTime: string, now: Date) {
-  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-  return slotDate !== today || minutes(startTime.slice(0, 5)) > now.getHours() * 60 + now.getMinutes();
+  const today = businessDateToday(now);
+  return slotDate !== today || minutes(startTime.slice(0, 5)) > businessClockMinutes(now);
 }
 
 export function availableTimesForServiceDate(slots: PublicAvailabilitySlot[], date: string, duration: number, now: Date, barber?: Barber | null) {
@@ -75,6 +106,7 @@ export async function readAvailabilitySlotsForRange(
   if (range?.end) query = query.lte('slot_date', range.end);
 
   const { data: rangedData, error: rangedError } = await query
+    .order('slot_date', { ascending: true })
     .order('start_time', { ascending: true });
 
   if (rangedError) throw rangedError;
@@ -122,17 +154,14 @@ export async function createAvailabilitySlots({
   const [hoursText, minutesText] = startTime.split(':');
   const hours = Number(hoursText);
   const minutesValue = Number(minutesText);
-  if (!Number.isInteger(hours) || !Number.isInteger(minutesValue) || hours < 10 || hours >= 20 || minutesValue < 0 || minutesValue > 59) {
-    throw new Error('El horario debe estar entre las 10:00 y las 19:00, con cualquier minuto válido.');
+  if (!Number.isInteger(hours) || !Number.isInteger(minutesValue) || hours < 0 || hours > 23 || minutesValue < 0 || minutesValue > 59 || minutesValue % 5 !== 0) {
+    throw new Error('El horario debe estar entre las 00:00 y las 23:55, en intervalos de 5 minutos.');
   }
-  const endMinutes = hours * 60 + minutesValue + 60;
-  if (endMinutes > 20 * 60) throw new Error('El horario termina fuera del horario operativo.');
 
   const businessToday = businessDateToday();
   const bookingEndDate = bookingEndDateFor(businessToday);
   const validDates = dates.filter(slotDate => isBookingDate(slotDate, businessToday, bookingEndDate));
-  if (validDates.length !== dates.filter(Boolean).length) throw new Error(`La fecha debe estar entre ${new Date(`${bookingEndDate}T12:00:00`).toLocaleDateString('es-AR')} y dentro de los días de atención.`);
-
+  if (validDates.length !== dates.filter(Boolean).length) throw new Error(`La fecha debe ser un día de atención entre ${businessToday} y ${bookingEndDate}.`);
   if (validDates.length === 0) throw new Error('Elegí al menos una fecha.');
 
   const { data, error } = await supabase.rpc('create_availability_slots', {

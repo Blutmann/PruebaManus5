@@ -165,3 +165,34 @@ Las interfaces nuevas y sus dependencias son `AdminMobileAppointments` en `/admi
 - Se retiran únicamente las reglas CSS sin consumidores de tablas/dashboard/disponibilidad legacy; se conservan las reglas de mantenimiento y de las interfaces nuevas.
 
 No se realizan migraciones destructivas, deletes de datos, cambios de Supabase, cambios de roles/RLS, cambios de autenticación, cambios de Resend ni publicación durante la implementación.
+
+
+## Rediseño del Panel Móvil y disponibilidad — auditoría y alcance
+
+### Hallazgos confirmados en Preview
+
+- Preview usa exclusivamente Supabase `iockpxtkflyjfagkvgnr`; Production no se modifica.
+- En `services`, la fuente de verdad actual es: Barba 30 minutos, Corte 45 minutos y Corte + barba 60 minutos. El frontend coincide actualmente con esos valores; no se duplicarán duraciones alternativas tomadas del pedido.
+- Preview contiene 570 slots de disponibilidad, todos `AVAILABLE`, con rango actual 10:00–20:00. No hay reservas en Preview al momento de la auditoría.
+- `request_appointment` usa un advisory lock por barbero y fecha, calcula `end_time` con `services.duration_minutes` y aplica la condición de solapamiento de intervalos semiabiertos (`nuevo_inicio < existente_fin` y `nuevo_fin > existente_inicio`). Las reservas contiguas están permitidas y CANCELLED no bloquea.
+- La vista pública excluye slots ocupados y no expone `internal_note`; la carga pública filtra además por `status = AVAILABLE`.
+- Las políticas RLS de reservas y disponibilidad limitan la lectura autenticada a ADMIN o al `barber_id` del perfil BARBER. Las mutaciones de disponibilidad pasan por RPCs autorizadas. Se corregirán privilegios DML directos excesivos sobre `appointments` en Preview sin cambiar Production.
+- La fecha de servidor del RPC de reservas todavía usa `current_date`, y el cliente usa la zona local del navegador para algunos límites. Se unificará en `America/Argentina/Buenos_Aires`.
+
+### Diseño de implementación
+
+- Mantener `AdminMobileAppointments` como experiencia principal de `/admin`; no reconstruir el sistema.
+- Reemplazar las cuatro tarjetas de estado por cinco cápsulas compactas en una fila flexible: `Todos`, `Pendientes`, `Confirmados`, `Cancelados`, `Completados`. `Todos` respetará los filtros de período y barbero, y cada estado filtrará exclusivamente su estado.
+- Compactar el bloque de filtros y separar el control de período del acceso calendario, conservando el filtro seguro por rol. El calendario se abrirá desde un control compacto sin desbordar el viewport.
+- Mostrar en cada tarjeta, sin `Ver detalle`, fecha, inicio–fin, cliente, servicio y duración configurada, barbero, teléfono, email, observaciones, estado y solo las acciones válidas. Mantener las acciones en RPC y los guards ADMIN/BARBER existentes.
+- Agregar un botón flotante de volver arriba con aparición basada en scroll, sin superponer acciones ni respetar el área segura móvil.
+- Rediseñar `AdminScheduleManager` con cápsulas en grid horizontal responsive, estados disponible/no disponible/ocupado y leyenda. Las ediciones seguirán usando `update_availability_slot`; una reserva activa no podrá invalidarse silenciosamente.
+- Mantener la consulta de horarios por rango y el aislamiento de `permittedRows`. El selector manual listará las 24 horas con intervalos de 5 minutos, sin alterar automáticamente el horario público 10:00–20:00. La validación de persistencia seguirá en RPC/constraints.
+- Cargar servicios activos desde Supabase para que precios y duraciones sean la fuente de verdad del flujo público y de las tarjetas administrativas; usar los valores locales únicamente como tipado/estado inicial mientras carga la consulta.
+- Ajustar los cálculos de fecha y vencimiento en cliente y RPC para la zona horaria argentina. No se tocarán reservas existentes ni se ejecutarán operaciones destructivas.
+
+### Cambios de datos previstos en Preview
+
+- Migración no destructiva para revocar DML directo de `appointments` a `anon`/`authenticated`, manteniendo la creación y actualización mediante RPCs existentes.
+- Corrección mínima del RPC `request_appointment` para usar la fecha de negocio argentina, conservar el advisory lock y los intervalos basados en `duration_minutes`.
+- Si la auditoría final confirma la necesidad de almacenar configuraciones fuera del horario público, cualquier relajación de constraints se mantendrá separada de la vista pública, del RPC de reservas y de las reglas 10:00–20:00; no se aplicará una ampliación silenciosa del horario reservable.

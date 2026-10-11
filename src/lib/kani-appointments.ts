@@ -4,7 +4,17 @@ import type { Appointment, Barber, ServiceId, Status } from '@/lib/kani-model';
 import { sendAppointmentNotification } from '@/lib/kani-notifications.functions';
 
 export type RealAppointmentStatus = Tables<'appointments'>['status'];
-export type RealAppointment = Appointment & { notes: string; statusCode: RealAppointmentStatus; barberId: string; serviceId: string; requestNumber: number };
+export type RealAppointment = Appointment & {
+  notes: string;
+  statusCode: RealAppointmentStatus;
+  barberId: string;
+  serviceId: string;
+  requestNumber: number;
+  endTime?: string;
+  serviceName?: string;
+  serviceDuration?: number;
+  servicePrice?: number;
+};
 
 type AppointmentRow = Tables<'appointments'>;
 
@@ -74,7 +84,7 @@ export async function readRealAppointments() {
   const [{ data: clients, error: clientsError }, { data: barbers, error: barbersError }, { data: services, error: servicesError }] = await Promise.all([
     clientIds.length ? supabase.from('clients').select('id, name, phone, email').in('id', clientIds) : Promise.resolve({ data: [], error: null }),
     barberIds.length ? supabase.from('barbers').select('id, name').in('id', barberIds) : Promise.resolve({ data: [], error: null }),
-    serviceIds.length ? supabase.from('services').select('id, name, duration_minutes').in('id', serviceIds) : Promise.resolve({ data: [], error: null }),
+    serviceIds.length ? supabase.from('services').select('id, name, duration_minutes, price_ars').in('id', serviceIds) : Promise.resolve({ data: [], error: null }),
   ]);
   if (clientsError || barbersError || servicesError) throw clientsError ?? barbersError ?? servicesError;
   const clientById = new Map((clients ?? []).map(client => [client.id, client]));
@@ -92,6 +102,7 @@ export async function readRealAppointments() {
       barber: barber.name as Barber,
       date: row.booking_date,
       time: row.start_time.slice(0, 5),
+      endTime: row.end_time.slice(0, 5),
       name: client.name,
       email: client.email,
       phone: client.phone,
@@ -100,6 +111,9 @@ export async function readRealAppointments() {
       statusCode: row.status,
       barberId: row.barber_id,
       serviceId: row.service_id,
+      serviceName: service.name,
+      serviceDuration: service.duration_minutes,
+      servicePrice: service.price_ars,
     } satisfies RealAppointment];
   });
 }
