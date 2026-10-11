@@ -663,6 +663,13 @@ html[data-theme="light"] input[type=date], html[data-theme="light"] input[type=t
 
 
 
+/* Shared admin section navigation. */
+.admin-shell { min-width: 0; }
+.admin-section-nav { display: flex; gap: .45rem; width: min(calc(100% - 2rem), 52rem); margin: 1rem auto 0; padding: .35rem; border: 1px solid var(--border); border-radius: .9rem; background: var(--surface); box-shadow: 0 5px 16px rgb(0 0 0 / .08); }
+.admin-section-nav-link { display: inline-flex; min-width: 0; flex: 1 1 0; align-items: center; justify-content: center; gap: .45rem; min-height: 2.55rem; padding: .45rem .7rem; border-radius: .65rem; color: var(--muted-foreground); font-size: .82rem; text-align: center; text-decoration: none; transition: background-color .2s ease, color .2s ease; }
+.admin-section-nav-link:hover { color: var(--foreground); }
+.admin-section-nav-link.is-active { background: var(--gold); color: var(--gold-foreground, #18130b); font-weight: 600; }
+
 /* Mobile appointments panel: isolated from the current admin layout. */
 .admin-mobile-page {
   min-height: 100%;
@@ -999,11 +1006,11 @@ textarea:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
   .admin-mobile-summary { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .admin-schedule-filters { grid-template-columns: 1fr; }
   .admin-schedule-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .55rem; }
-  .admin-schedule-card { padding: .65rem; border-radius: .75rem; }
-  .admin-schedule-card-top { display: grid; gap: .45rem; }
+  .admin-schedule-card { min-height: 5.35rem; padding: .65rem; border-radius: .75rem; }
+  .admin-schedule-card-top { display: grid; min-height: 4rem; grid-template-rows: auto minmax(1.15rem, auto); gap: .45rem; align-content: space-between; }
   .admin-schedule-time strong { font-size: 1.25rem; }
   .admin-schedule-time span { font-size: .7rem; }
-  .admin-schedule-status { font-size: .68rem; }
+  .admin-schedule-status { min-height: 1.15rem; font-size: .68rem; white-space: nowrap; }
 }
 
 @media (max-width: 420px) {

@@ -5,6 +5,7 @@ import { AdminAccess } from '@/components/kani/admin-access';
 import { getAuthenticatedStaff, signOut, type AuthenticatedStaff } from '@/lib/kani-auth';
 import { AdminStaffProvider } from '@/lib/kani-admin-context';
 import { supabase } from '@/integrations/supabase/client';
+import { AdminSectionNav } from '@/components/kani/admin-section-nav';
 
 export const Route = createFileRoute('/admin')({
   component: AdminLayout,
@@ -61,7 +62,10 @@ function AdminLayout() {
 
   return (
     <AdminStaffProvider staff={authState.staff}>
-      <Outlet />
+      <div className="admin-shell">
+        <AdminSectionNav />
+        <Outlet />
+      </div>
     </AdminStaffProvider>
   );
 }

@@ -180,3 +180,11 @@ En modo claro y desde 1024px se utiliza el fondo panorámico desktop suministrad
 ## Fondos del modo oscuro
 
 En modo oscuro, mobile utiliza el fondo vertical suministrado y desktop desde 1024px utiliza el fondo panorámico suministrado. El modo claro conserva sus fondos correspondientes. El logo se mantiene en ambos temas. No modificar funcionalidades ni publicar sin autorización específica.
+
+
+## Navegación administrativa y disponibilidad pública
+
+- Mostrar una navegación secundaria común inmediatamente debajo del header en las rutas administrativas, con solo “Turnos” (`/admin`) y “Gestioná tus horarios” (`/admin/horarios`), protegidas por el guard existente.
+- Ocultar del flujo público los horarios `UNAVAILABLE` y los horarios ya ocupados, sin crear ni modificar datos.
+- En mobile, mantener dos cápsulas por fila, altura uniforme, hora, intervalo y estado legibles, sin superposición ni scroll horizontal.
+- No modificar servicios, precios, duraciones, reservas, credenciales ni reglas ajenas a este ajuste.

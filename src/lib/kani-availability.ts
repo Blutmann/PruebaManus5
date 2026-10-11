@@ -53,7 +53,7 @@ export async function readPublicAvailabilitySlots(barber: Barber | null, fromDat
     .order('start_time', { ascending: true });
 
   if (error) throw error;
-  return (data ?? []).flatMap(slot => {
+  return (data ?? []).filter(slot => slot.status === 'AVAILABLE').flatMap(slot => {
     const barberName = barberById.get(slot.barber_id);
     return barberName ? [{ ...slot, barber_name: barberName }] : [];
   }) as PublicAvailabilitySlot[];
