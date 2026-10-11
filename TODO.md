@@ -170,3 +170,8 @@ Mantener aislamiento ADMIN/BARBER, RLS, RPCs, `/reservar`, reservas, credenciale
 ## Logo transparente y fondo de modo claro — Preview
 
 El logo transparente suministrado reemplaza el logo anterior del header y de la pantalla de acceso administrativo, y se muestra en modo claro y oscuro. El fondo japonés suministrado se utiliza únicamente en modo claro; el modo oscuro no debe mostrarlo. El modo claro es el estado inicial, salvo una preferencia oscura guardada por el usuario. No modificar flujo de reservas, autenticación, datos, Supabase, Resend ni Production.
+
+
+## Fondo claro desktop
+
+En modo claro y desde 1024px se utiliza el fondo panorámico desktop suministrado. Mobile conserva el fondo vertical existente. El modo oscuro permanece sin imagen de fondo. No modificar funciones ni publicar sin autorización específica.

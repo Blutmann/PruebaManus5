@@ -221,3 +221,8 @@ Los emails server-side de confirmación y cancelación mostrarán fecha `DD/MM/A
 ## Logo transparente y fondo de modo claro — Preview
 
 Se incorporan los assets suministrados como archivos locales del proyecto. El logo transparente reemplaza el wordmark del header y de la pantalla de acceso administrativo en ambos temas, conservando enlaces, tamaños funcionales y accesibilidad. El fondo japonés vertical se aplica únicamente sobre `html[data-theme="light"]` en el fondo global; el modo oscuro conserva su superficie oscura sin esa imagen. El render inicial y la preferencia persistida siguen iniciando en modo claro salvo que el usuario haya elegido oscuro.
+
+
+## Fondo claro desktop
+
+Se agrega la variante panorámica suministrada para `min-width: 1024px` únicamente bajo `html[data-theme="light"]`. Mobile mantiene el fondo vertical anterior; el modo oscuro no recibe ninguno de los dos fondos. La implementación usa el mismo fondo global fijo y no altera contenido ni navegación.
