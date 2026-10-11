@@ -159,13 +159,6 @@ export function AdminMobileAppointments() {
 
   return <main className="site-container admin-mobile-page">
     <div className="admin-mobile-shell">
-      <header className="admin-mobile-heading">
-        <div>
-          <span className="eyebrow">TURNOS</span>
-          <h1 className="section-title">Turnos</h1>
-        </div>
-      </header>
-
       <section className="admin-mobile-summary" aria-label="Resumen de turnos">
         {summaryFilters.map(filter => <button key={filter.value} type="button" className={`admin-mobile-summary-card ${statusTone(filter.value)} ${statusFilter === filter.value ? 'is-active' : ''}`} aria-pressed={statusFilter === filter.value} onClick={() => setStatusFilter(filter.value)}><span>{filter.label}</span><strong>{counts[filter.value]}</strong></button>)}
       </section>

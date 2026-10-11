@@ -293,13 +293,16 @@ html[data-theme="light"] {
 
 .booking-aside .eyebrow { font-size: 9px; }
 .booking-option { width: 100%; display: flex; gap: 18px; height: 104px; padding: 20px 22px; background: var(--surface); box-shadow: 0 10px 26px rgb(0 0 0 / 0.14); white-space: normal; }
-.booking-option.selected, .barber-choice-list .selected { border-color: var(--gold) !important; background: #702B3A !important; color: #FFFFFF !important; }
+.booking-option.selected, .barber-choice-list .selected, .booking-time-slot.selected { border-color: #702B3A !important; background: #702B3A !important; color: #FFFFFF !important; }
 .selection-circle { width: 18px; height: 18px; display: grid; place-items: center; border: 1px solid var(--border); border-radius: 50%; flex-shrink: 0; }
-.booking-option.selected .selection-circle { background: transparent; border-color: var(--gold); color: var(--gold); }
+.booking-option.selected .selection-circle { background: transparent; border-color: #FFFFFF; color: #FFFFFF; }
 .booking-option.selected .text-muted-foreground { color: #FFFFFF !important; }
 .option-icon { width: 48px; height: 48px; border: 1px solid var(--border); display: grid; place-items: center; color: var(--gold); border-radius: 4px; }
 .option-icon img { width: 100%; height: 100%; object-fit: contain; }
+.booking-option.selected .option-icon { border-color: #FFFFFF; color: #FFFFFF; }
+.booking-option.selected .option-icon img { filter: brightness(0) invert(1); }
 .barber-avatar { width: 48px; height: 48px; flex-shrink: 0; display: grid; place-items: center; font-family: var(--font-sans); font-size: 25px; border-radius: 50%; background: var(--secondary); color: var(--gold); }
+.booking-option.selected .barber-avatar { background: transparent; color: #FFFFFF; border: 1px solid #FFFFFF; }
 .avatar-1 { background: color-mix(in oklch,var(--primary) 35%,var(--surface)); }
 .avatar-2 { background: color-mix(in oklch,var(--gold) 15%,var(--surface)); }
 .summary-list { display: flex; flex-direction: column; gap: 22px; font-size: 13px; }
@@ -355,6 +358,7 @@ html[data-theme="light"] {
 .booking-home-button { flex: 0 0 44px; width: 44px; height: 44px; margin-right: 12px; color: var(--primary-foreground) !important; }
 .booking-home-button:hover { background: color-mix(in oklch, var(--primary) 88%, white) !important; }
 .calendar-day.selected { background: var(--gold) !important; border-color: var(--gold) !important; color: var(--background) !important; }
+.booking-time-slot.selected:hover:not(:disabled), .booking-time-slot.selected:focus-visible { border-color: #702B3A !important; background: #702B3A !important; color: #FFFFFF !important; }
 .booking-back-button { min-height: 44px; }
 .booking-next-button { margin-left: auto; min-height: 44px; }
 .exit-dialog { max-width: 420px; }
@@ -411,8 +415,8 @@ html[data-theme="light"] input[type=date], html[data-theme="light"] input[type=t
 .mobile-menu a { display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 0 8px; border-bottom: 1px solid color-mix(in oklch, var(--gold) 28%, var(--border)); color: var(--foreground); font-size: 15px; }
 .mobile-menu a:hover, .mobile-menu a:focus-visible { background: color-mix(in oklch, var(--gold) 12%, transparent); color: var(--gold); outline: none; }
 .mobile-menu svg { width: 17px; height: 17px; color: var(--gold); }
-html[data-theme="dark"] .booking-option.selected, html[data-theme="dark"] .barber-choice-list .selected, html:not([data-theme="light"]) .booking-option.selected, html:not([data-theme="light"]) .barber-choice-list .selected { border-color: var(--gold) !important; background: var(--chrome) !important; color: var(--foreground) !important; }
-html[data-theme="dark"] .booking-option.selected .text-muted-foreground, html:not([data-theme="light"]) .booking-option.selected .text-muted-foreground { color: var(--muted-foreground) !important; }
+ html[data-theme="dark"] .booking-option.selected, html[data-theme="dark"] .barber-choice-list .selected, html:not([data-theme="light"]) .booking-option.selected, html:not([data-theme="light"]) .barber-choice-list .selected { border-color: #702B3A !important; background: #702B3A !important; color: #FFFFFF !important; }
+ html[data-theme="dark"] .booking-option.selected .text-muted-foreground, html:not([data-theme="light"]) .booking-option.selected .text-muted-foreground { color: #FFFFFF !important; }
 .booking-title-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .booking-title-row .section-title { margin-bottom: 12px; }
 .booking-reset-button { flex: 0 0 44px; width: 44px; height: 44px; color: var(--muted-foreground); }
@@ -420,7 +424,7 @@ html[data-theme="dark"] .booking-option.selected .text-muted-foreground, html:no
 .booking-defer-option .barber-defer-mark { width: 48px; height: 48px; flex-basis: 48px; }
 .booking-time-slot { border-color: color-mix(in oklch, var(--gold) 18%, var(--border)); background: var(--surface); box-shadow: 0 5px 14px rgb(0 0 0 / 0.12); }
 .booking-time-slot:hover:not(:disabled) { border-color: color-mix(in oklch, var(--gold) 58%, var(--border)); background: color-mix(in oklch, var(--gold) 8%, var(--surface)); }
-.booking-time-slot.selected { border-color: var(--gold); background: var(--gold); color: var(--background); }
+ .booking-time-slot.selected { border-color: #702B3A !important; background: #702B3A !important; color: #FFFFFF !important; }
 .phone-input-row { display: grid; grid-template-columns: 138px minmax(0, 1fr); gap: 8px; margin-top: 10px; }
 .phone-input-row input { margin-top: 0; }
 .phone-country-picker { position: relative; min-width: 0; }
@@ -1026,10 +1030,6 @@ textarea:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
   .admin-schedule-card { padding: .55rem; }
   .admin-schedule-status { font-size: .64rem; }
 }
-
-/* Selected service/barber cards use the brand gold only for the tick. */
-.booking-option.selected .selection-circle { background: transparent; border-color: var(--gold); color: var(--gold); }
-
 
 /* Símbolo de marca en el acceso administrativo. */
 .admin-login-symbol {
