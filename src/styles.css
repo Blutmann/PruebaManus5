@@ -267,13 +267,19 @@ html[data-theme="light"] {
 .confirmation-secondary:hover { color: var(--foreground) !important; border-color: var(--gold) !important; background: transparent !important; }
 .back-link { display: inline-flex; gap: 9px; align-items: center; font-size: 12px; color: var(--muted-foreground); }
 .booking-page { max-width: 860px; padding-top: 12px; padding-bottom: 110px; min-height: 780px; }
-.booking-progress { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); margin-top: 12px; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
-.booking-progress > button { display: flex; align-items: center; gap: 10px; height: auto; justify-content: flex-start; padding: 0 0 19px; border-radius: 0; color: var(--muted-foreground); border-bottom: 2px solid transparent; }
-.booking-progress > button > span { width: 24px; height: 24px; border: 1px solid var(--border); border-radius: 50%; font-size: 9px; display: grid; place-items: center; flex-shrink: 0; }
-.booking-progress small { font-size: 11px; }
+.booking-progress { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); margin-top: 12px; margin-bottom: 20px; border-bottom: 2px solid var(--border); }
+.booking-progress > button { display: flex; align-items: center; gap: 10px; height: auto; justify-content: center; padding: 0 0 19px; border-radius: 0; color: var(--muted-foreground); border-bottom: 3px solid transparent; }
+.booking-progress > button > span { width: 26px; height: 26px; border: 2px solid var(--foreground); border-radius: 50%; color: var(--foreground); font-size: 9px; display: grid; place-items: center; flex-shrink: 0; }
+.booking-progress small { display: flex; align-items: center; min-height: 26px; font-size: 11px; line-height: 1.15; text-align: center; }
 .booking-progress .current { color: var(--foreground); border-bottom-color: var(--gold); }
-.booking-progress .current > span { border-color: var(--gold); color: var(--gold); }
-.booking-progress .complete > span { color: var(--gold); }
+.booking-progress .current > span { border-color: var(--foreground); color: var(--foreground); }
+.booking-progress .complete > span { border-color: var(--gold); background: var(--gold); color: #191919; }
+html[data-theme="light"] .booking-progress > button,
+html[data-theme="light"] .booking-progress > button > span,
+html[data-theme="light"] .booking-progress .current > span { color: #252323; }
+html[data-theme="light"] .booking-progress > button > span,
+html[data-theme="light"] .booking-progress .current > span { border-color: #252323; }
+html[data-theme="light"] .booking-progress .complete > span { border-color: var(--gold); color: #FFFFFF; }
 .booking-layout { display: block; max-width: 860px; margin-inline: auto; }
 .section-title { font-size: 29px; line-height: 1.2; font-weight: 500; margin-top: 4px; }
 .section-title, .services-heading h2, .booking-aside > h2, .calendar-panel h2, .barber-choice-inline h2, .review-line h2, .confirmation h1, .studio-info-card h2 { font-family: var(--font-display); }
