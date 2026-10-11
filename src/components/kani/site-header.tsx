@@ -53,8 +53,27 @@ export function SiteHeader() {
   }, [admin]);
   useEffect(() => { onMenuOpenChange(false); }, [path, onMenuOpenChange]);
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
+    const body = document.body;
+    if (menuOpen) {
+      const scrollY = window.scrollY;
+      body.style.position = 'fixed';
+      body.style.top = `-${scrollY}px`;
+      body.style.left = '0';
+      body.style.right = '0';
+      body.style.width = '100%';
+      body.style.overflow = 'hidden';
+    }
+    return () => {
+      const top = body.style.top;
+      const restoreY = top ? Math.max(0, Number.parseInt(top, 10) * -1) : window.scrollY;
+      body.style.position = '';
+      body.style.top = '';
+      body.style.left = '';
+      body.style.right = '';
+      body.style.width = '';
+      body.style.overflow = '';
+      if (menuOpen && top) window.scrollTo(0, restoreY);
+    };
   }, [menuOpen]);
   const closeMenu = () => onMenuOpenChange(false);
   const continueBooking = (event: MouseEvent<HTMLAnchorElement>) => {
