@@ -196,3 +196,11 @@ En modo oscuro, mobile utiliza el fondo vertical suministrado y desktop desde 10
 - Mantener la selección correcta por modo claro/oscuro y breakpoint desktop/mobile usando las rutas existentes.
 - No modificar logo, layout, navegación, flujo de reservas, panel administrativo, Supabase, autenticación, reservas, disponibilidad, notificaciones ni Resend.
 - Validar que los cuatro assets se sirvan en Preview y que no haya regresiones visuales ni desbordamiento.
+
+
+## Reemplazo de fondos WEBP — 2026-10-11
+
+- Reemplazar los fondos claro/oscuro de desktop y mobile por los cuatro WEBP suministrados.
+- Mantener las rutas estables `kani-fondo-claro-desktop.webp`, `kani-fondo-claro-mobile.webp`, `kani-fondo-oscuro-desktop.webp` y `kani-fondo-oscuro-mobile.webp`.
+- Conservar el mapeo actual por tema y breakpoint, sin modificar lógica, navegación, reservas, disponibilidad, Supabase, Resend ni autenticación.
+- Validar en Preview y publicar únicamente si TypeScript, tests, build, rutas y assets pasan correctamente.
