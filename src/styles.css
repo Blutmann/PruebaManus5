@@ -415,8 +415,12 @@ html[data-theme="light"] input[type=date], html[data-theme="light"] input[type=t
 .mobile-menu a { display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 0 8px; border-bottom: 1px solid color-mix(in oklch, var(--gold) 28%, var(--border)); color: var(--foreground); font-size: 15px; }
 .mobile-menu a:hover, .mobile-menu a:focus-visible { background: color-mix(in oklch, var(--gold) 12%, transparent); color: var(--gold); outline: none; }
 .mobile-menu svg { width: 17px; height: 17px; color: var(--gold); }
- html[data-theme="dark"] .booking-option.selected, html[data-theme="dark"] .barber-choice-list .selected, html:not([data-theme="light"]) .booking-option.selected, html:not([data-theme="light"]) .barber-choice-list .selected { border-color: #702B3A !important; background: #702B3A !important; color: #FFFFFF !important; }
- html[data-theme="dark"] .booking-option.selected .text-muted-foreground, html:not([data-theme="light"]) .booking-option.selected .text-muted-foreground { color: #FFFFFF !important; }
+html[data-theme="dark"] .booking-option.selected, html[data-theme="dark"] .barber-choice-list .selected, html:not([data-theme="light"]) .booking-option.selected, html:not([data-theme="light"]) .barber-choice-list .selected { border-color: var(--gold) !important; background: var(--gold) !important; color: #191919 !important; }
+html[data-theme="dark"] .booking-option.selected .text-muted-foreground, html:not([data-theme="light"]) .booking-option.selected .text-muted-foreground { color: #191919 !important; }
+html[data-theme="dark"] .booking-option.selected .selection-circle, html:not([data-theme="light"]) .booking-option.selected .selection-circle { border-color: #191919; color: #191919; }
+html[data-theme="dark"] .booking-option.selected .option-icon, html:not([data-theme="light"]) .booking-option.selected .option-icon { border-color: #191919; color: #191919; }
+html[data-theme="dark"] .booking-option.selected .option-icon img, html:not([data-theme="light"]) .booking-option.selected .option-icon img { filter: brightness(0); }
+html[data-theme="dark"] .booking-option.selected .barber-avatar, html:not([data-theme="light"]) .booking-option.selected .barber-avatar { color: #191919; border-color: #191919; }
 .booking-title-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .booking-title-row .section-title { margin-bottom: 12px; }
 .booking-reset-button { flex: 0 0 44px; width: 44px; height: 44px; color: var(--muted-foreground); }
@@ -424,7 +428,7 @@ html[data-theme="light"] input[type=date], html[data-theme="light"] input[type=t
 .booking-defer-option .barber-defer-mark { width: 48px; height: 48px; flex-basis: 48px; }
 .booking-time-slot { border-color: color-mix(in oklch, var(--gold) 18%, var(--border)); background: var(--surface); box-shadow: 0 5px 14px rgb(0 0 0 / 0.12); }
 .booking-time-slot:hover:not(:disabled) { border-color: color-mix(in oklch, var(--gold) 58%, var(--border)); background: color-mix(in oklch, var(--gold) 8%, var(--surface)); }
- .booking-time-slot.selected { border-color: #702B3A !important; background: #702B3A !important; color: #FFFFFF !important; }
+html[data-theme="dark"] .booking-time-slot.selected, html:not([data-theme="light"]) .booking-time-slot.selected { border-color: var(--gold) !important; background: var(--gold) !important; color: #191919 !important; }
 .phone-input-row { display: grid; grid-template-columns: 138px minmax(0, 1fr); gap: 8px; margin-top: 10px; }
 .phone-input-row input { margin-top: 0; }
 .phone-country-picker { position: relative; min-width: 0; }
