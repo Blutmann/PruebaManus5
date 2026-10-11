@@ -8,12 +8,12 @@ export function KaniProvider({ children }: { children: ReactNode }) {
   const [availability, setAvailability] = useState<Availability>(initialAvailability);
   const [slotOverrides, setSlotOverrides] = useState<SlotOverrides>(initialSlotOverrides);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [theme, setTheme] = useState<KaniTheme>('dark');
+  const [theme, setTheme] = useState<KaniTheme>('light');
   const [themeReady, setThemeReady] = useState(false);
   useEffect(() => {
-    let saved: KaniTheme = 'dark';
+    let saved: KaniTheme = 'light';
     try {
-      saved = window.localStorage.getItem('kani-theme') === 'light' ? 'light' : 'dark';
+      saved = window.localStorage.getItem('kani-theme') === 'dark' ? 'dark' : 'light';
     } catch { /* storage may be unavailable */ }
     document.documentElement.dataset['theme'] = saved;
     setTheme(saved);

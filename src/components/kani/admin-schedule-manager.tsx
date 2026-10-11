@@ -44,7 +44,7 @@ export function AdminScheduleManager() {
   const [datePreset, setDatePreset] = useState<MobileDatePreset>('ALL');
   const [specificDate, setSpecificDate] = useState('');
   const [businessToday, setBusinessToday] = useState(() => businessDateToday());
-  const [barberFilter, setBarberFilter] = useState('Todos');
+  const [barberFilter, setBarberFilter] = useState('');
   const [slots, setSlots] = useState<ScheduleSlot[]>([]);
   const [loading, setLoading] = useState(true);
   const [savingId, setSavingId] = useState<string | null>(null);
@@ -60,10 +60,11 @@ export function AdminScheduleManager() {
     if (profile.role === 'BARBER') {
       setBarberFilter(permittedBarbers[0] ?? '');
       setManualBarberId(ownBarberId ?? '');
-    } else if (!permittedRows.some(row => row.id === manualBarberId)) {
-      setManualBarberId(permittedRows[0]?.id ?? '');
+    } else {
+      if (!permittedRows.some(row => row.name === barberFilter)) setBarberFilter(permittedRows[0]?.name ?? '');
+      if (!permittedRows.some(row => row.id === manualBarberId)) setManualBarberId(permittedRows[0]?.id ?? '');
     }
-  }, [manualBarberId, ownBarberId, permittedBarbers, permittedRows, profile.role]);
+  }, [barberFilter, manualBarberId, ownBarberId, permittedBarbers, permittedRows, profile.role]);
   useEffect(() => {
     const timer = window.setInterval(() => {
       const next = businessDateToday();
@@ -76,7 +77,7 @@ export function AdminScheduleManager() {
   const dateRange = useMemo(() => dateRangeForMobilePreset(datePreset, businessToday, specificDate), [businessToday, datePreset, specificDate]);
   const selectedRows = useMemo(() => {
     if (profile.role === 'BARBER') return ownBarberId ? permittedRows.filter(row => row.id === ownBarberId) : [];
-    return barberFilter === 'Todos' ? permittedRows : permittedRows.filter(row => row.name === barberFilter);
+    return permittedRows.filter(row => row.name === barberFilter);
   }, [barberFilter, ownBarberId, permittedRows, profile.role]);
 
   async function loadSlots() {
@@ -153,12 +154,12 @@ export function AdminScheduleManager() {
     slots.forEach(slot => groups.set(slot.slot_date, [...(groups.get(slot.slot_date) ?? []), slot]));
     return [...groups.entries()];
   }, [slots]);
-  const contextLabel = profile.role === 'BARBER' ? 'Tu agenda' : barberFilter === 'Todos' ? 'Agenda de todos los barberos' : `Agenda de ${barberFilter}`;
+  const contextLabel = profile.role === 'BARBER' ? 'Tu agenda' : `Agenda de ${barberFilter}`;
 
   return <main className="site-container admin-schedule-page">
     <div className="admin-schedule-shell">
       <header className="admin-schedule-heading"><div><Link to="/admin/movil" className="admin-schedule-back">← Panel móvil</Link><span className="eyebrow">DISPONIBILIDAD</span><h1 className="section-title">Gestiona tus horarios</h1><p className="admin-schedule-context">{contextLabel}</p></div><Button className="action-positive admin-schedule-add" onClick={() => setManualOpen(true)}><Plus size={17} />Agregar horario</Button></header>
-      <section className="admin-schedule-filters" aria-label="Filtros de horarios"><div className="admin-schedule-date-filter"><label htmlFor="schedule-date-preset">Período</label><div className="admin-schedule-date-controls"><select id="schedule-date-preset" value={datePreset} onChange={event => selectPreset(event.target.value as MobileDatePreset)}>{datePresets.map(preset => <option key={preset} value={preset}>{mobileDatePresetLabels[preset]}</option>)}</select><input id="schedule-specific-date" type="date" value={specificDate} onChange={event => selectSpecificDate(event.target.value)} aria-label="Fecha específica" /></div></div>{profile.role === 'ADMIN' && <div className="admin-schedule-barber-filter"><label htmlFor="schedule-barber-filter">Barbero</label><select id="schedule-barber-filter" value={barberFilter} onChange={event => setBarberFilter(event.target.value)}><option value="Todos">Todos</option>{permittedBarbers.map(barber => <option key={barber} value={barber}>{barber}</option>)}</select></div>}</section>
+      <section className="admin-schedule-filters" aria-label="Filtros de horarios"><div className="admin-schedule-date-filter"><label htmlFor="schedule-date-preset">Período</label><div className="admin-schedule-date-controls"><select id="schedule-date-preset" value={datePreset} onChange={event => selectPreset(event.target.value as MobileDatePreset)}>{datePresets.map(preset => <option key={preset} value={preset}>{mobileDatePresetLabels[preset]}</option>)}</select><input id="schedule-specific-date" type="date" value={specificDate} onChange={event => selectSpecificDate(event.target.value)} aria-label="Fecha específica" /></div></div>{profile.role === 'ADMIN' && <div className="admin-schedule-barber-filter"><label htmlFor="schedule-barber-filter">Barbero</label><select id="schedule-barber-filter" value={barberFilter} onChange={event => setBarberFilter(event.target.value)}>{permittedBarbers.map(barber => <option key={barber} value={barber}>{barber}</option>)}</select></div>}</section>
       <div className="admin-schedule-legend" aria-label="Leyenda de horarios"><span><CircleDot size={14} />Disponible</span><span><XCircle size={14} />No disponible</span><span><Clock3 size={14} />Con reserva</span></div>
       {notice && <div role="status" className="admin-mobile-notice"><Check size={16} />{notice}<Button variant="ghost" size="icon" aria-label="Cerrar aviso" onClick={() => setNotice('')}><X /></Button></div>}
       {error && <div role="alert" className="admin-mobile-notice is-error"><XCircle size={16} />{error}</div>}

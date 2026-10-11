@@ -910,7 +910,7 @@ html[data-theme="light"] input[type=date], html[data-theme="light"] input[type=t
 .admin-schedule-legend span:nth-child(1) svg { color: var(--success); }
 .admin-schedule-legend span:nth-child(2) svg { color: var(--destructive); }
 .admin-schedule-legend span:nth-child(3) svg { color: var(--gold); }
-.admin-schedule-cards { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.admin-schedule-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .admin-schedule-card.is-occupied { border-color: color-mix(in srgb, var(--gold) 48%, var(--border)); background: color-mix(in srgb, var(--gold) 5%, var(--surface)); }
 .admin-schedule-status.occupied { color: var(--gold); }
 .admin-schedule-card:disabled { cursor: not-allowed; opacity: .72; }
@@ -980,6 +980,12 @@ textarea:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
   .admin-mobile-filter-period { grid-column: 1 / -1; }
   .admin-mobile-summary { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .admin-schedule-filters { grid-template-columns: 1fr; }
+  .admin-schedule-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .55rem; }
+  .admin-schedule-card { padding: .65rem; border-radius: .75rem; }
+  .admin-schedule-card-top { display: grid; gap: .45rem; }
+  .admin-schedule-time strong { font-size: 1.25rem; }
+  .admin-schedule-time span { font-size: .7rem; }
+  .admin-schedule-status { font-size: .68rem; }
 }
 
 @media (max-width: 420px) {
@@ -990,4 +996,7 @@ textarea:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
   .admin-mobile-filters select,
   .admin-mobile-filters input,
   .admin-mobile-filter-readonly { font-size: .78rem; padding-inline: .5rem; }
+  .admin-schedule-cards { gap: .4rem; }
+  .admin-schedule-card { padding: .55rem; }
+  .admin-schedule-status { font-size: .64rem; }
 }
