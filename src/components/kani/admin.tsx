@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Ban, Bell, CalendarDays, Check, CircleDot, Clock3, LogOut, Mail, MailOpen, MessageSquareText, SlidersHorizontal, Wrench, X, XCircle } from 'lucide-react';
+import { Ban, Bell, CalendarDays, Check, CircleDot, Clock3, LogOut, Mail, MailOpen, MessageSquareText, SlidersHorizontal, Smartphone, Wrench, X, XCircle } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -81,12 +81,15 @@ export function Admin({ view }: { view: View }) {
     .filter(a => a.statusCode === listStatus)
     .filter(a => (view === 'cancelled' || a.date >= demoToday) && isAppointmentVisible(a) && (!dateFilter || a.date === dateFilter))
     .sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
-  const tabs: Array<{ to: '/admin' | '/admin/pendientes' | '/admin/cancelados' | '/admin/disponibilidad' | '/admin/mantenimiento'; label: string; icon: typeof Check; id: View }> = [
+  const tabs: Array<{ to: '/admin' | '/admin/pendientes' | '/admin/cancelados' | '/admin/disponibilidad' | '/admin/mantenimiento' | '/admin/movil'; label: string; icon: typeof Check; id: View | 'mobile' }> = [
     { to: '/admin' as const, label: 'Confirmados', icon: Check, id: 'upcoming' as const },
     { to: '/admin/pendientes' as const, label: 'Pendientes', icon: Clock3, id: 'pending' as const },
     { to: '/admin/cancelados' as const, label: 'Cancelados', icon: Ban, id: 'cancelled' as const },
     { to: '/admin/disponibilidad' as const, label: 'Horarios', icon: CalendarDays, id: 'availability' as const },
-    ...(profile.role === 'ADMIN' ? [{ to: '/admin/mantenimiento' as const, label: 'Mantenimiento', icon: Wrench, id: 'maintenance' as const }] : []),
+    ...(profile.role === 'ADMIN' ? [
+      { to: '/admin/mantenimiento' as const, label: 'Mantenimiento', icon: Wrench, id: 'maintenance' as const },
+      { to: '/admin/movil' as const, label: 'Panel móvil de turnos', icon: Smartphone, id: 'mobile' as const },
+    ] : []),
   ];
 
   async function changeStatus(appointment: RealAppointment, next: 'CONFIRMED' | 'CANCELLED' | 'COMPLETED') {

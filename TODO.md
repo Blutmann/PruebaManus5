@@ -69,3 +69,12 @@ Crear una ruta independiente para el panel móvil, accesible únicamente a usuar
 - Reutilizar la fuente de datos y operaciones existentes; los cambios deben reflejarse en el panel actual sin duplicar registros y sin agregar emails ni notificaciones nuevas.
 - BARBER solo puede consultar y gestionar turnos de su propio `barber_id`, incluidos los cancelados. ADMIN puede consultar y gestionar los tres barberos. La separación debe depender de la autenticación/RLS además de los filtros visuales.
 - Verificar en Preview el panel actual, autenticación, roles, cuatro estados, cancelados, acciones, fuente compartida y responsive en iPhone/Android; no crear datos destructivos o ficticios.
+
+
+## Ajustes de navegación y UI del panel móvil — Preview
+
+- Agregar en el panel ADMIN existente un acceso visible con texto `Panel móvil de turnos` hacia `/admin/movil`, únicamente para perfiles ADMIN; conservar el guard de autenticación existente y no reemplazar el panel actual.
+- Reducir moderadamente padding, altura y espacios internos de las tarjetas Pendientes, Confirmados, Cancelados y Completados; conservar contadores, colores, jerarquía, legibilidad y responsive sin alterar cálculos.
+- Alinear visualmente el calendario de Fecha y las flechas de Estado/Barbero; agregar espaciado interno adecuado en los controles sin cambiar opciones, lógica ni componentes.
+- Mantener el alcance exclusivamente en Preview; no modificar autenticación, Supabase, RLS, estados, operaciones de negocio, reservas públicas, Resend ni notificaciones; no publicar Production.
+- Validar acceso ADMIN, ausencia del enlace para perfiles no ADMIN, filtros intactos, menor ocupación visual, responsive y ausencia de scroll horizontal; ejecutar TypeScript, tests y build.

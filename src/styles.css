@@ -856,19 +856,19 @@ html[data-theme="light"] input[type=date], html[data-theme="light"] input[type=t
 .admin-mobile-summary {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: .65rem;
-  margin-bottom: 1rem;
+  gap: .5rem;
+  margin-bottom: .85rem;
 }
 
 .admin-mobile-summary-card {
   display: flex;
-  min-height: 4.5rem;
+  min-height: 3.75rem;
   flex-direction: column;
   justify-content: space-between;
-  gap: .35rem;
-  padding: .8rem .9rem;
+  gap: .25rem;
+  padding: .6rem .7rem;
   border: 1px solid var(--border);
-  border-radius: 1rem;
+  border-radius: .85rem;
   background: var(--surface);
   color: var(--muted-foreground);
   text-align: left;
@@ -878,7 +878,7 @@ html[data-theme="light"] input[type=date], html[data-theme="light"] input[type=t
 .admin-mobile-summary-card:hover,
 .admin-mobile-summary-card.is-active { border-color: var(--gold); background: var(--card); transform: translateY(-1px); }
 .admin-mobile-summary-card span { font-size: .75rem; }
-.admin-mobile-summary-card strong { color: var(--foreground); font-size: 1.75rem; font-weight: 500; line-height: 1; }
+.admin-mobile-summary-card strong { color: var(--foreground); font-size: 1.5rem; font-weight: 500; line-height: 1; }
 .admin-mobile-summary-card.pending strong { color: var(--gold); }
 .admin-mobile-summary-card.confirmed strong { color: var(--success); }
 .admin-mobile-summary-card.cancelled strong { color: var(--destructive); }
@@ -899,16 +899,20 @@ html[data-theme="light"] input[type=date], html[data-theme="light"] input[type=t
 .admin-mobile-filters input,
 .admin-mobile-filters select {
   width: 100%;
-  min-height: 2.75rem;
+  min-height: 2.65rem;
   min-width: 0;
   border: 1px solid var(--input);
   border-radius: .7rem;
   background: var(--background);
   color: var(--foreground);
-  padding: .55rem .7rem;
+  padding: .5rem .7rem;
   font: inherit;
   font-size: .9rem;
 }
+
+.admin-mobile-filters input[type="date"] { padding-right: 1.9rem; }
+.admin-mobile-filters input[type="date"]::-webkit-calendar-picker-indicator { margin-right: .15rem; }
+.admin-mobile-filters select { padding-right: 2rem; }
 
 .admin-mobile-notice {
   display: flex;

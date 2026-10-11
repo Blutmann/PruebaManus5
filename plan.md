@@ -97,3 +97,8 @@ Estética `editorial zen` coherente con Kani: fondo profundo/ivory según tema, 
 ### Estructura del proyecto
 
 La aplicación conserva el shell global y el árbol de rutas TanStack. La nueva ruta es hija de `/admin`; el componente móvil vive junto al componente administrativo existente, y la lógica de datos permanece en la capa `kani-appointments` compartida. No se introduce backend adicional ni una segunda agenda.
+
+
+## Ajustes puntuales de navegación y UI del panel móvil — Preview
+
+Se agrega una pestaña `Panel móvil de turnos` en el panel ADMIN existente únicamente cuando el perfil activo tiene rol `ADMIN`; la ruta destino es `/admin/movil` y conserva la protección del layout administrativo. El panel móvil existente se mantiene sin cambios funcionales: solo se compactan moderadamente las tarjetas de estados y se ajustan los paddings de los controles nativos de fecha y selección para equilibrar calendario y flechas sin cambiar sus opciones ni su lógica. No se modifica Production, autenticación, Supabase, RLS, reservas, disponibilidad, Resend ni notificaciones.
