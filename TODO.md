@@ -114,3 +114,15 @@ Implementar exclusivamente en Preview una sección independiente `/admin/horario
 - Ajustar únicamente el layout de `/admin/movil` para que Período y Fecha tengan exactamente el mismo ancho, queden dentro del viewport y no generen scroll horizontal. Mostrar `Todos` en lugar de `Todos los barberos` solo cuando esa opción esté seleccionada; conservar opciones y valores internos.
 - Verificar TypeScript, tests, build, rutas, responsive 390×844/desktop, filtro de fechas, aislamiento BARBER/ADMIN, persistencia de estados/notas, compatibilidad del flujo público y ausencia de operaciones sobre reservas reales. Si no puede realizarse una prueba autenticada autónoma, documentarla como pendiente sin presentarla como validada.
 - No modificar Resend, notificaciones, autenticación, precios, servicios, reservas reales, datos existentes, Production ni la publicación automática.
+
+## Eliminar el panel de administración antiguo — Preview
+
+- Mantener íntegramente la nueva gestión de turnos y el panel móvil, con sus estados, filtros, acciones, permisos y lógica actuales, sin reconstruirlos ni cambiar su diseño/UX writing/comportamiento.
+- Conservar `/admin` como entrada autenticada de la nueva gestión responsive y conservar `/admin/movil` y `/admin/horarios`.
+- Eliminar únicamente el panel legacy de tablas/dashboard y sus rutas `/admin/pendientes`, `/admin/cancelados` y `/admin/disponibilidad`, incluidos accesos y enlaces legacy, después de verificar que no tengan dependencias activas.
+- Conservar el layout/guard de `/admin`, `AdminAccess`, `AdminMobileAppointments`, `AdminScheduleManager`, la gestión ADMIN de Mantenimiento, los helpers de reservas/disponibilidad, las RPCs, RLS, notificaciones, Auth, Supabase y Resend que sigan siendo necesarios.
+- Mantener la funcionalidad de novedades administrativas integrándola en la experiencia nueva; actualizar sus destinos a `/admin/movil` y `/admin/horarios` sin cambiar los eventos persistidos ni el envío de emails.
+- Eliminar componentes legacy sin consumidores: `src/components/kani/admin.tsx`, `admin-demand-dashboard.tsx` y `availability-admin.tsx`; retirar solo CSS exclusivo no utilizado.
+- Verificar escritorio y mobile, login/guard, visualización de turnos, confirmación, cancelación/rechazo, disponibilidad, mantenimiento ADMIN y aislamiento BARBER/ADMIN; comprobar que no queden rutas huérfanas, enlaces rotos ni errores de compilación.
+- No eliminar información de Production, no ejecutar migraciones destructivas, no cambiar datos, roles, políticas RLS, funciones RPC, autenticación, notificaciones ni Resend.
+- Ejecutar TypeScript, tests, build, rutas y Preview. Crear checkpoint solo después de una verificación satisfactoria; publicar únicamente tras autorización/validación según el alcance vigente.

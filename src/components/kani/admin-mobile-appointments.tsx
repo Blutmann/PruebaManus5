@@ -8,6 +8,7 @@ import { useAdminStaff } from '@/lib/kani-admin-context';
 import { appointmentErrorMessage, readRealAppointments, updateRealAppointmentStatus, type RealAppointment, type RealAppointmentStatus } from '@/lib/kani-appointments';
 import { businessDateToday, dateRangeForMobilePreset, filterMobileAppointments, mobileDatePresetLabels, type MobileDatePreset, type MobileStatusFilter } from '@/lib/kani-mobile-appointments';
 import { permittedBarberNames } from '@/lib/kani-role-scope';
+import { AdminActivityPopover } from '@/components/kani/admin-activity-popover';
 
 type StatusFilter = MobileStatusFilter;
 
@@ -146,6 +147,7 @@ export function AdminMobileAppointments() {
           <h1 className="section-title">Turnos</h1>
           <p className="admin-mobile-date"><CalendarDays size={16} />{activeDateLabel}</p>
         </div>
+        <AdminActivityPopover />
       </header>
 
       <section className="admin-mobile-summary" aria-label="Resumen de turnos">

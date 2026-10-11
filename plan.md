@@ -145,3 +145,23 @@ La sección seguirá la estética editorial zen del panel móvil: superficies so
 ### Estructura y permisos
 
 La ruta será hija de `/admin`, por lo que reutilizará `AdminLayout` y `AdminStaffProvider`. `BARBER` solo podrá seleccionar su perfil real y la base rechazará cualquier `barber_id` ajeno. `ADMIN` podrá seleccionar un barbero o todos y al agregar deberá elegir explícitamente la agenda. La nueva UI no será la única barrera: las RPCs y RLS de Preview serán la segunda capa.
+
+## Limpieza del panel administrativo antiguo — Preview
+
+### Resultado de la auditoría
+
+El archivo `src/routes/admin.tsx` no es el panel antiguo: es el layout/guard común que verifica sesión, carga `staff_profile`, mantiene el aislamiento ADMIN/BARBER y monta `AdminStaffProvider`; se conserva. La experiencia antigua estaba concentrada en `src/components/kani/admin.tsx`, que renderizaba tablas desktop, filtros legacy, dashboard, disponibilidad legacy, tabs y notificaciones. Sus rutas exclusivas eran `/admin/pendientes`, `/admin/cancelados` y `/admin/disponibilidad`.
+
+Las interfaces nuevas y sus dependencias son `AdminMobileAppointments` en `/admin/movil` y `AdminScheduleManager` en `/admin/horarios`. La primera ya contiene visualización, filtros por período/estado/barbero, detalle y transiciones PENDING/CONFIRMED/CANCELLED/COMPLETED; la segunda contiene la gestión segura de disponibilidad, comentarios internos, períodos, mutaciones RPC y aislamiento de agenda. Ambas reutilizan `AdminStaffProvider`, `kani-appointments`, `kani-availability` y `kani-role-scope`.
+
+### Eliminación segura
+
+- `/admin/` pasa a montar `AdminMobileAppointments`, para que `/admin` sea la entrada de la única experiencia de turnos responsive en escritorio y mobile.
+- Se eliminan las rutas legacy `/admin/pendientes`, `/admin/cancelados` y `/admin/disponibilidad`, sus entradas del manifiesto y los accesos legacy.
+- Se elimina `src/components/kani/admin.tsx`, junto con `admin-demand-dashboard.tsx` y `availability-admin.tsx`, porque no tienen consumidores después de la migración.
+- Se conserva `AdminAccess`, el layout/guard `src/routes/admin.tsx`, `AdminMobileAppointments`, `AdminScheduleManager`, `AdminMaintenance`, los helpers de Auth/RLS/RPC, `kani-admin-activity` y sus tablas/backend.
+- `AdminMaintenance` queda en `/admin/mantenimiento` como utilidad protegida independiente de ADMIN; no depende del panel legacy y no se eliminan sus RPCs, RLS ni datos.
+- Las notificaciones administrativas se integran en la nueva experiencia y sus enlaces pasan a `/admin/movil` o `/admin/horarios`; no se modifican tablas, eventos, permisos ni Resend.
+- Se retiran únicamente las reglas CSS sin consumidores de tablas/dashboard/disponibilidad legacy; se conservan las reglas de mantenimiento y de las interfaces nuevas.
+
+No se realizan migraciones destructivas, deletes de datos, cambios de Supabase, cambios de roles/RLS, cambios de autenticación, cambios de Resend ni publicación durante la implementación.

@@ -14,12 +14,9 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as EstudioRouteImport } from './routes/estudio'
 import { Route as ReservarRouteImport } from './routes/reservar'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
-import { Route as AdminCanceladosRouteImport } from './routes/admin.cancelados'
-import { Route as AdminDisponibilidadRouteImport } from './routes/admin.disponibilidad'
 import { Route as AdminHorariosRouteImport } from './routes/admin.horarios'
 import { Route as AdminMantenimientoRouteImport } from './routes/admin.mantenimiento'
 import { Route as AdminMovilRouteImport } from './routes/admin.movil'
-import { Route as AdminPendientesRouteImport } from './routes/admin.pendientes'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -46,16 +43,6 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminCanceladosRoute = AdminCanceladosRouteImport.update({
-  id: '/cancelados',
-  path: '/cancelados',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminDisponibilidadRoute = AdminDisponibilidadRouteImport.update({
-  id: '/disponibilidad',
-  path: '/disponibilidad',
-  getParentRoute: () => AdminRoute,
-} as any)
 const AdminHorariosRoute = AdminHorariosRouteImport.update({
   id: '/horarios',
   path: '/horarios',
@@ -71,35 +58,24 @@ const AdminMovilRoute = AdminMovilRouteImport.update({
   path: '/movil',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminPendientesRoute = AdminPendientesRouteImport.update({
-  id: '/pendientes',
-  path: '/pendientes',
-  getParentRoute: () => AdminRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/estudio': typeof EstudioRoute
   '/reservar': typeof ReservarRoute
-  '/admin/cancelados': typeof AdminCanceladosRoute
-  '/admin/disponibilidad': typeof AdminDisponibilidadRoute
   '/admin/horarios': typeof AdminHorariosRoute
   '/admin/mantenimiento': typeof AdminMantenimientoRoute
   '/admin/movil': typeof AdminMovilRoute
-  '/admin/pendientes': typeof AdminPendientesRoute
   '/admin/': typeof AdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/estudio': typeof EstudioRoute
   '/reservar': typeof ReservarRoute
-  '/admin/cancelados': typeof AdminCanceladosRoute
-  '/admin/disponibilidad': typeof AdminDisponibilidadRoute
   '/admin/horarios': typeof AdminHorariosRoute
   '/admin/mantenimiento': typeof AdminMantenimientoRoute
   '/admin/movil': typeof AdminMovilRoute
-  '/admin/pendientes': typeof AdminPendientesRoute
   '/admin': typeof AdminIndexRoute
 }
 export interface FileRoutesById {
@@ -108,12 +84,9 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/estudio': typeof EstudioRoute
   '/reservar': typeof ReservarRoute
-  '/admin/cancelados': typeof AdminCanceladosRoute
-  '/admin/disponibilidad': typeof AdminDisponibilidadRoute
   '/admin/horarios': typeof AdminHorariosRoute
   '/admin/mantenimiento': typeof AdminMantenimientoRoute
   '/admin/movil': typeof AdminMovilRoute
-  '/admin/pendientes': typeof AdminPendientesRoute
   '/admin/': typeof AdminIndexRoute
 }
 export interface FileRouteTypes {
@@ -123,24 +96,18 @@ export interface FileRouteTypes {
     | '/admin'
     | '/estudio'
     | '/reservar'
-    | '/admin/cancelados'
-    | '/admin/disponibilidad'
     | '/admin/horarios'
     | '/admin/mantenimiento'
     | '/admin/movil'
-    | '/admin/pendientes'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/estudio'
     | '/reservar'
-    | '/admin/cancelados'
-    | '/admin/disponibilidad'
     | '/admin/horarios'
     | '/admin/mantenimiento'
     | '/admin/movil'
-    | '/admin/pendientes'
     | '/admin'
   id:
     | '__root__'
@@ -148,12 +115,9 @@ export interface FileRouteTypes {
     | '/admin'
     | '/estudio'
     | '/reservar'
-    | '/admin/cancelados'
-    | '/admin/disponibilidad'
     | '/admin/horarios'
     | '/admin/mantenimiento'
     | '/admin/movil'
-    | '/admin/pendientes'
     | '/admin/'
   fileRoutesById: FileRoutesById
 }
@@ -201,20 +165,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/cancelados': {
-      id: '/admin/cancelados'
-      path: '/cancelados'
-      fullPath: '/admin/cancelados'
-      preLoaderRoute: typeof AdminCanceladosRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/disponibilidad': {
-      id: '/admin/disponibilidad'
-      path: '/disponibilidad'
-      fullPath: '/admin/disponibilidad'
-      preLoaderRoute: typeof AdminDisponibilidadRouteImport
-      parentRoute: typeof AdminRoute
-    }
     '/admin/horarios': {
       id: '/admin/horarios'
       path: '/horarios'
@@ -236,33 +186,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminMovilRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/pendientes': {
-      id: '/admin/pendientes'
-      path: '/pendientes'
-      fullPath: '/admin/pendientes'
-      preLoaderRoute: typeof AdminPendientesRouteImport
-      parentRoute: typeof AdminRoute
-    }
   }
 }
 
 interface AdminRouteChildren {
-  AdminCanceladosRoute: typeof AdminCanceladosRoute
-  AdminDisponibilidadRoute: typeof AdminDisponibilidadRoute
   AdminHorariosRoute: typeof AdminHorariosRoute
   AdminMantenimientoRoute: typeof AdminMantenimientoRoute
   AdminMovilRoute: typeof AdminMovilRoute
-  AdminPendientesRoute: typeof AdminPendientesRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
-  AdminCanceladosRoute: AdminCanceladosRoute,
-  AdminDisponibilidadRoute: AdminDisponibilidadRoute,
   AdminHorariosRoute: AdminHorariosRoute,
   AdminMantenimientoRoute: AdminMantenimientoRoute,
   AdminMovilRoute: AdminMovilRoute,
-  AdminPendientesRoute: AdminPendientesRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 
