@@ -188,3 +188,11 @@ En modo oscuro, mobile utiliza el fondo vertical suministrado y desktop desde 10
 - Ocultar del flujo público los horarios `UNAVAILABLE` y los horarios ya ocupados, sin crear ni modificar datos.
 - En mobile, mantener dos cápsulas por fila, altura uniforme, hora, intervalo y estado legibles, sin superposición ni scroll horizontal.
 - No modificar servicios, precios, duraciones, reservas, credenciales ni reglas ajenas a este ajuste.
+
+
+## Reemplazo de fondos WEBP
+
+- Reemplazar los cuatro fondos anteriores por los nuevos WEBP suministrados: claro desktop, claro mobile, oscuro desktop y oscuro mobile.
+- Mantener la selección correcta por modo claro/oscuro y breakpoint desktop/mobile usando las rutas existentes.
+- No modificar logo, layout, navegación, flujo de reservas, panel administrativo, Supabase, autenticación, reservas, disponibilidad, notificaciones ni Resend.
+- Validar que los cuatro assets se sirvan en Preview y que no haya regresiones visuales ni desbordamiento.

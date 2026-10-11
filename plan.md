@@ -231,3 +231,8 @@ Se agrega la variante panorámica suministrada para `min-width: 1024px` únicame
 ## Fondos del modo oscuro
 
 Se incorporan los fondos oscuros suministrados: la variante vertical se aplica en mobile y la panorámica desde `min-width: 1024px`, únicamente bajo `html[data-theme="dark"]`. Los fondos claros permanecen separados por tema y breakpoint, y el logo continúa compartido por ambos modos.
+
+
+## Reemplazo de fondos WEBP por tema y breakpoint
+
+Se reemplazan in-place los cuatro assets públicos conservando sus rutas actuales: `kani-fondo-claro-desktop.webp`, `kani-fondo-claro-mobile.webp`, `kani-fondo-oscuro-desktop.webp` y `kani-fondo-oscuro-mobile.webp`. El CSS existente mantiene la selección por `data-theme` y media query, por lo que claro/oscuro y desktop/mobile quedan desacoplados sin modificar layout, componentes ni lógica de negocio. La validación se limita a compilación, rutas de assets y revisión visual en Preview; no se cambian datos, autenticación, reservas, Supabase ni Resend.
