@@ -204,3 +204,11 @@ En modo oscuro, mobile utiliza el fondo vertical suministrado y desktop desde 10
 - Mantener las rutas estables `kani-fondo-claro-desktop.webp`, `kani-fondo-claro-mobile.webp`, `kani-fondo-oscuro-desktop.webp` y `kani-fondo-oscuro-mobile.webp`.
 - Conservar el mapeo actual por tema y breakpoint, sin modificar lógica, navegación, reservas, disponibilidad, Supabase, Resend ni autenticación.
 - Validar en Preview y publicar únicamente si TypeScript, tests, build, rutas y assets pasan correctamente.
+
+
+## Símbolo de Kani en login administrativo — Preview
+
+- Reemplazar únicamente el logo completo del login de `/admin` por el símbolo transparente suministrado, manteniendo el texto alternativo de marca y una escala responsive legible.
+- No modificar autenticación, sesiones, roles, Supabase, reservas ni navegación.
+- Verificar el login visualmente en desktop y mobile, ejecutar TypeScript, tests y build, y mantener los cuatro fondos WEBP ya publicados en Production.
+- Dejar el símbolo en Preview hasta contar con autorización específica para publicar este cambio.

@@ -1026,3 +1026,21 @@ textarea:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
   .admin-schedule-card { padding: .55rem; }
   .admin-schedule-status { font-size: .64rem; }
 }
+
+
+/* Símbolo de marca en el acceso administrativo. */
+.admin-login-symbol {
+  display: block;
+  width: 112px;
+  height: 112px;
+  margin-inline: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 18px color-mix(in oklch, var(--foreground) 12%, transparent));
+}
+
+@media (max-width: 767px) {
+  .admin-login-symbol {
+    width: 96px;
+    height: 96px;
+  }
+}
