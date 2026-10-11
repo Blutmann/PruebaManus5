@@ -226,3 +226,8 @@ Se incorporan los assets suministrados como archivos locales del proyecto. El lo
 ## Fondo claro desktop
 
 Se agrega la variante panorámica suministrada para `min-width: 1024px` únicamente bajo `html[data-theme="light"]`. Mobile mantiene el fondo vertical anterior; el modo oscuro no recibe ninguno de los dos fondos. La implementación usa el mismo fondo global fijo y no altera contenido ni navegación.
+
+
+## Fondos del modo oscuro
+
+Se incorporan los fondos oscuros suministrados: la variante vertical se aplica en mobile y la panorámica desde `min-width: 1024px`, únicamente bajo `html[data-theme="dark"]`. Los fondos claros permanecen separados por tema y breakpoint, y el logo continúa compartido por ambos modos.

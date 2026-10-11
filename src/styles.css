@@ -205,9 +205,17 @@ html[data-theme="light"] {
     background: var(--page-background) url('/kani-fondo-claro-mobile.webp') center top / cover fixed no-repeat;
   }
 
+  html[data-theme="dark"] body::before {
+    background: var(--page-background) url('/kani-fondo-oscuro-mobile.webp') center top / cover fixed no-repeat;
+  }
+
   @media (min-width: 1024px) {
     html[data-theme="light"] body::before {
       background-image: url('/kani-fondo-claro-desktop.webp');
+    }
+
+    html[data-theme="dark"] body::before {
+      background-image: url('/kani-fondo-oscuro-desktop.webp');
     }
   }
 }

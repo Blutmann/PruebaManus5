@@ -175,3 +175,8 @@ El logo transparente suministrado reemplaza el logo anterior del header y de la 
 ## Fondo claro desktop
 
 En modo claro y desde 1024px se utiliza el fondo panorámico desktop suministrado. Mobile conserva el fondo vertical existente. El modo oscuro permanece sin imagen de fondo. No modificar funciones ni publicar sin autorización específica.
+
+
+## Fondos del modo oscuro
+
+En modo oscuro, mobile utiliza el fondo vertical suministrado y desktop desde 1024px utiliza el fondo panorámico suministrado. El modo claro conserva sus fondos correspondientes. El logo se mantiene en ambos temas. No modificar funcionalidades ni publicar sin autorización específica.
