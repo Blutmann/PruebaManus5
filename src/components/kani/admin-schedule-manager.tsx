@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Check, CircleDot, Clock3, LoaderCircle, Pencil, Plus, SlidersHorizontal, Trash2, X, XCircle } from 'lucide-react';
+import { Check, CircleDot, Clock3, Plus, SlidersHorizontal, X, XCircle } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle } from '@/components/ui/dialog';
@@ -50,8 +50,6 @@ export function AdminScheduleManager() {
   const [savingId, setSavingId] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
-  const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
-  const [noteDrafts, setNoteDrafts] = useState<Record<string, string>>({});
   const [manualOpen, setManualOpen] = useState(false);
   const [manualDate, setManualDate] = useState(() => businessDateToday());
   const [manualBarberId, setManualBarberId] = useState(() => ownBarberId ?? permittedRows[0]?.id ?? '');
@@ -93,8 +91,6 @@ export function AdminScheduleManager() {
         .map(slot => ({ ...slot, barberName: (barberById.get(slot.barber_id)?.name ?? 'Barbero') as Barber, occupied: appointments.some(appointment => overlaps(slot, appointment)) }))
         .sort((a, b) => `${a.slot_date}${a.start_time}`.localeCompare(`${b.slot_date}${b.start_time}`));
       setSlots(nextSlots);
-      setNoteDrafts(Object.fromEntries(nextSlots.map(slot => [slot.id, slot.internal_note ?? ''])));
-      setEditingNoteId(null);
     } catch (cause) {
       setSlots([]);
       setError(errorMessage(cause));
@@ -115,19 +111,17 @@ export function AdminScheduleManager() {
     setDatePreset(next ? 'SPECIFIC' : 'ALL');
   }
 
-  async function saveSlot(slot: ScheduleSlot, changes: Partial<Pick<AvailabilitySlot, 'status' | 'internal_note'>>) {
-    if (slot.occupied && changes.status === 'UNAVAILABLE') {
-      setError('No se puede bloquear un horario que ya tiene una reserva activa.');
+  async function saveSlot(slot: ScheduleSlot, nextStatus: AvailabilitySlot['status']) {
+    if (slot.occupied) {
+      setError('No se puede modificar un horario que ya tiene una reserva activa.');
       return;
     }
     setSavingId(slot.id);
     setError('');
     setNotice('');
     try {
-      const updated = await updateAvailabilitySlot({ id: slot.id, barberId: slot.barber_id, status: changes.status ?? slot.status, internalNote: changes.internal_note !== undefined ? changes.internal_note : slot.internal_note });
+      const updated = await updateAvailabilitySlot({ id: slot.id, barberId: slot.barber_id, status: nextStatus, internalNote: slot.internal_note });
       setSlots(current => current.map(currentSlot => currentSlot.id === updated.id ? { ...updated, barberName: slot.barberName, occupied: slot.occupied } : currentSlot));
-      setNoteDrafts(current => ({ ...current, [updated.id]: updated.internal_note ?? '' }));
-      setEditingNoteId(null);
       setNotice(`${slot.barberName} · ${updated.start_time.slice(0, 5)} actualizado.`);
     } catch (cause) {
       setError(errorMessage(cause));
@@ -173,17 +167,11 @@ export function AdminScheduleManager() {
         {!loading && groupedSlots.length === 0 && <div className="admin-mobile-empty"><SlidersHorizontal size={28} /><h2>No hay horarios para estos filtros.</h2><p>Podés agregar una disponibilidad en cualquier fecha futura de atención.</p></div>}
         {!loading && groupedSlots.map(([date, dateSlots]) => <section key={date} className="admin-schedule-day"><div className="admin-schedule-day-heading"><div><span className="eyebrow">FECHA</span><h2>{dateLabel(date)}</h2></div><span>{dateSlots.length} {dateSlots.length === 1 ? 'horario' : 'horarios'}</span></div><div className="admin-schedule-cards">{dateSlots.map(slot => {
           const available = slot.status === 'AVAILABLE';
-          const existingNote = slot.internal_note?.trim() ?? '';
-          const noteDraft = noteDrafts[slot.id] ?? existingNote;
-          const editing = editingNoteId === slot.id;
           const saving = savingId === slot.id;
           const slotTone = slot.occupied ? 'occupied' : available ? 'available' : 'unavailable';
-          return <article key={slot.id} className={`admin-schedule-card admin-schedule-capsule booking-time-slot is-${slotTone}`}>
+          return <button type="button" key={slot.id} className={`admin-schedule-card admin-schedule-capsule booking-time-slot is-${slotTone}`} disabled={slot.occupied || saving} aria-label={`${slot.start_time.slice(0, 5)}: ${slot.occupied ? 'Con reserva, no modificable' : available ? 'Disponible, tocar para marcar no disponible' : 'No disponible, tocar para habilitar'}`} onClick={() => void saveSlot(slot, available ? 'UNAVAILABLE' : 'AVAILABLE')}>
             <div className="admin-schedule-card-top"><div className="admin-schedule-time"><strong>{slot.start_time.slice(0, 5)}</strong><span>hasta {slot.end_time.slice(0, 5)}</span></div><span className={`admin-schedule-status ${slotTone}`}>{slot.occupied ? <Clock3 size={14} /> : available ? <CircleDot size={14} /> : <XCircle size={14} />}{slot.occupied ? 'Con reserva' : available ? 'Disponible' : 'No disponible'}</span></div>
-            {profile.role === 'ADMIN' && <p className="admin-schedule-barber"><span className="small-avatar">{slot.barberName[0]}</span>{slot.barberName}</p>}
-            <div className="admin-schedule-toggle"><Button type="button" disabled={saving || slot.occupied} className={available && !slot.occupied ? 'selected available' : 'available'} aria-pressed={available && !slot.occupied} onClick={() => void saveSlot(slot, { status: 'AVAILABLE' })}><Check size={14} />Habilitar</Button><Button type="button" disabled={saving || slot.occupied} className={!available && !slot.occupied ? 'selected unavailable' : 'unavailable'} aria-pressed={!available && !slot.occupied} onClick={() => void saveSlot(slot, { status: 'UNAVAILABLE' })}><XCircle size={14} />Deshabilitar</Button></div>
-            <div className="admin-schedule-note"><span className="eyebrow">COMENTARIO INTERNO</span>{editing || !existingNote ? <div className="admin-schedule-note-editor"><Input value={noteDraft} onChange={event => setNoteDrafts(current => ({ ...current, [slot.id]: event.target.value }))} placeholder="Agregar comentario opcional" maxLength={500} aria-label={`Comentario interno ${slot.start_time.slice(0, 5)}`} /><Button variant="outline" size="icon" disabled={saving || noteDraft.trim() === existingNote} aria-label="Guardar comentario" onClick={() => void saveSlot(slot, { internal_note: noteDraft })}>{saving ? <LoaderCircle className="animate-spin" /> : <Check />}</Button>{editing && <Button variant="ghost" size="icon" disabled={saving} aria-label="Cancelar edición" onClick={() => { setNoteDrafts(current => ({ ...current, [slot.id]: existingNote })); setEditingNoteId(null); }}><X /></Button>}</div> : <div className="admin-schedule-note-value"><span>{existingNote}</span><Button variant="ghost" size="icon" aria-label="Editar comentario" onClick={() => setEditingNoteId(slot.id)}><Pencil size={15} /></Button><Button variant="ghost" size="icon" disabled={slot.occupied} aria-label="Eliminar comentario" onClick={() => void saveSlot(slot, { internal_note: null })}><Trash2 size={15} /></Button></div>}</div>
-          </article>;
+          </button>;
         })}</div></section>)}
       </section>
     </div>
