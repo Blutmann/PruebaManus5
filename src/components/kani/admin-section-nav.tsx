@@ -2,8 +2,8 @@ import { CalendarDays, Clock3 } from "lucide-react";
 import { Link, useRouterState } from "@tanstack/react-router";
 
 const items = [
-  { to: "/admin/horarios" as const, label: "Horarios", icon: Clock3 },
   { to: "/admin" as const, label: "Turnos", icon: CalendarDays },
+  { to: "/admin/horarios" as const, label: "Horarios", icon: Clock3 },
 ];
 
 export function AdminSectionNav() {
