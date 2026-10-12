@@ -384,6 +384,10 @@ html[data-theme='dark'] .booking-time-slot.selected:active {
   color: #191919 !important;
 }
 html[data-theme='light'] .booking-progress .current { border-bottom-color: #702B3A; }
+html[data-theme='light'] .booking-time-slot.selected,
+html[data-theme='light'] .booking-time-slot.selected:hover:not(:disabled),
+html[data-theme='light'] .booking-time-slot.selected:focus-visible,
+html[data-theme='light'] .booking-time-slot.selected:active { border-color: var(--gold) !important; background: var(--gold) !important; color: #FFFFFF !important; }
 .booking-back-button { min-height: 44px; }
 .booking-next-button { margin-left: auto; min-height: 44px; }
 .exit-dialog { max-width: 420px; }
@@ -452,8 +456,35 @@ html[data-theme="dark"] .booking-option.selected .selection-circle, html:not([da
 html[data-theme="dark"] .booking-option.selected .option-icon, html:not([data-theme="light"]) .booking-option.selected .option-icon { border-color: #191919; color: #191919; }
 html[data-theme="dark"] .booking-option.selected .option-icon img, html:not([data-theme="light"]) .booking-option.selected .option-icon img { filter: brightness(0); }
 html[data-theme="dark"] .booking-option.selected .barber-avatar, html:not([data-theme="light"]) .booking-option.selected .barber-avatar { color: #191919; border-color: #191919; }
+html[data-theme="dark"] .booking-defer-option.selected, html:not([data-theme="light"]) .booking-defer-option.selected { border-color: var(--gold) !important; background: var(--gold) !important; color: #191919 !important; }
+html[data-theme="dark"] .booking-defer-option.selected .barber-defer-mark, html:not([data-theme="light"]) .booking-defer-option.selected .barber-defer-mark { border-color: #191919; color: #191919 !important; }
+html[data-theme="dark"] .booking-defer-option.selected .text-muted-foreground, html:not([data-theme="light"]) .booking-defer-option.selected .text-muted-foreground { color: #191919 !important; }
+html[data-theme="dark"] .booking-defer-option.selected .selection-circle, html:not([data-theme="light"]) .booking-defer-option.selected .selection-circle { border-color: #191919; color: #191919; }
+html[data-theme="light"] .barber-choice-list .selected,
+html[data-theme="light"] .barber-choice-list .selected:hover:not(:disabled),
+html[data-theme="light"] .barber-choice-list .selected:focus-visible,
+html[data-theme="light"] .barber-choice-list .selected:active { border-color: var(--gold) !important; background: var(--gold) !important; color: #FFFFFF !important; }
+html[data-theme="light"] .booking-option.selected,
+html[data-theme="light"] .booking-option.selected:hover:not(:disabled),
+html[data-theme="light"] .booking-option.selected:focus-visible,
+html[data-theme="light"] .booking-option.selected:active,
+html[data-theme="light"] .booking-defer-option.selected,
+html[data-theme="light"] .booking-defer-option.selected:hover:not(:disabled),
+html[data-theme="light"] .booking-defer-option.selected:focus-visible,
+html[data-theme="light"] .booking-defer-option.selected:active { border-color: var(--gold) !important; background: var(--gold) !important; color: #191919 !important; }
+html[data-theme="light"] .booking-option.selected .text-muted-foreground,
+html[data-theme="light"] .booking-option.selected .selection-circle,
+html[data-theme="light"] .booking-option.selected .option-icon,
+html[data-theme="light"] .booking-option.selected .barber-avatar,
+html[data-theme="light"] .booking-defer-option.selected .text-muted-foreground,
+html[data-theme="light"] .booking-defer-option.selected .selection-circle,
+html[data-theme="light"] .booking-defer-option.selected .barber-defer-mark { border-color: #191919; color: #191919 !important; }
+html[data-theme="light"] .booking-option.selected .option-icon img { filter: brightness(0); }
 .booking-title-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .booking-title-row .section-title { margin-bottom: 12px; }
+.booking-time-heading { display: block; }
+.booking-time-heading-date { display: flex; align-items: center; gap: 8px; margin-top: -4px; color: var(--muted-foreground); font-size: 13px; line-height: 1.2; }
+.booking-time-heading-date svg { flex: 0 0 auto; color: var(--gold); }
 .booking-reset-button { flex: 0 0 44px; width: 44px; height: 44px; color: var(--muted-foreground); }
 .booking-reset-button:hover { color: var(--foreground); background: color-mix(in oklch, var(--gold) 10%, transparent); }
 .booking-defer-option .barber-defer-mark { width: 48px; height: 48px; flex-basis: 48px; }
@@ -555,6 +586,10 @@ html[data-theme="dark"] .booking-time-slot.selected, html:not([data-theme="light
  .booking-aside { display: none; }
  .section-title { font-size: 24px; line-height: 1.2; margin-top: 2px; }
  .booking-page .section-title { font-size: 22px; }
+ .booking-time-heading { display: flex; align-items: baseline; justify-content: flex-start; gap: 9px; min-width: 0; white-space: nowrap; }
+ .booking-time-heading .section-title { min-width: 0; flex: 0 1 auto; margin-bottom: 12px; }
+ .booking-time-heading-date { min-width: 0; flex: 0 1 auto; gap: 5px; margin-top: 0; overflow: hidden; font-size: clamp(10px, 2.8vw, 13px); white-space: nowrap; text-overflow: ellipsis; }
+ .booking-time-heading-date svg { width: 14px; height: 14px; }
  .booking-option { gap: 14px; padding: 14px 16px; height: 90px; }
  .booking-defer-option { height: 90px; min-height: 90px; padding: 14px 16px; gap: 14px; }
  .booking-defer-option .barber-defer-mark { width: 40px; height: 40px; flex-basis: 40px; }
@@ -1141,6 +1176,9 @@ textarea:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
 
 @media (max-width: 359px) {
   .booking-time-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .25rem; }
+  .booking-time-heading { gap: 5px; }
+  .booking-time-heading .section-title { font-size: 18px; }
+  .booking-time-heading-date { font-size: 10px; }
 }
 
 /* Corrección puntual: espacio vertical móvil y no disponible claro. */
