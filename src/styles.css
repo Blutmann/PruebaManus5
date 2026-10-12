@@ -287,6 +287,12 @@ html[data-theme="light"] .booking-progress .complete > span { border-color: #702
 .booking-deposit-notice svg { flex: 0 0 auto; margin-top: 1px; color: var(--gold); }
 .booking-aside { margin-top: 9px; padding: 27px 0 27px 28px; border-left: 1px solid var(--border); }
 .booking-defer-option { width: 100%; height: 104px; min-height: 104px; display: flex; align-items: center; gap: 18px; padding: 20px 22px; background: var(--surface); box-shadow: 0 10px 26px rgb(0 0 0 / 0.14); text-align: left; white-space: normal; }
+.booking-defer-option.selected,
+.booking-defer-option.selected:hover:not(:disabled),
+.booking-defer-option.selected:focus-visible,
+.booking-defer-option.selected:active { border-color: #702B3A !important; background: #702B3A !important; color: #FFFFFF !important; }
+.booking-defer-option.selected .barber-defer-mark,
+.booking-defer-option.selected .text-muted-foreground { border-color: #FFFFFF; color: #FFFFFF !important; }
 .barber-defer-mark { width: 36px; height: 36px; display: grid; place-items: center; flex: 0 0 36px; border: 1px dashed color-mix(in oklch, var(--gold) 55%, var(--border)); border-radius: 50%; color: var(--gold); font-family: var(--font-sans); font-size: 20px; }
 .booking-defer-copy { min-width: 0; overflow-wrap: anywhere; line-height: 1.25; }
 .barber-choice-inline { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); }
@@ -365,7 +371,19 @@ html[data-theme="light"] .booking-progress .complete > span { border-color: #702
 .booking-home-button { flex: 0 0 44px; width: 44px; height: 44px; margin-right: 12px; color: var(--primary-foreground) !important; }
 .booking-home-button:hover { background: color-mix(in oklch, var(--primary) 88%, white) !important; }
 .calendar-day.selected { background: var(--gold) !important; border-color: var(--gold) !important; color: var(--background) !important; }
-.booking-time-slot.selected:hover:not(:disabled), .booking-time-slot.selected:focus-visible { border-color: #702B3A !important; background: #702B3A !important; color: #FFFFFF !important; }
+.booking-time-slot.selected,
+.booking-time-slot.selected:hover:not(:disabled),
+.booking-time-slot.selected:focus-visible,
+.booking-time-slot.selected:active,
+html[data-theme='dark'] .booking-time-slot.selected,
+html[data-theme='dark'] .booking-time-slot.selected:hover:not(:disabled),
+html[data-theme='dark'] .booking-time-slot.selected:focus-visible,
+html[data-theme='dark'] .booking-time-slot.selected:active {
+  border-color: var(--gold) !important;
+  background: var(--gold) !important;
+  color: #191919 !important;
+}
+html[data-theme='light'] .booking-progress .current { border-bottom-color: #702B3A; }
 .booking-back-button { min-height: 44px; }
 .booking-next-button { margin-left: auto; min-height: 44px; }
 .exit-dialog { max-width: 420px; }
@@ -1110,18 +1128,19 @@ textarea:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
   .admin-schedule-card-top { min-height: 3.55rem; }
   .admin-schedule-card .admin-schedule-time strong { font-size: 1.25rem; }
   .booking-time-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: .45rem;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: .35rem;
   }
   .booking-time-slot {
     min-height: 2.75rem;
     height: 2.75rem;
-    padding-inline: .35rem;
+    padding-inline: .15rem;
+    font-size: .72rem;
   }
 }
 
 @media (max-width: 359px) {
-  .booking-time-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .booking-time-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .25rem; }
 }
 
 /* Corrección puntual: espacio vertical móvil y no disponible claro. */
