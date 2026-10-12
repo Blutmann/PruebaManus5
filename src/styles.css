@@ -1083,3 +1083,43 @@ textarea:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
     height: 96px;
   }
 }
+
+/* Densidad visual acotada a los horarios, sin cambiar estados ni interacción. */
+.admin-schedule-card {
+  min-height: 4.75rem;
+  padding-block: .65rem;
+}
+.admin-schedule-card-top { min-height: 3.35rem; }
+.admin-schedule-card .admin-schedule-time strong { font-size: 1.35rem; }
+
+.booking-time-grid {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: .45rem;
+}
+.booking-time-slot {
+  min-height: 2.75rem;
+  height: 2.75rem;
+  padding-inline: .45rem;
+}
+
+@media (max-width: 767px) {
+  .admin-schedule-card {
+    min-height: 4.75rem;
+    padding: .6rem .65rem;
+  }
+  .admin-schedule-card-top { min-height: 3.55rem; }
+  .admin-schedule-card .admin-schedule-time strong { font-size: 1.25rem; }
+  .booking-time-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: .45rem;
+  }
+  .booking-time-slot {
+    min-height: 2.75rem;
+    height: 2.75rem;
+    padding-inline: .35rem;
+  }
+}
+
+@media (max-width: 359px) {
+  .booking-time-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
