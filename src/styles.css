@@ -950,6 +950,8 @@ html[data-theme="light"] .admin-section-nav-link.is-active:active { background: 
 .admin-schedule-control { min-width: 0; }
 .admin-schedule-filter-value { display: flex; min-height: 2.65rem; align-items: center; overflow-wrap: anywhere; border: 1px solid var(--input); border-radius: .7rem; background: var(--background); color: var(--foreground); padding: .5rem .7rem; font: inherit; font-size: .9rem; }
 .admin-schedule-add-row { display: flex; justify-content: flex-end; margin-bottom: 1.2rem; }
+.admin-schedule-add-row-day { justify-content: flex-start; margin: .85rem 0 0; }
+.admin-schedule-add-row-empty { justify-content: center; margin: .9rem 0 0; }
 .admin-schedule-filters label { display: block; margin-bottom: .4rem; color: var(--muted-foreground); font-size: .78rem; }
 .admin-schedule-filters select, .admin-schedule-filters input { width: 100%; min-width: 0; min-height: 2.65rem; border: 1px solid var(--input); border-radius: .7rem; background: var(--background); color: var(--foreground); padding: .5rem .7rem; font: inherit; font-size: .9rem; }
 .admin-schedule-filters select { padding-right: 2rem; }

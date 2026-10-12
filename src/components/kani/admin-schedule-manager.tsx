@@ -266,6 +266,14 @@ export function AdminScheduleManager() {
     }
   }
 
+  function openManualDialog(date: string, barberId?: string) {
+    setManualDate(date || specificDate || businessToday);
+    const contextualBarberId = barberId ?? selectedRows[0]?.id;
+    if (contextualBarberId && permittedRows.some((row) => row.id === contextualBarberId))
+      setManualBarberId(contextualBarberId);
+    setManualOpen(true);
+  }
+
   const groupedSlots = useMemo(() => {
     const groups = new Map<string, ScheduleSlot[]>();
     slots.forEach((slot) =>
@@ -323,15 +331,6 @@ export function AdminScheduleManager() {
             )}
           </div>
         </section>
-        <div className="admin-schedule-add-row">
-          <Button
-            className="action-positive admin-schedule-add"
-            onClick={() => setManualOpen(true)}
-          >
-            <Plus size={17} />
-            Agregar horario
-          </Button>
-        </div>
         <div className="admin-schedule-legend" aria-label="Leyenda de horarios">
           <span>
             <CircleDot size={14} />
@@ -374,11 +373,22 @@ export function AdminScheduleManager() {
             </div>
           )}
           {!loading && groupedSlots.length === 0 && (
-            <div className="admin-mobile-empty">
-              <SlidersHorizontal size={28} />
-              <h2>No hay horarios para estos filtros.</h2>
-              <p>Podés agregar una disponibilidad en cualquier fecha futura de atención.</p>
-            </div>
+            <>
+              <div className="admin-mobile-empty">
+                <SlidersHorizontal size={28} />
+                <h2>No hay horarios para estos filtros.</h2>
+                <p>Podés agregar una disponibilidad en cualquier fecha futura de atención.</p>
+              </div>
+              <div className="admin-schedule-add-row admin-schedule-add-row-empty">
+                <Button
+                  className="action-positive admin-schedule-add"
+                  onClick={() => openManualDialog(specificDate, selectedRows[0]?.id)}
+                >
+                  <Plus size={17} />
+                  Agregar horario
+                </Button>
+              </div>
+            </>
           )}
           {!loading &&
             groupedSlots.map(([date, dateSlots]) => (
@@ -433,6 +443,15 @@ export function AdminScheduleManager() {
                       </button>
                     );
                   })}
+                </div>
+                <div className="admin-schedule-add-row admin-schedule-add-row-day">
+                  <Button
+                    className="action-positive admin-schedule-add"
+                    onClick={() => openManualDialog(date, dateSlots[0]?.barber_id)}
+                  >
+                    <Plus size={17} />
+                    Agregar horario
+                  </Button>
                 </div>
                 {validStarts.filter((start) => start.slot_date === date).length > 0 && (
                   <div className="admin-schedule-starts" aria-label={`Inicios válidos del ${date}`}>
