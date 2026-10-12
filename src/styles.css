@@ -1180,6 +1180,29 @@ textarea:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
   .booking-time-heading-date { font-size: 10px; }
 }
 
+/* Encabezado de horarios: título a la izquierda y fecha a la derecha en desktop. */
+@media (min-width: 768px) {
+  .booking-time-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    min-width: 0;
+    white-space: nowrap;
+  }
+  .booking-time-heading .section-title {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+  .booking-time-heading-date {
+    min-width: 0;
+    flex: 0 0 auto;
+    margin-top: 0;
+    text-align: right;
+    white-space: nowrap;
+  }
+}
+
 /* Corrección puntual: espacio vertical móvil y no disponible claro. */
 @media (max-width: 767px) {
   .admin-schedule-card {
