@@ -964,6 +964,16 @@ html[data-theme="light"] .admin-section-nav-link.is-active:active { background: 
 .admin-schedule-card.is-occupied { border-color: color-mix(in srgb, var(--gold) 48%, var(--border)); background: color-mix(in srgb, var(--gold) 5%, var(--surface)); }
 .admin-schedule-status.occupied { color: var(--gold); }
 .admin-schedule-card:disabled { cursor: not-allowed; opacity: .72; }
+.admin-schedule-starts { margin-top: .8rem; padding: .75rem; border: 1px dashed var(--border); border-radius: .8rem; background: color-mix(in srgb, var(--surface) 78%, transparent); }
+.admin-schedule-starts-heading { display: flex; align-items: baseline; justify-content: space-between; gap: .75rem; margin-bottom: .55rem; color: var(--foreground); font-size: .78rem; }
+.admin-schedule-starts-heading span:last-child { color: var(--muted-foreground); font-size: .68rem; text-align: right; }
+.admin-schedule-start-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .45rem; }
+.admin-schedule-start { display: grid; min-width: 0; grid-template-columns: auto 1fr; align-items: baseline; gap: .15rem .45rem; padding: .45rem .55rem; border: 1px solid color-mix(in srgb, var(--border) 70%, var(--gold)); border-radius: .65rem; background: var(--background); }
+.admin-schedule-start strong { font-size: 1.05rem; font-weight: 600; }
+.admin-schedule-start span { color: var(--muted-foreground); font-size: .65rem; }
+.admin-schedule-start small { grid-column: 1 / -1; min-width: 0; overflow-wrap: anywhere; color: var(--muted-foreground); font-size: .65rem; line-height: 1.25; }
+.admin-schedule-start.is-exception { border-color: color-mix(in srgb, var(--gold) 65%, var(--border)); background: color-mix(in srgb, var(--gold) 7%, var(--background)); }
+.admin-schedule-start.is-exception span { color: var(--gold); }
 
 @media (max-width: 420px) {
   .admin-mobile-summary { gap: .25rem; }
@@ -1039,6 +1049,9 @@ textarea:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
   .admin-schedule-time strong { font-size: 1.25rem; }
   .admin-schedule-time span { font-size: .7rem; }
   .admin-schedule-status { min-height: 1.15rem; font-size: .68rem; white-space: nowrap; }
+  .admin-schedule-starts-heading { display: grid; gap: .2rem; }
+  .admin-schedule-starts-heading span:last-child { text-align: left; }
+  .admin-schedule-start-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 420px) {

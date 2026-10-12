@@ -21,6 +21,7 @@ import {
 import { dateLabel, minutes, type Barber } from "@/lib/kani-model";
 import {
   createAvailabilitySlots,
+  readAvailabilityStartsForRange,
   readAvailabilitySlotsForRange,
   updateAvailabilitySlot,
   type AvailabilitySlot,
@@ -39,6 +40,7 @@ const hours = Array.from({ length: 11 }, (_, index) => index + 10);
 const manualMinutes = Array.from({ length: 12 }, (_, index) => index * 5);
 
 type ScheduleSlot = AvailabilitySlot & { barberName: Barber; occupied: boolean };
+type ScheduleStart = Awaited<ReturnType<typeof readAvailabilityStartsForRange>>[number] & { barberName: Barber };
 
 function errorMessage(cause: unknown) {
   const error = cause as { code?: unknown; message?: unknown; details?: unknown } | null;
@@ -104,6 +106,7 @@ export function AdminScheduleManager() {
   const [specificDate, setSpecificDate] = useState(() => businessDateToday());
   const [barberFilter, setBarberFilter] = useState("");
   const [slots, setSlots] = useState<ScheduleSlot[]>([]);
+  const [validStarts, setValidStarts] = useState<ScheduleStart[]>([]);
   const [loading, setLoading] = useState(true);
   const [savingId, setSavingId] = useState<string | null>(null);
   const [error, setError] = useState("");
@@ -150,9 +153,12 @@ export function AdminScheduleManager() {
     setLoading(true);
     setError("");
     try {
-      const [slotRows, appointments] = await Promise.all([
+      const [slotRows, starts, appointments] = await Promise.all([
         Promise.all(
           selectedRows.map((row) => readAvailabilitySlotsForRange(row.id, dateRange)),
+        ).then((rows) => rows.flat()),
+        Promise.all(
+          selectedRows.map((row) => readAvailabilityStartsForRange(row.id, dateRange)),
         ).then((rows) => rows.flat()),
         readRealAppointments(),
       ]);
@@ -166,8 +172,17 @@ export function AdminScheduleManager() {
           `${a.slot_date}${a.start_time}`.localeCompare(`${b.slot_date}${b.start_time}`),
         );
       setSlots(nextSlots);
+      setValidStarts(
+        starts
+          .map((start) => ({
+            ...start,
+            barberName: (barberById.get(start.barber_id)?.name ?? "Barbero") as Barber,
+          }))
+          .sort((a, b) => `${a.slot_date}${a.start_time}`.localeCompare(`${b.slot_date}${b.start_time}`)),
+      );
     } catch (cause) {
       setSlots([]);
+      setValidStarts([]);
       setError(errorMessage(cause));
     } finally {
       setLoading(false);
@@ -216,6 +231,7 @@ export function AdminScheduleManager() {
             : currentSlot,
         ),
       );
+      void loadSlots();
       setNotice(`${slot.barberName} · ${updated.start_time.slice(0, 5)} actualizado.`);
     } catch (cause) {
       setError(errorMessage(cause));
@@ -418,6 +434,23 @@ export function AdminScheduleManager() {
                     );
                   })}
                 </div>
+                {validStarts.filter((start) => start.slot_date === date).length > 0 && (
+                  <div className="admin-schedule-starts" aria-label={`Inicios válidos del ${date}`}>
+                    <div className="admin-schedule-starts-heading">
+                      <span>Inicios que puede ofrecer</span>
+                      <span>La reserva pública usa esta misma lista</span>
+                    </div>
+                    <div className="admin-schedule-start-list">
+                      {validStarts.filter((start) => start.slot_date === date).map((start) => (
+                        <div key={`${start.barber_id}-${start.slot_date}-${start.start_time}`} className={`admin-schedule-start ${start.is_exception ? "is-exception" : "is-standard"}`}>
+                          <strong>{start.start_time.slice(0, 5)}</strong>
+                          <span>{start.is_exception ? "Excepción manual" : "Estándar"}</span>
+                          <small>{start.compatible_services.join(" · ")}</small>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </section>
             ))}
         </section>

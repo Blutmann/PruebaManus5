@@ -12,6 +12,14 @@ export type ConfiguredService = Omit<(typeof services)[number], 'price' | 'durat
   price: number;
   duration: number;
 };
+export type PublicAvailabilityStart = {
+  barber_id: string;
+  slot_date: string;
+  start_time: string;
+  is_exception: boolean;
+  compatible_services: string[];
+  barber_name: Barber;
+};
 
 const AVAILABILITY_STEP_MINUTES = 5;
 
@@ -50,26 +58,52 @@ export async function readConfiguredServices(): Promise<ConfiguredService[]> {
   });
 }
 
-export async function readPublicAvailabilitySlots(barber: Barber | null, fromDate: string, toDate: string) {
+export async function readPublicAvailabilityStarts(barber: Barber | null, fromDate: string, toDate: string) {
   let barberQuery = supabase.from('barbers').select('id, name').eq('active', true);
   if (barber) barberQuery = barberQuery.eq('name', barber);
   const { data: barberRows, error: barberError } = await barberQuery;
   if (barberError) throw barberError;
-  if (!barberRows?.length) return [] as PublicAvailabilitySlot[];
+  if (!barberRows?.length) return [] as PublicAvailabilityStart[];
   const barberById = new Map(barberRows.map(row => [row.id, row.name as Barber]));
-  const { data, error } = await supabase
-    .from('available_barber_slots')
-    .select(publicSlotFields)
-    .in('barber_id', barberRows.map(row => row.id))
-    .gte('slot_date', fromDate)
-    .lte('slot_date', toDate)
-    .order('slot_date', { ascending: true })
-    .order('start_time', { ascending: true });
+  const { data, error } = await supabase.rpc('read_valid_availability_starts', {
+    p_barber_id: barber ? barberRows[0]?.id ?? null : null,
+    p_from_date: fromDate,
+    p_to_date: toDate,
+  });
   if (error) throw error;
-  return (data ?? []).flatMap(slot => {
-    const barberName = barberById.get(slot.barber_id);
-    return barberName ? [{ ...slot, barber_name: barberName }] : [];
-  }) as PublicAvailabilitySlot[];
+  return (data ?? []).flatMap(row => {
+    const barberName = barberById.get(row.barber_id);
+    return barberName ? [{ ...row, barber_name: barberName }] : [];
+  }) as PublicAvailabilityStart[];
+}
+
+export function availabilityStartTimesForServiceDate(
+  starts: PublicAvailabilityStart[],
+  date: string,
+  serviceName: string,
+  now: Date,
+  barber?: Barber | null,
+) {
+  return [...new Set(starts
+    .filter(start => start.slot_date === date)
+    .filter(start => !barber || start.barber_name === barber)
+    .filter(start => start.compatible_services.includes(serviceName))
+    .filter(start => slotCanStillBeBooked(start.slot_date, start.start_time, now))
+    .map(start => start.start_time.slice(0, 5)))].sort();
+}
+
+export function eligibleBarbersForAvailabilityStart(
+  starts: PublicAvailabilityStart[],
+  date: string,
+  time: string,
+  serviceName: string,
+  now: Date,
+) {
+  return [...new Set(starts
+    .filter(start => start.slot_date === date && start.start_time.slice(0, 5) === time)
+    .filter(start => start.compatible_services.includes(serviceName))
+    .filter(start => slotCanStillBeBooked(start.slot_date, start.start_time, now))
+    .map(start => start.barber_name))];
 }
 
 function businessClockMinutes(now: Date) {
@@ -172,6 +206,25 @@ export async function readAvailabilitySlotsForRange(
     .order('start_time', { ascending: true });
   if (rangedError) throw rangedError;
   return rangedData as AvailabilitySlot[];
+}
+
+export async function readAvailabilityStartsForRange(
+  barberId: string,
+  range: { start?: string; end?: string } | null = null,
+) {
+  const { data, error } = await supabase.rpc('read_valid_availability_starts', {
+    p_barber_id: barberId,
+    p_from_date: range?.start ?? null,
+    p_to_date: range?.end ?? null,
+  });
+  if (error) throw error;
+  return (data ?? []) as Array<{
+    barber_id: string;
+    slot_date: string;
+    start_time: string;
+    is_exception: boolean;
+    compatible_services: string[];
+  }>;
 }
 
 export async function updateAvailabilitySlot({

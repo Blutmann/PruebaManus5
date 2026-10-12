@@ -577,6 +577,20 @@ export type Database = {
           updated_by: string | null
         }[]
       }
+      read_valid_availability_starts: {
+        Args: {
+          p_barber_id?: string | null
+          p_from_date?: string | null
+          p_to_date?: string | null
+        }
+        Returns: {
+          barber_id: string
+          slot_date: string
+          start_time: string
+          is_exception: boolean
+          compatible_services: string[]
+        }[]
+      }
       update_availability_slot: {
         Args: {
           p_slot_id: string

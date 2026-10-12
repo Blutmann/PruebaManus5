@@ -1,9 +1,12 @@
 import { describe, expect, it } from "vitest";
 import {
+  availabilityStartTimesForServiceDate,
   availableTimesForServiceDate,
+  eligibleBarbersForAvailabilityStart,
   eligibleBarbersForServiceSlot,
   effectiveServiceDurationSeconds,
   isManageableScheduleDate,
+  type PublicAvailabilityStart,
   type PublicAvailabilitySlot,
 } from "./kani-availability";
 
@@ -84,6 +87,21 @@ describe("public booking availability helpers", () => {
       "Lautaro",
     ]);
     expect(availableTimesForServiceDate(slots, "2026-10-08", 60, now, "Gonzalo")).toEqual([]);
+  });
+
+  it("representa inicios estándar cada 15 minutos y conserva excepciones manuales", () => {
+    const starts: PublicAvailabilityStart[] = [
+      { slot_date: "2026-10-08", start_time: "10:00:00", is_exception: false, compatible_services: ["Corte", "Barba", "Corte + barba"], barber_name: "Lautaro", barber_id: "lautaro-id" },
+      { slot_date: "2026-10-08", start_time: "10:15:00", is_exception: false, compatible_services: ["Barba"], barber_name: "Lautaro", barber_id: "lautaro-id" },
+      { slot_date: "2026-10-08", start_time: "12:10:00", is_exception: true, compatible_services: ["Barba"], barber_name: "Lautaro", barber_id: "lautaro-id" },
+    ];
+    expect(starts.filter(start => !start.is_exception).map(start => start.start_time.slice(0, 5))).toEqual(["10:00", "10:15"]);
+    expect(starts.find(start => start.is_exception)?.start_time.slice(0, 5)).toBe("12:10");
+    expect(starts.find(start => start.start_time === "10:15:00")?.compatible_services).toEqual(["Barba"]);
+    const now = new Date("2026-10-08T08:00:00-03:00");
+    expect(availabilityStartTimesForServiceDate(starts, "2026-10-08", "Barba", now, "Lautaro")).toEqual(["10:00", "10:15", "12:10"]);
+    expect(availabilityStartTimesForServiceDate(starts, "2026-10-08", "Corte + barba", now, "Lautaro")).toEqual(["10:00"]);
+    expect(eligibleBarbersForAvailabilityStart(starts, "2026-10-08", "12:10", "Barba", now)).toEqual(["Lautaro"]);
   });
 
   it("requires all five-minute segments of a service to be available", () => {
