@@ -379,7 +379,7 @@ export function AdminScheduleManager() {
                 <h2>No hay horarios para estos filtros.</h2>
                 <p>Podés agregar una disponibilidad en cualquier fecha futura de atención.</p>
               </div>
-              <div className="admin-schedule-add-row admin-schedule-add-row-empty">
+              <div className="admin-schedule-cards admin-schedule-cards-empty">
                 <Button
                   className="action-positive admin-schedule-add"
                   onClick={() => openManualDialog(specificDate, selectedRows[0]?.id)}
@@ -443,8 +443,6 @@ export function AdminScheduleManager() {
                       </button>
                     );
                   })}
-                </div>
-                <div className="admin-schedule-add-row admin-schedule-add-row-day">
                   <Button
                     className="action-positive admin-schedule-add"
                     onClick={() => openManualDialog(date, dateSlots[0]?.barber_id)}
