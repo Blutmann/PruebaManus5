@@ -1123,3 +1123,25 @@ textarea:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
 @media (max-width: 359px) {
   .booking-time-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
+
+/* Corrección puntual: espacio vertical móvil y no disponible claro. */
+@media (max-width: 767px) {
+  .admin-schedule-card {
+    min-height: 5.05rem;
+    padding-block: .65rem;
+  }
+  .admin-schedule-card-top { min-height: 3.85rem; }
+}
+
+html[data-theme='light'] .admin-schedule-card.is-unavailable,
+html[data-theme='light'] .admin-schedule-card.is-unavailable:hover:not(:disabled),
+html[data-theme='light'] .admin-schedule-card.is-unavailable:focus-visible {
+  border-color: #702B3A;
+  background: #702B3A;
+  color: #FFFFFF;
+}
+html[data-theme='light'] .admin-schedule-card.is-unavailable .admin-schedule-time span,
+html[data-theme='light'] .admin-schedule-card.is-unavailable .admin-schedule-status,
+html[data-theme='light'] .admin-schedule-card.is-unavailable .admin-schedule-status svg {
+  color: #FFFFFF;
+}
