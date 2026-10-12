@@ -41,8 +41,14 @@ const manualMinutes = Array.from({ length: 12 }, (_, index) => index * 5);
 type ScheduleSlot = AvailabilitySlot & { barberName: Barber; occupied: boolean };
 
 function errorMessage(cause: unknown) {
-  const message = cause instanceof Error ? cause.message : "";
-  if (message.includes("AVAILABILITY_OVERLAP"))
+  const error = cause as { code?: unknown; message?: unknown; details?: unknown } | null;
+  const message = [
+    cause instanceof Error ? cause.message : "",
+    typeof error?.message === "string" ? error.message : "",
+    typeof error?.details === "string" ? error.details : "",
+    typeof error?.code === "string" ? error.code : "",
+  ].join(" ");
+  if (message.includes("AVAILABILITY_OVERLAP") || error?.code === "23P01")
     return "Ese horario se superpone con otro horario existente.";
   if (message.includes("AVAILABILITY_APPOINTMENT_CONFLICT"))
     return "Ese horario se superpone con una reserva existente.";
