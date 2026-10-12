@@ -48,6 +48,12 @@ function errorMessage(cause: unknown) {
     return "Ese horario se superpone con una reserva existente.";
   if (message.includes("AVAILABILITY_DATE_INVALID"))
     return "Elegí una fecha futura de atención; los domingos permanecen cerrados.";
+  if (message.includes("START_TIME_INVALID"))
+    return "Elegí un horario válido en intervalos de 5 minutos.";
+  if (message.includes("BARBER_NOT_FOUND"))
+    return "No se encontró el barbero seleccionado.";
+  if (message.includes("DATE_REQUIRED"))
+    return "Elegí al menos una fecha.";
   if (message.includes("AVAILABILITY_NOT_ALLOWED"))
     return "No tenés permiso para modificar esa agenda.";
   if (message.includes("INTERNAL_NOTE_TOO_LONG"))
