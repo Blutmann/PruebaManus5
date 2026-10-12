@@ -562,6 +562,7 @@ export type Database = {
           p_barber_id: string
           p_slot_dates: string[]
           p_start_time: string
+          p_end_time: string
         }
         Returns: {
           id: string

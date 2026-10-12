@@ -31,55 +31,95 @@ function slot({
 describe("public booking availability helpers", () => {
   const slots = [
     slot({
-      id: "lautaro-10",
+      id: "lautaro-window",
       barber_name: "Lautaro",
       start_time: "10:00:00",
-      end_time: "11:00:00",
+      end_time: "12:00:00",
     }),
     slot({
-      id: "gonzalo-10",
+      id: "gonzalo-window",
       barber_name: "Gonzalo",
       start_time: "10:00:00",
       end_time: "11:00:00",
+    }),
+    slot({
+      id: "gonzalo-blocked",
+      barber_name: "Gonzalo",
+      start_time: "10:30:00",
+      end_time: "10:45:00",
       status: "UNAVAILABLE",
     }),
     slot({
-      id: "valentin-11",
+      id: "valentin-window",
       barber_name: "Valentín",
       start_time: "11:00:00",
       end_time: "12:00:00",
     }),
   ];
 
-  it("groups all barbers by unique available start time", () => {
-    expect(availableTimesForServiceDate(slots, "2026-10-08", 60, now)).toEqual(["10:00", "11:00"]);
-    expect(eligibleBarbersForServiceSlot(slots, "2026-10-08", "10:00", 60, now)).toEqual([
-      "Lautaro",
+  it("offers every five-minute start that fits the full service duration", () => {
+    expect(availableTimesForServiceDate(slots, "2026-10-08", 60, now, "Lautaro")).toEqual([
+      "10:00", "10:05", "10:10", "10:15", "10:20", "10:25", "10:30", "10:35", "10:40", "10:45", "10:50", "10:55", "11:00",
     ]);
-    expect(eligibleBarbersForServiceSlot(slots, "2026-10-08", "11:00", 60, now)).toEqual([
-      "Valentín",
+    expect(availableTimesForServiceDate(slots, "2026-10-08", 45, now, "Lautaro")).toEqual([
+      "10:00", "10:05", "10:10", "10:15", "10:20", "10:25", "10:30", "10:35", "10:40", "10:45", "10:50", "10:55", "11:00", "11:05", "11:10", "11:15",
+    ]);
+    expect(availableTimesForServiceDate(slots, "2026-10-08", 30, now, "Lautaro")).toEqual([
+      "10:00", "10:05", "10:10", "10:15", "10:20", "10:25", "10:30", "10:35", "10:40", "10:45", "10:50", "10:55", "11:00", "11:05", "11:10", "11:15", "11:20", "11:25", "11:30",
     ]);
   });
 
-  it("filters by a concrete barber when one was chosen initially", () => {
-    expect(availableTimesForServiceDate(slots, "2026-10-08", 60, now, "Lautaro")).toEqual([
-      "10:00",
+  it("keeps barbers distinct and ignores unavailable windows", () => {
+    expect(eligibleBarbersForServiceSlot(slots, "2026-10-08", "10:00", 60, now)).toEqual([
+      "Lautaro",
+    ]);
+    expect(eligibleBarbersForServiceSlot(slots, "2026-10-08", "10:30", 30, now)).toEqual([
+      "Lautaro",
     ]);
     expect(availableTimesForServiceDate(slots, "2026-10-08", 60, now, "Gonzalo")).toEqual([]);
   });
 
-  it("requires the full service duration", () => {
-    const shortSlot = slot({
-      id: "short",
-      barber_name: "Lautaro",
-      start_time: "12:00:00",
-      end_time: "12:30:00",
-    });
-    expect(availableTimesForServiceDate([shortSlot], "2026-10-08", 60, now)).toEqual([]);
-    expect(eligibleBarbersForServiceSlot([shortSlot], "2026-10-08", "12:00", 60, now)).toEqual([]);
+  it("requires all five-minute segments of a service to be available", () => {
+    const splitWindow = [
+      slot({ id: "first", barber_name: "Lautaro", start_time: "12:00:00", end_time: "12:30:00" }),
+      slot({ id: "second", barber_name: "Lautaro", start_time: "12:40:00", end_time: "13:10:00" }),
+    ];
+    expect(availableTimesForServiceDate(splitWindow, "2026-10-08", 45, now, "Lautaro")).toEqual([]);
+    expect(availableTimesForServiceDate(splitWindow, "2026-10-08", 30, now, "Lautaro")).toEqual([
+      "12:00", "12:40",
+    ]);
+  });
+
+  it("reuses the remaining interval after a 30-minute reservation", () => {
+    const remainingAfterBarba = [
+      slot({ id: "remaining", barber_name: "Lautaro", start_time: "11:30:00", end_time: "12:00:00" }),
+    ];
+    expect(availableTimesForServiceDate(remainingAfterBarba, "2026-10-08", 30, now, "Lautaro")).toEqual([
+      "11:30",
+    ]);
+  });
+
+  it("does not offer a start inside the remaining interval of an overlapping 45-minute reservation", () => {
+    const remainingAfterCorte = [
+      slot({ id: "remaining", barber_name: "Lautaro", start_time: "11:45:00", end_time: "12:00:00" }),
+    ];
+    expect(availableTimesForServiceDate(remainingAfterCorte, "2026-10-08", 30, now, "Lautaro")).toEqual([]);
+  });
+
+  it("supports intermediate starts such as 12:10 and 12:15", () => {
+    const intermediateWindow = [
+      slot({ id: "intermediate", barber_name: "Lautaro", start_time: "12:10:00", end_time: "13:15:00" }),
+    ];
+    expect(availableTimesForServiceDate(intermediateWindow, "2026-10-08", 60, now, "Lautaro")).toEqual([
+      "12:10", "12:15",
+    ]);
+  });
+
+  it("rejects unsupported durations instead of inventing a partial start", () => {
+    expect(availableTimesForServiceDate(slots, "2026-10-08", 0, now)).toEqual([]);
+    expect(availableTimesForServiceDate(slots, "2026-10-08", 7, now)).toEqual([]);
   });
 });
-
 
 describe("fechas administrables de horarios", () => {
   it("permite fechas futuras más allá de 21 días y bloquea domingos", () => {

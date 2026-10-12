@@ -35,7 +35,7 @@ const datePresets: MobileDatePreset[] = [
   "THIS_WEEK",
   "SPECIFIC",
 ];
-const hours = Array.from({ length: 24 }, (_, index) => index);
+const hours = Array.from({ length: 11 }, (_, index) => index + 10);
 const manualMinutes = Array.from({ length: 12 }, (_, index) => index * 5);
 
 type ScheduleSlot = AvailabilitySlot & { barberName: Barber; occupied: boolean };
@@ -55,13 +55,17 @@ function errorMessage(cause: unknown) {
   if (message.includes("AVAILABILITY_DATE_INVALID"))
     return "Elegí una fecha futura de atención; los domingos permanecen cerrados.";
   if (message.includes("START_TIME_INVALID"))
-    return "Elegí un horario válido en intervalos de 5 minutos.";
+    return "Elegí un inicio entre las 10:00 y las 19:55, en intervalos de 5 minutos.";
+  if (message.includes("END_TIME_INVALID") || message.includes("AVAILABILITY_INTERVAL_INVALID"))
+    return "Elegí un fin posterior al inicio, dentro del horario de atención.";
   if (message.includes("BARBER_NOT_FOUND"))
     return "No se encontró el barbero seleccionado.";
   if (message.includes("DATE_REQUIRED"))
     return "Elegí al menos una fecha.";
   if (message.includes("AVAILABILITY_NOT_ALLOWED"))
     return "No tenés permiso para modificar esa agenda.";
+  if (message.includes("AVAILABILITY_APPOINTMENT_CONFLICT"))
+    return "Ese período se superpone con una reserva existente.";
   if (message.includes("INTERNAL_NOTE_TOO_LONG"))
     return "El comentario no puede superar los 500 caracteres.";
   return message || "No se pudo completar la operación.";
@@ -111,6 +115,8 @@ export function AdminScheduleManager() {
   );
   const [manualHour, setManualHour] = useState("10");
   const [manualMinute, setManualMinute] = useState("00");
+  const [manualEndHour, setManualEndHour] = useState("11");
+  const [manualEndMinute, setManualEndMinute] = useState("00");
 
   useEffect(() => {
     if (profile.role === "BARBER") {
@@ -230,13 +236,14 @@ export function AdminScheduleManager() {
         barberId: manualBarberId,
         dates: [manualDate],
         startTime: `${manualHour}:${manualMinute}`,
+        endTime: `${manualEndHour}:${manualEndMinute}`,
       });
       setManualOpen(false);
       await loadSlots();
       const barberName = barberById.get(manualBarberId)?.name ?? "Agenda";
       setNotice(
         created.length > 0
-          ? `${barberName} · horario ${manualHour}:${manualMinute} guardado.`
+        ? `${barberName} · ventana ${manualHour}:${manualMinute}–${manualEndHour}:${manualEndMinute} guardada.`
           : "Ese horario ya existía; no se creó un duplicado.",
       );
     } catch (cause) {
@@ -428,8 +435,8 @@ export function AdminScheduleManager() {
         <DialogContent className="manual-dialog admin-schedule-dialog">
           <DialogTitle>Agregar horario</DialogTitle>
           <DialogDescription>
-            Elegí una fecha y un inicio entre 00:00 y 23:55, en intervalos de 5 minutos. La agenda
-            pública conserva el horario comercial vigente.
+            Elegí una fecha y una ventana entre las 10:00 y las 20:00, en intervalos de 5 minutos.
+            La agenda pública muestra inicios compatibles con la duración real de cada servicio.
           </DialogDescription>
           <div className="admin-schedule-manual-fields">
             {profile.role === "ADMIN" && (
@@ -459,37 +466,74 @@ export function AdminScheduleManager() {
                 onChange={(event) => setManualDate(event.target.value)}
               />
             </div>
-            <div className="admin-schedule-time-pair">
-              <div>
-                <label htmlFor="schedule-manual-hour">Hora</label>
-                <select
-                  id="schedule-manual-hour"
-                  className="select-control w-full"
-                  value={manualHour}
-                  onChange={(event) => setManualHour(event.target.value)}
-                >
-                  {hours.map((hour) => (
-                    <option key={hour} value={String(hour)}>
-                      {String(hour).padStart(2, "0")}
-                    </option>
-                  ))}
-                </select>
+            <div className="admin-schedule-time-window">
+              <div className="admin-schedule-time-pair">
+                <span className="admin-schedule-time-label">Inicio</span>
+                <div>
+                  <label htmlFor="schedule-manual-hour">Hora</label>
+                  <select
+                    id="schedule-manual-hour"
+                    className="select-control w-full"
+                    value={manualHour}
+                    onChange={(event) => setManualHour(event.target.value)}
+                  >
+                    {hours.map((hour) => (
+                      <option key={hour} value={String(hour)}>
+                        {String(hour).padStart(2, "0")}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <span>:</span>
+                <div>
+                  <label htmlFor="schedule-manual-minute">Minutos</label>
+                  <select
+                    id="schedule-manual-minute"
+                    className="select-control w-full"
+                    value={manualMinute}
+                    onChange={(event) => setManualMinute(event.target.value)}
+                  >
+                    {manualMinutes.map((minute) => (
+                      <option key={minute} value={String(minute).padStart(2, "0")}>
+                        {String(minute).padStart(2, "0")}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
-              <span>:</span>
-              <div>
-                <label htmlFor="schedule-manual-minute">Minutos</label>
-                <select
-                  id="schedule-manual-minute"
-                  className="select-control w-full"
-                  value={manualMinute}
-                  onChange={(event) => setManualMinute(event.target.value)}
-                >
-                  {manualMinutes.map((minute) => (
-                    <option key={minute} value={String(minute).padStart(2, "0")}>
-                      {String(minute).padStart(2, "0")}
-                    </option>
-                  ))}
-                </select>
+              <div className="admin-schedule-time-pair">
+                <span className="admin-schedule-time-label">Fin</span>
+                <div>
+                  <label htmlFor="schedule-manual-end-hour">Hora</label>
+                  <select
+                    id="schedule-manual-end-hour"
+                    className="select-control w-full"
+                    value={manualEndHour}
+                    onChange={(event) => setManualEndHour(event.target.value)}
+                  >
+                    {hours.map((hour) => (
+                      <option key={hour} value={String(hour)}>
+                        {String(hour).padStart(2, "0")}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <span>:</span>
+                <div>
+                  <label htmlFor="schedule-manual-end-minute">Minutos</label>
+                  <select
+                    id="schedule-manual-end-minute"
+                    className="select-control w-full"
+                    value={manualEndMinute}
+                    onChange={(event) => setManualEndMinute(event.target.value)}
+                  >
+                    {manualMinutes.map((minute) => (
+                      <option key={minute} value={String(minute).padStart(2, "0")}>
+                        {String(minute).padStart(2, "0")}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
           </div>
