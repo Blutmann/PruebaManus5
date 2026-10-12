@@ -48,8 +48,8 @@ function errorMessage(cause: unknown) {
     typeof error?.details === "string" ? error.details : "",
     typeof error?.code === "string" ? error.code : "",
   ].join(" ");
-  if (message.includes("AVAILABILITY_OVERLAP") || error?.code === "23P01")
-    return "Ese horario se superpone con otro horario existente.";
+  if (message.includes("AVAILABILITY_OVERLAP") || message.includes("AVAILABILITY_BLOCKED_START"))
+    return "Ese inicio está dentro de un bloqueo existente.";
   if (message.includes("AVAILABILITY_APPOINTMENT_CONFLICT"))
     return "Ese horario se superpone con una reserva existente.";
   if (message.includes("AVAILABILITY_DATE_INVALID"))
@@ -57,7 +57,7 @@ function errorMessage(cause: unknown) {
   if (message.includes("START_TIME_INVALID"))
     return "Elegí un inicio entre las 10:00 y las 19:55, en intervalos de 5 minutos.";
   if (message.includes("END_TIME_INVALID") || message.includes("AVAILABILITY_INTERVAL_INVALID"))
-    return "Elegí un fin posterior al inicio, dentro del horario de atención.";
+    return "No se pudo calcular una ventana válida para ese inicio.";
   if (message.includes("BARBER_NOT_FOUND"))
     return "No se encontró el barbero seleccionado.";
   if (message.includes("DATE_REQUIRED"))
@@ -65,7 +65,7 @@ function errorMessage(cause: unknown) {
   if (message.includes("AVAILABILITY_NOT_ALLOWED"))
     return "No tenés permiso para modificar esa agenda.";
   if (message.includes("AVAILABILITY_APPOINTMENT_CONFLICT"))
-    return "Ese período se superpone con una reserva existente.";
+    return "Ese inicio coincide con una reserva existente.";
   if (message.includes("INTERNAL_NOTE_TOO_LONG"))
     return "El comentario no puede superar los 500 caracteres.";
   return message || "No se pudo completar la operación.";
@@ -115,8 +115,6 @@ export function AdminScheduleManager() {
   );
   const [manualHour, setManualHour] = useState("10");
   const [manualMinute, setManualMinute] = useState("00");
-  const [manualEndHour, setManualEndHour] = useState("11");
-  const [manualEndMinute, setManualEndMinute] = useState("00");
 
   useEffect(() => {
     if (profile.role === "BARBER") {
@@ -236,15 +234,14 @@ export function AdminScheduleManager() {
         barberId: manualBarberId,
         dates: [manualDate],
         startTime: `${manualHour}:${manualMinute}`,
-        endTime: `${manualEndHour}:${manualEndMinute}`,
       });
       setManualOpen(false);
       await loadSlots();
       const barberName = barberById.get(manualBarberId)?.name ?? "Agenda";
       setNotice(
         created.length > 0
-        ? `${barberName} · ventana ${manualHour}:${manualMinute}–${manualEndHour}:${manualEndMinute} guardada.`
-          : "Ese horario ya existía; no se creó un duplicado.",
+        ? `${barberName} · inicio ${manualHour}:${manualMinute} habilitado.`
+          : "Ese inicio ya estaba contemplado; no se creó un duplicado.",
       );
     } catch (cause) {
       setError(errorMessage(cause));
@@ -435,8 +432,8 @@ export function AdminScheduleManager() {
         <DialogContent className="manual-dialog admin-schedule-dialog">
           <DialogTitle>Agregar horario</DialogTitle>
           <DialogDescription>
-            Elegí una fecha y una ventana entre las 10:00 y las 20:00, en intervalos de 5 minutos.
-            La agenda pública muestra inicios compatibles con la duración real de cada servicio.
+            Elegí una fecha y un inicio entre las 10:00 y las 19:55, en intervalos de 5 minutos.
+            El sistema calcula automáticamente hasta dónde puede ofrecer cada servicio.
           </DialogDescription>
           <div className="admin-schedule-manual-fields">
             {profile.role === "ADMIN" && (
@@ -492,40 +489,6 @@ export function AdminScheduleManager() {
                     className="select-control w-full"
                     value={manualMinute}
                     onChange={(event) => setManualMinute(event.target.value)}
-                  >
-                    {manualMinutes.map((minute) => (
-                      <option key={minute} value={String(minute).padStart(2, "0")}>
-                        {String(minute).padStart(2, "0")}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-              <div className="admin-schedule-time-pair">
-                <span className="admin-schedule-time-label">Fin</span>
-                <div>
-                  <label htmlFor="schedule-manual-end-hour">Hora</label>
-                  <select
-                    id="schedule-manual-end-hour"
-                    className="select-control w-full"
-                    value={manualEndHour}
-                    onChange={(event) => setManualEndHour(event.target.value)}
-                  >
-                    {hours.map((hour) => (
-                      <option key={hour} value={String(hour)}>
-                        {String(hour).padStart(2, "0")}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <span>:</span>
-                <div>
-                  <label htmlFor="schedule-manual-end-minute">Minutos</label>
-                  <select
-                    id="schedule-manual-end-minute"
-                    className="select-control w-full"
-                    value={manualEndMinute}
-                    onChange={(event) => setManualEndMinute(event.target.value)}
                   >
                     {manualMinutes.map((minute) => (
                       <option key={minute} value={String(minute).padStart(2, "0")}>

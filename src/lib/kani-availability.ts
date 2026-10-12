@@ -15,6 +15,20 @@ export type ConfiguredService = Omit<(typeof services)[number], 'price' | 'durat
 
 const AVAILABILITY_STEP_MINUTES = 5;
 
+const EFFECTIVE_SERVICE_DURATION_SECONDS: Record<number, number> = {
+  30: 30 * 60,
+  45: 45 * 60,
+  60: 60 * 60,
+};
+
+export function effectiveServiceDurationSeconds(duration: number) {
+  return EFFECTIVE_SERVICE_DURATION_SECONDS[duration] ?? duration * 60;
+}
+
+function requiredAvailabilitySegments(duration: number) {
+  return Math.ceil(effectiveServiceDurationSeconds(duration) / (AVAILABILITY_STEP_MINUTES * 60));
+}
+
 export function isManageableScheduleDate(slotDate: string, today = businessDateToday()) {
   return slotDate >= today && parseDate(slotDate).getDay() !== 0;
 }
@@ -52,7 +66,7 @@ export async function readPublicAvailabilitySlots(barber: Barber | null, fromDat
     .order('slot_date', { ascending: true })
     .order('start_time', { ascending: true });
   if (error) throw error;
-  return (data ?? []).filter(slot => slot.status === 'AVAILABLE').flatMap(slot => {
+  return (data ?? []).flatMap(slot => {
     const barberName = barberById.get(slot.barber_id);
     return barberName ? [{ ...slot, barber_name: barberName }] : [];
   }) as PublicAvailabilitySlot[];
@@ -119,7 +133,7 @@ export function availableTimesForServiceDate(
   for (const start of [...segmentStarts].sort((a, b) => a - b)) {
     if (!slotCanStillBeBooked(date, timeFor(start), now)) continue;
     const complete = Array.from(
-      { length: duration / AVAILABILITY_STEP_MINUTES },
+      { length: requiredAvailabilitySegments(duration) },
       (_, index) => start + index * AVAILABILITY_STEP_MINUTES,
     ).every(segment => segmentStarts.has(segment));
     if (complete) times.push(timeFor(start));
@@ -193,7 +207,7 @@ export async function createAvailabilitySlots({
   barberId: string;
   dates: string[];
   startTime: string;
-  endTime: string;
+  endTime?: string | null;
 }) {
   const { data: { user }, error: userError } = await supabase.auth.getUser();
   if (userError || !user) throw userError ?? new Error('Sesión no disponible');
@@ -202,7 +216,6 @@ export async function createAvailabilitySlots({
     return { hours: Number(hoursText), minutesValue: Number(minutesText) };
   };
   const start = parseTime(startTime);
-  const end = parseTime(endTime);
   const validTime = (value: { hours: number; minutesValue: number }) =>
     Number.isInteger(value.hours)
     && Number.isInteger(value.minutesValue)
@@ -214,12 +227,7 @@ export async function createAvailabilitySlots({
   if (!validTime(start) || start.hours < 10 || start.hours >= 20) {
     throw new Error('El inicio debe estar entre las 10:00 y las 19:55, en intervalos de 5 minutos.');
   }
-  if (!validTime(end) || end.hours < 10 || end.hours > 20) {
-    throw new Error('El fin debe estar entre las 10:05 y las 20:00, en intervalos de 5 minutos.');
-  }
   const normalizedStart = `${String(start.hours).padStart(2, '0')}:${String(start.minutesValue).padStart(2, '0')}`;
-  const normalizedEnd = `${String(end.hours).padStart(2, '0')}:${String(end.minutesValue).padStart(2, '0')}`;
-  if (minutes(normalizedEnd) <= minutes(normalizedStart)) throw new Error('El fin debe ser posterior al inicio.');
   const businessToday = businessDateToday();
   const validDates = dates.filter(slotDate => isManageableScheduleDate(slotDate, businessToday));
   if (validDates.length !== dates.filter(Boolean).length) throw new Error(`La fecha debe ser un día de atención desde ${businessToday}; los domingos permanecen cerrados.`);
@@ -228,7 +236,7 @@ export async function createAvailabilitySlots({
     p_barber_id: barberId,
     p_slot_dates: validDates,
     p_start_time: `${normalizedStart}:00`,
-    p_end_time: `${normalizedEnd}:00`,
+    p_end_time: endTime ?? null,
   });
   if (error) throw error;
   return (data ?? []) as AvailabilitySlot[];

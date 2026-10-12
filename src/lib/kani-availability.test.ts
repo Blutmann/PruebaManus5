@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   availableTimesForServiceDate,
   eligibleBarbersForServiceSlot,
+  effectiveServiceDurationSeconds,
   isManageableScheduleDate,
   type PublicAvailabilitySlot,
 } from "./kani-availability";
@@ -29,6 +30,12 @@ function slot({
 }
 
 describe("public booking availability helpers", () => {
+  it("mantiene las duraciones comerciales exactas", () => {
+    expect(effectiveServiceDurationSeconds(45)).toBe(45 * 60);
+    expect(effectiveServiceDurationSeconds(30)).toBe(30 * 60);
+    expect(effectiveServiceDurationSeconds(60)).toBe(60 * 60);
+  });
+
   const slots = [
     slot({
       id: "lautaro-window",
