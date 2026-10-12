@@ -275,7 +275,7 @@ html[data-theme="light"] {
 .booking-progress .current > span { border-color: var(--gold); color: var(--gold); }
 .booking-progress .complete > span { border-color: var(--gold); background: var(--gold); color: #191919; }
 html[data-theme="light"] .booking-progress > button { color: #252323; }
-html[data-theme="light"] .booking-progress .complete > span { border-color: #FFFFFF; background: #FFFFFF; color: #252323; }
+html[data-theme="light"] .booking-progress .complete > span { border-color: #702B3A; background: #702B3A; color: #FFFFFF; }
 .booking-layout { display: block; max-width: 860px; margin-inline: auto; }
 .section-title { font-size: 29px; line-height: 1.2; font-weight: 500; margin-top: 4px; }
 .section-title, .services-heading h2, .booking-aside > h2, .calendar-panel h2, .barber-choice-inline h2, .review-line h2, .confirmation h1, .studio-info-card h2 { font-family: var(--font-display); }
@@ -1144,4 +1144,36 @@ html[data-theme='light'] .admin-schedule-card.is-unavailable .admin-schedule-tim
 html[data-theme='light'] .admin-schedule-card.is-unavailable .admin-schedule-status,
 html[data-theme='light'] .admin-schedule-card.is-unavailable .admin-schedule-status svg {
   color: #FFFFFF;
+}
+
+/* Stepper móvil compacto: conserva los seis estados sin alterar desktop. */
+@media (max-width: 767px) {
+  .booking-page .booking-progress {
+    margin-top: 4px;
+    margin-bottom: 10px;
+    gap: 4px;
+  }
+  .booking-page .booking-progress > button {
+    gap: 4px;
+    padding-bottom: 8px;
+  }
+  .booking-page .booking-progress > button > span {
+    width: 20px;
+    height: 20px;
+    font-size: 8px;
+  }
+  .booking-page .booking-progress > button > span svg {
+    width: 11px;
+    height: 11px;
+  }
+  .booking-page .booking-progress small {
+    min-height: 20px;
+    font-size: 8px;
+    line-height: 1.05;
+  }
+  html[data-theme='light'] .booking-page .booking-progress .complete > span {
+    border-color: #702B3A;
+    background: #702B3A;
+    color: #FFFFFF;
+  }
 }
