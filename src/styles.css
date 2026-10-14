@@ -1166,8 +1166,8 @@ textarea:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
 .admin-schedule-card .admin-schedule-time strong { font-size: 1.35rem; }
 
 .booking-time-grid {
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: .45rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .55rem;
 }
 .booking-time-slot {
   min-height: 2.75rem;
@@ -1183,8 +1183,8 @@ textarea:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
   .admin-schedule-card-top { min-height: 3.55rem; }
   .admin-schedule-card .admin-schedule-time strong { font-size: 1.25rem; }
   .booking-time-grid {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: .35rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .45rem;
   }
   .booking-time-slot {
     min-height: 2.75rem;
@@ -1195,7 +1195,7 @@ textarea:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
 }
 
 @media (max-width: 359px) {
-  .booking-time-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .25rem; }
+  .booking-time-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .35rem; }
   .booking-time-heading { gap: 5px; }
   .booking-time-heading .section-title { font-size: 18px; }
   .booking-time-heading-date { font-size: 10px; }
