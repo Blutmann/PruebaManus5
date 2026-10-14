@@ -21,6 +21,7 @@ import {
 import { dateLabel, minutes, type Barber } from "@/lib/kani-model";
 import {
   createAvailabilitySlots,
+  FIXED_BOOKING_START_TIMES,
   readAvailabilityStartsForRange,
   readAvailabilitySlotsForRange,
   updateAvailabilitySlot,
@@ -36,9 +37,6 @@ const datePresets: MobileDatePreset[] = [
   "THIS_WEEK",
   "SPECIFIC",
 ];
-const hours = Array.from({ length: 11 }, (_, index) => index + 10);
-const manualMinutes = Array.from({ length: 12 }, (_, index) => index * 5);
-
 type ScheduleSlot = AvailabilitySlot & { barberName: Barber; occupied: boolean };
 type ScheduleStart = Awaited<ReturnType<typeof readAvailabilityStartsForRange>>[number] & { barberName: Barber };
 
@@ -56,8 +54,8 @@ function errorMessage(cause: unknown) {
     return "Ese horario se superpone con una reserva existente.";
   if (message.includes("AVAILABILITY_DATE_INVALID"))
     return "Elegí una fecha futura de atención; los domingos permanecen cerrados.";
-  if (message.includes("START_TIME_INVALID"))
-    return "Elegí un inicio entre las 10:00 y las 19:55, en intervalos de 5 minutos.";
+  if (message.includes("START_TIME_INVALID") || message.includes("START_TIME_NOT_ALLOWED"))
+    return "Elegí uno de los inicios comerciales fijos entre las 10:00 y las 19:00.";
   if (message.includes("END_TIME_INVALID") || message.includes("AVAILABILITY_INTERVAL_INVALID"))
     return "No se pudo calcular una ventana válida para ese inicio.";
   if (message.includes("BARBER_NOT_FOUND"))
@@ -116,8 +114,7 @@ export function AdminScheduleManager() {
   const [manualBarberId, setManualBarberId] = useState(
     () => ownBarberId ?? permittedRows[0]?.id ?? "",
   );
-  const [manualHour, setManualHour] = useState("10");
-  const [manualMinute, setManualMinute] = useState("00");
+  const [manualStartTime, setManualStartTime] = useState(FIXED_BOOKING_START_TIMES[0] ?? "10:00");
 
   useEffect(() => {
     if (profile.role === "BARBER") {
@@ -249,14 +246,14 @@ export function AdminScheduleManager() {
       const created = await createAvailabilitySlots({
         barberId: manualBarberId,
         dates: [manualDate],
-        startTime: `${manualHour}:${manualMinute}`,
+        startTime: manualStartTime,
       });
       setManualOpen(false);
       await loadSlots();
       const barberName = barberById.get(manualBarberId)?.name ?? "Agenda";
       setNotice(
         created.length > 0
-        ? `${barberName} · inicio ${manualHour}:${manualMinute} habilitado.`
+        ? `${barberName} · inicio ${manualStartTime} habilitado.`
           : "Ese inicio ya estaba contemplado; no se creó un duplicado.",
       );
     } catch (cause) {
@@ -482,8 +479,8 @@ export function AdminScheduleManager() {
         <DialogContent className="manual-dialog admin-schedule-dialog">
           <DialogTitle>Agregar horario</DialogTitle>
           <DialogDescription>
-            Elegí una fecha y un inicio entre las 10:00 y las 19:55, en intervalos de 5 minutos.
-            El sistema calcula automáticamente hasta dónde puede ofrecer cada servicio.
+            Elegí una fecha y uno de los inicios comerciales fijos. El sistema calcula automáticamente
+            hasta dónde puede ofrecer cada servicio.
           </DialogDescription>
           <div className="admin-schedule-manual-fields">
             {profile.role === "ADMIN" && (
@@ -513,41 +510,20 @@ export function AdminScheduleManager() {
                 onChange={(event) => setManualDate(event.target.value)}
               />
             </div>
-            <div className="admin-schedule-time-window">
-              <div className="admin-schedule-time-pair">
-                <span className="admin-schedule-time-label">Inicio</span>
-                <div>
-                  <label htmlFor="schedule-manual-hour">Hora</label>
-                  <select
-                    id="schedule-manual-hour"
-                    className="select-control w-full"
-                    value={manualHour}
-                    onChange={(event) => setManualHour(event.target.value)}
-                  >
-                    {hours.map((hour) => (
-                      <option key={hour} value={String(hour)}>
-                        {String(hour).padStart(2, "0")}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <span>:</span>
-                <div>
-                  <label htmlFor="schedule-manual-minute">Minutos</label>
-                  <select
-                    id="schedule-manual-minute"
-                    className="select-control w-full"
-                    value={manualMinute}
-                    onChange={(event) => setManualMinute(event.target.value)}
-                  >
-                    {manualMinutes.map((minute) => (
-                      <option key={minute} value={String(minute).padStart(2, "0")}>
-                        {String(minute).padStart(2, "0")}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
+            <div>
+              <label htmlFor="schedule-manual-start">Inicio comercial</label>
+              <select
+                id="schedule-manual-start"
+                className="select-control w-full"
+                value={manualStartTime}
+                onChange={(event) => setManualStartTime(event.target.value)}
+              >
+                {FIXED_BOOKING_START_TIMES.map((startTime) => (
+                  <option key={startTime} value={startTime}>
+                    {startTime}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
           <p className="manual-dialog-date text-xs text-muted-foreground">

@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { availableSlots, initialAvailability, initialAppointments, serviceFor, demoToday, parseDate, isoDate, type Appointment } from './kani-model';
+import { availableSlots, bookingStartTimes, initialAvailability, initialAppointments, serviceFor, demoToday, parseDate, isoDate, type Appointment } from './kani-model';
 const weekdayDate = parseDate(demoToday).getDay() === 0 ? isoDate(new Date(parseDate(demoToday).getTime() + 24 * 60 * 60 * 1000)) : demoToday;
 describe('KANI mock availability', () => {
  it('uses the official service durations', () => {
   expect(serviceFor('corte').duration).toBe(45);
-  expect(serviceFor('corte-barba').duration).toBe(60);
+  expect(serviceFor('corte-barba').duration).toBe(45);
   expect(serviceFor('barba').duration).toBe(30);
  });
  it('respects closing time for all service lengths', () => {
@@ -13,16 +13,16 @@ describe('KANI mock availability', () => {
   expect(availableSlots('corte-barba', 'Gonzalo', weekdayDate, [], hours).at(-1)).toBe('19:00');
   expect(availableSlots('barba', 'Gonzalo', weekdayDate, [], hours).at(-1)).toBe('19:00');
  });
- it('uses ten exact hourly start times for every service', () => {
+ it('uses the thirteen fixed commercial starts for every service', () => {
   for (const service of ['corte', 'corte-barba', 'barba'] as const) {
-   expect(availableSlots(service, 'Gonzalo', weekdayDate, [], initialAvailability())).toEqual(Array.from({ length: 10 }, (_, i) => `${10+i}:00`));
+   expect(availableSlots(service, 'Gonzalo', weekdayDate, [], initialAvailability())).toEqual(bookingStartTimes);
   }
  });
  it('rounds modified opening hours up to the next exact hour', () => {
   const hours = initialAvailability();
   const currentDay = hours.Gonzalo[parseDate(weekdayDate).getDay()];
   if (currentDay) currentDay.start = '10:30';
-  expect(availableSlots('barba', 'Gonzalo', weekdayDate, [], hours)[0]).toBe('11:00');
+  expect(availableSlots('barba', 'Gonzalo', weekdayDate, [], hours)[0]).toBe('10:45');
  });
  it('blocks pending and confirmed overlapping intervals, but cancellation releases them', () => {
   const first = initialAppointments[0];

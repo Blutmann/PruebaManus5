@@ -1,6 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables } from '@/integrations/supabase/types';
-import { minutes, parseDate, services, timeFor, type Barber } from '@/lib/kani-model';
+import { bookingStartTimes, minutes, parseDate, services, type Barber } from '@/lib/kani-model';
 import { BUSINESS_TIME_ZONE, businessDateToday } from '@/lib/kani-mobile-appointments';
 
 export type AvailabilitySlot = Tables<'barber_availability_slots'>;
@@ -22,6 +22,12 @@ export type PublicAvailabilityStart = {
 };
 
 const AVAILABILITY_STEP_MINUTES = 5;
+
+export const FIXED_BOOKING_START_TIMES = bookingStartTimes;
+
+export function isFixedBookingStart(value: string) {
+  return FIXED_BOOKING_START_TIMES.includes(value.slice(0, 5));
+}
 
 const EFFECTIVE_SERVICE_DURATION_SECONDS: Record<number, number> = {
   30: 30 * 60,
@@ -87,6 +93,7 @@ export function availabilityStartTimesForServiceDate(
   return [...new Set(starts
     .filter(start => start.slot_date === date)
     .filter(start => !barber || start.barber_name === barber)
+    .filter(start => isFixedBookingStart(start.start_time))
     .filter(start => start.compatible_services.includes(serviceName))
     .filter(start => slotCanStillBeBooked(start.slot_date, start.start_time, now))
     .map(start => start.start_time.slice(0, 5)))].sort();
@@ -101,6 +108,7 @@ export function eligibleBarbersForAvailabilityStart(
 ) {
   return [...new Set(starts
     .filter(start => start.slot_date === date && start.start_time.slice(0, 5) === time)
+    .filter(start => isFixedBookingStart(start.start_time))
     .filter(start => start.compatible_services.includes(serviceName))
     .filter(start => slotCanStillBeBooked(start.slot_date, start.start_time, now))
     .map(start => start.barber_name))];
@@ -164,13 +172,14 @@ export function availableTimesForServiceDate(
   if (duration <= 0 || duration % AVAILABILITY_STEP_MINUTES !== 0) return [];
   const segmentStarts = availableSegmentStarts(slots, date, barber);
   const times: string[] = [];
-  for (const start of [...segmentStarts].sort((a, b) => a - b)) {
-    if (!slotCanStillBeBooked(date, timeFor(start), now)) continue;
+  for (const startTime of FIXED_BOOKING_START_TIMES) {
+    const start = minutes(startTime);
+    if (!slotCanStillBeBooked(date, startTime, now)) continue;
     const complete = Array.from(
       { length: requiredAvailabilitySegments(duration) },
       (_, index) => start + index * AVAILABILITY_STEP_MINUTES,
     ).every(segment => segmentStarts.has(segment));
-    if (complete) times.push(timeFor(start));
+    if (complete) times.push(startTime);
   }
   return times;
 }
@@ -277,10 +286,10 @@ export async function createAvailabilitySlots({
     && value.minutesValue >= 0
     && value.minutesValue <= 59
     && value.minutesValue % AVAILABILITY_STEP_MINUTES === 0;
-  if (!validTime(start) || start.hours < 10 || start.hours >= 20) {
-    throw new Error('El inicio debe estar entre las 10:00 y las 19:55, en intervalos de 5 minutos.');
-  }
   const normalizedStart = `${String(start.hours).padStart(2, '0')}:${String(start.minutesValue).padStart(2, '0')}`;
+  if (!validTime(start) || !isFixedBookingStart(normalizedStart)) {
+    throw new Error('El inicio debe ser uno de los horarios comerciales: 10:00, 10:45, 11:30, 12:15, 13:00, 13:45, 14:30, 15:15, 16:00, 16:45, 17:30, 18:15 o 19:00.');
+  }
   const businessToday = businessDateToday();
   const validDates = dates.filter(slotDate => isManageableScheduleDate(slotDate, businessToday));
   if (validDates.length !== dates.filter(Boolean).length) throw new Error(`La fecha debe ser un día de atención desde ${businessToday}; los domingos permanecen cerrados.`);

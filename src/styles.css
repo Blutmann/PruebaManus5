@@ -69,57 +69,57 @@
 
 :root {
   --radius: 0.375rem;
-  --page-background: #111111;
-  --chrome: #111111;
+  --page-background: #0B0A0A;
+  --chrome: #121011;
   --color-scheme: dark;
-  --background: #111111;
-  --foreground: #F5F2EC;
-  --card: #252424;
-  --card-foreground: #F5F2EC;
-  --popover: #252424;
-  --popover-foreground: #F5F2EC;
+  --background: #0B0A0A;
+  --foreground: #F7F4EF;
+  --card: #1E1A1B;
+  --card-foreground: #F7F4EF;
+  --popover: #1A1718;
+  --popover-foreground: #F7F4EF;
   --primary: #762936;
-  --primary-foreground: #F2EFE7;
-  --secondary: #343131;
-  --secondary-foreground: #F5F2EC;
-  --muted: #343131;
-  --muted-foreground: #C5C0B6;
-  --accent: #3c3834;
-  --accent-foreground: #F5F2EC;
-  --destructive: #762936;
-  --destructive-foreground: #F2EFE7;
-  --border: #514B43;
-  --input: #645B4D;
+  --primary-foreground: #FFFFFF;
+  --secondary: #2A2426;
+  --secondary-foreground: #F7F4EF;
+  --muted: #2A2426;
+  --muted-foreground: #C8C0BA;
+  --accent: #33272A;
+  --accent-foreground: #F7F4EF;
+  --destructive: #8B3343;
+  --destructive-foreground: #FFFFFF;
+  --border: #4B3D41;
+  --input: #69575B;
   --ring: #B99A5B;
   --gold: #B99A5B;
-  --success: #78a47a;
-  --overlay: #111111;
-  --surface: rgb(17 17 17 / 85%);
+  --success: #83AD88;
+  --overlay: #0B0A0A;
+  --surface: rgb(27 23 24 / 92%);
   --chart-1: #B99A5B;
-  --chart-2: #78a47a;
+  --chart-2: #83AD88;
   --chart-3: #762936;
-  --chart-4: #A9A49B;
-  --chart-5: #F2EFE7;
-  --sidebar: #222222;
-  --sidebar-foreground: #F2EFE7;
+  --chart-4: #B8B0AA;
+  --chart-5: #F7F4EF;
+  --sidebar: #171415;
+  --sidebar-foreground: #F7F4EF;
   --sidebar-primary: #762936;
-  --sidebar-primary-foreground: #F2EFE7;
-  --sidebar-accent: #38342f;
-  --sidebar-accent-foreground: #F2EFE7;
-  --sidebar-border: #4b4740;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #2A2224;
+  --sidebar-accent-foreground: #F7F4EF;
+  --sidebar-border: #45383C;
   --sidebar-ring: #B99A5B;
-  --button-primary-bg: #B99A5B;
-  --button-primary-text: #191919;
-  --button-primary-hover: #c5a866;
-  --button-primary-active: #a98748;
-  --button-primary-border: #B99A5B;
-  --button-primary-focus: #F2EFE7;
-  --button-primary-disabled-bg: #4b4740;
-  --button-primary-disabled-text: #c9c4ba;
-  --button-primary-disabled-border: #5b554a;
+  --button-primary-bg: #762936;
+  --button-primary-text: #FFFFFF;
+  --button-primary-hover: #8A3342;
+  --button-primary-active: #63212C;
+  --button-primary-border: #762936;
+  --button-primary-focus: #B99A5B;
+  --button-primary-disabled-bg: #30282A;
+  --button-primary-disabled-text: #A49A96;
+  --button-primary-disabled-border: #514448;
   --button-destructive-bg: #762936;
-  --button-destructive-text: #F2EFE7;
-  --button-destructive-hover: #63212C;
+  --button-destructive-text: #FFFFFF;
+  --button-destructive-hover: #8A3342;
 }
 
 html[data-theme="light"] {
@@ -370,19 +370,6 @@ html[data-theme="light"] .booking-progress .complete > span { border-color: #702
 .booking-cta-inner { width: min(1020px, calc(100% - 40px)); margin-inline: auto; gap: 10px; padding-block: 10px; }
 .booking-home-button { flex: 0 0 44px; width: 44px; height: 44px; margin-right: 12px; color: var(--primary-foreground) !important; }
 .booking-home-button:hover { background: color-mix(in oklch, var(--primary) 88%, white) !important; }
-.calendar-day.selected { background: var(--gold) !important; border-color: var(--gold) !important; color: var(--background) !important; }
-.booking-time-slot.selected,
-.booking-time-slot.selected:hover:not(:disabled),
-.booking-time-slot.selected:focus-visible,
-.booking-time-slot.selected:active,
-html[data-theme='dark'] .booking-time-slot.selected,
-html[data-theme='dark'] .booking-time-slot.selected:hover:not(:disabled),
-html[data-theme='dark'] .booking-time-slot.selected:focus-visible,
-html[data-theme='dark'] .booking-time-slot.selected:active {
-  border-color: var(--gold) !important;
-  background: var(--gold) !important;
-  color: #191919 !important;
-}
 html[data-theme='light'] .booking-progress .current { border-bottom-color: #702B3A; }
 html[data-theme='light'] .booking-time-slot.selected,
 html[data-theme='light'] .booking-time-slot.selected:hover:not(:disabled),
@@ -451,16 +438,6 @@ html[data-theme="light"] .mobile-menu { background-image: url('/kani-menu-claro-
 .mobile-menu-session-identity span { color: var(--muted-foreground); font-family: var(--font-sans); font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
 .mobile-menu-signout { display: inline-flex; min-height: 42px; flex: 0 0 auto; align-items: center; gap: 8px; padding: 0 12px; border: 1px solid var(--border); border-radius: 4px; color: var(--foreground); font: inherit; font-size: 12px; white-space: nowrap; }
 .mobile-menu-signout:hover, .mobile-menu-signout:focus-visible { border-color: var(--gold); color: var(--gold); outline: none; }
-html[data-theme="dark"] .booking-option.selected, html[data-theme="dark"] .barber-choice-list .selected, html:not([data-theme="light"]) .booking-option.selected, html:not([data-theme="light"]) .barber-choice-list .selected { border-color: var(--gold) !important; background: var(--gold) !important; color: #191919 !important; }
-html[data-theme="dark"] .booking-option.selected .text-muted-foreground, html:not([data-theme="light"]) .booking-option.selected .text-muted-foreground { color: #191919 !important; }
-html[data-theme="dark"] .booking-option.selected .selection-circle, html:not([data-theme="light"]) .booking-option.selected .selection-circle { border-color: #191919; color: #191919; }
-html[data-theme="dark"] .booking-option.selected .option-icon, html:not([data-theme="light"]) .booking-option.selected .option-icon { border-color: #191919; color: #191919; }
-html[data-theme="dark"] .booking-option.selected .option-icon img, html:not([data-theme="light"]) .booking-option.selected .option-icon img { filter: brightness(0); }
-html[data-theme="dark"] .booking-option.selected .barber-avatar, html:not([data-theme="light"]) .booking-option.selected .barber-avatar { color: #191919; border-color: #191919; }
-html[data-theme="dark"] .booking-defer-option.selected, html:not([data-theme="light"]) .booking-defer-option.selected { border-color: var(--gold) !important; background: var(--gold) !important; color: #191919 !important; }
-html[data-theme="dark"] .booking-defer-option.selected .barber-defer-mark, html:not([data-theme="light"]) .booking-defer-option.selected .barber-defer-mark { border-color: #191919; color: #191919 !important; }
-html[data-theme="dark"] .booking-defer-option.selected .text-muted-foreground, html:not([data-theme="light"]) .booking-defer-option.selected .text-muted-foreground { color: #191919 !important; }
-html[data-theme="dark"] .booking-defer-option.selected .selection-circle, html:not([data-theme="light"]) .booking-defer-option.selected .selection-circle { border-color: #191919; color: #191919; }
 html[data-theme="light"] .barber-choice-list .selected,
 html[data-theme="light"] .barber-choice-list .selected:hover:not(:disabled),
 html[data-theme="light"] .barber-choice-list .selected:focus-visible,
@@ -491,7 +468,6 @@ html[data-theme="light"] .booking-option.selected .option-icon img { filter: bri
 .booking-defer-option .barber-defer-mark { width: 48px; height: 48px; flex-basis: 48px; }
 .booking-time-slot { border-color: color-mix(in oklch, var(--gold) 18%, var(--border)); background: var(--surface); box-shadow: 0 5px 14px rgb(0 0 0 / 0.12); }
 .booking-time-slot:hover:not(:disabled) { border-color: color-mix(in oklch, var(--gold) 58%, var(--border)); background: color-mix(in oklch, var(--gold) 8%, var(--surface)); }
-html[data-theme="dark"] .booking-time-slot.selected, html:not([data-theme="light"]) .booking-time-slot.selected { border-color: var(--gold) !important; background: var(--gold) !important; color: #191919 !important; }
 .phone-input-row { display: grid; grid-template-columns: 138px minmax(0, 1fr); gap: 8px; margin-top: 10px; }
 .phone-input-row input { margin-top: 0; }
 .phone-country-picker { position: relative; min-width: 0; }
@@ -584,7 +560,7 @@ html[data-theme="dark"] .booking-time-slot.selected, html:not([data-theme="light
  .site-footer { display: none; }
  .booking-progress { gap: 5px; margin-top: 10px; margin-bottom: 16px; }
  .booking-progress > button { flex-direction: column; gap: 8px; padding-bottom: 13px; }
- .booking-progress small { font-size: 9px; }
+ .booking-progress small { font-size: 10px; }
  .booking-layout { display: block; }
  .booking-aside { display: none; }
  .section-title { font-size: 24px; line-height: 1.2; margin-top: 2px; }
@@ -593,8 +569,8 @@ html[data-theme="dark"] .booking-time-slot.selected, html:not([data-theme="light
  .booking-time-heading .section-title { min-width: 0; flex: 0 1 auto; margin-bottom: 12px; }
  .booking-time-heading-date { min-width: 0; flex: 0 1 auto; gap: 5px; margin-top: 0; overflow: hidden; font-size: clamp(10px, 2.8vw, 13px); white-space: nowrap; text-overflow: ellipsis; }
  .booking-time-heading-date svg { width: 14px; height: 14px; }
- .booking-option { gap: 14px; padding: 14px 16px; height: 90px; }
- .booking-defer-option { height: 90px; min-height: 90px; padding: 14px 16px; gap: 14px; }
+ .booking-option { gap: 14px; padding: 14px 16px; height: 70px; min-height: 70px; }
+ .booking-defer-option { height: 70px; min-height: 70px; padding: 14px 16px; gap: 14px; }
  .booking-defer-option .barber-defer-mark { width: 40px; height: 40px; flex-basis: 40px; }
  .phone-input-row { grid-template-columns: 126px minmax(0, 1fr); }
  .phone-country-trigger { font-size: 11px; }
@@ -620,7 +596,15 @@ html[data-theme="dark"] .booking-time-slot.selected, html:not([data-theme="light
  .booking-option .option-icon, .booking-option .barber-avatar { flex-basis: 40px; }
  .booking-option .barber-avatar { font-size: 21px; }
  .booking-option .text-lg { font-size: 1rem; }
- .calendar-panel { padding: 18px; }
+ .calendar-panel { margin-top: 16px; padding: 12px; }
+ .calendar-header { margin-bottom: 12px !important; }
+ .calendar-header h2 { font-size: 16px; line-height: 1.1; }
+ .calendar-header .flex { gap: 4px; }
+ .calendar-header button { width: 40px; height: 40px; }
+ .calendar-grid { gap: 3px; }
+ .calendar-weekday { margin-bottom: 3px; font-size: 10px; }
+ .calendar-day { height: 40px; min-height: 40px; }
+ .calendar-note { margin-top: 10px !important; line-height: 1.25; }
  .confirmation { padding-top: 32px; padding-bottom: 48px; }
  .confirmation h1 { font-size: 30px; }
  .confirmation-details { padding: 16px; font-size: 12px; }
@@ -1518,4 +1502,185 @@ html[data-theme='dark'] .service-option .booking-option-price {
 html[data-theme='dark'] .service-option .booking-option-price {
   flex-shrink: 0;
   text-align: right;
+}
+
+/* Modo oscuro premium: solo color y contraste; la geometría queda compartida. */
+html[data-theme='dark'] .header-control-button {
+  border-color: var(--border) !important;
+  background: var(--card) !important;
+  color: var(--gold) !important;
+}
+
+html[data-theme='dark'] .mobile-menu {
+  background-color: var(--chrome);
+  color: var(--foreground);
+}
+
+html[data-theme='dark'] .booking-option,
+html[data-theme='dark'] .booking-defer-option,
+html[data-theme='dark'] .barber-choice-list > button {
+  border-color: var(--border) !important;
+  background: var(--card) !important;
+  color: var(--foreground) !important;
+}
+
+html[data-theme='dark'] .booking-option.selected,
+html[data-theme='dark'] .booking-option.selected:hover:not(:disabled),
+html[data-theme='dark'] .booking-option.selected:focus-visible,
+html[data-theme='dark'] .booking-option.selected:active,
+html[data-theme='dark'] .booking-defer-option.selected,
+html[data-theme='dark'] .booking-defer-option.selected:hover:not(:disabled),
+html[data-theme='dark'] .booking-defer-option.selected:focus-visible,
+html[data-theme='dark'] .booking-defer-option.selected:active,
+html[data-theme='dark'] .barber-choice-list .selected,
+html[data-theme='dark'] .barber-choice-list .selected:hover:not(:disabled),
+html[data-theme='dark'] .barber-choice-list .selected:focus-visible,
+html[data-theme='dark'] .barber-choice-list .selected:active {
+  border-color: var(--gold) !important;
+  background: var(--surface) !important;
+  color: var(--primary-foreground) !important;
+}
+
+html[data-theme='dark'] .booking-option.selected .booking-option-name,
+html[data-theme='dark'] .booking-option.selected .booking-option-price,
+html[data-theme='dark'] .booking-option.selected .booking-barber-name,
+html[data-theme='dark'] .booking-defer-option.selected .booking-defer-copy {
+  color: var(--foreground) !important;
+}
+html[data-theme='dark'] .booking-option.selected .booking-option-duration,
+html[data-theme='dark'] .booking-option.selected .booking-barber-handle,
+html[data-theme='dark'] .booking-defer-option.selected .text-muted-foreground,
+html[data-theme='dark'] .booking-option.selected .text-muted-foreground {
+  color: var(--muted-foreground) !important;
+}
+
+html[data-theme='dark'] .booking-option:not(.selected) .service-icon-dark {
+  filter: none !important;
+}
+
+html[data-theme='dark'] .booking-option.selected .selection-circle,
+html[data-theme='dark'] .booking-option.selected .option-icon,
+html[data-theme='dark'] .booking-option.selected .barber-avatar,
+html[data-theme='dark'] .booking-defer-option.selected .selection-circle,
+html[data-theme='dark'] .booking-defer-option.selected .barber-defer-mark {
+  border-color: var(--gold) !important;
+  color: var(--gold) !important;
+  background: transparent !important;
+}
+
+html[data-theme='dark'] .booking-option.selected .selection-circle,
+html[data-theme='dark'] .booking-defer-option.selected .selection-circle {
+  border-color: var(--gold) !important;
+  background: var(--gold) !important;
+  color: #191919 !important;
+}
+
+html[data-theme='dark'] .booking-option.selected .option-icon img {
+  filter: brightness(0) saturate(100%) invert(69%) sepia(16%) saturate(760%) hue-rotate(357deg) brightness(91%) contrast(86%) !important;
+}
+
+/* El stepper oscuro reutiliza la misma geometría continua del modo claro; solo cambia la paleta. */
+html[data-theme='dark'] .booking-page .booking-progress {
+  position: relative;
+  gap: 0 !important;
+  border-bottom: 0 !important;
+  background: transparent !important;
+}
+
+html[data-theme='dark'] .booking-page .booking-progress::before,
+html[data-theme='dark'] .booking-page .booking-progress::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: var(--progress-start, 0px);
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+html[data-theme='dark'] .booking-page .booking-progress::before {
+  right: var(--progress-start, 0px);
+  height: 1px;
+  background: var(--border);
+  z-index: 0;
+}
+
+html[data-theme='dark'] .booking-page .booking-progress::after {
+  width: var(--progress-width, 0px);
+  height: 3px;
+  background: var(--gold);
+  z-index: 1;
+}
+
+html[data-theme='dark'] .booking-page .booking-progress > button {
+  position: relative;
+  z-index: 2;
+  border-bottom-color: transparent !important;
+}
+
+html[data-theme='dark'] .booking-progress .current {
+  border-bottom-color: transparent !important;
+  color: var(--foreground);
+}
+
+html[data-theme='dark'] .booking-progress .current > span {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+html[data-theme='dark'] .booking-progress .complete > span {
+  border-color: var(--gold);
+  background: var(--gold);
+  color: #191919;
+}
+
+html[data-theme='dark'] .calendar-day.selected,
+html[data-theme='dark'] .calendar-day.selected:hover:not(:disabled),
+html[data-theme='dark'] .calendar-day.selected:focus-visible,
+html[data-theme='dark'] .calendar-day.selected:active {
+  border-color: var(--gold) !important;
+  background: var(--gold) !important;
+  color: #FFFFFF !important;
+}
+html[data-theme='dark'] .booking-time-slot.selected,
+html[data-theme='dark'] .booking-time-slot.selected:hover:not(:disabled),
+html[data-theme='dark'] .booking-time-slot.selected:focus-visible,
+html[data-theme='dark'] .booking-time-slot.selected:active {
+  border-color: var(--primary) !important;
+  background: var(--primary) !important;
+  color: var(--primary-foreground) !important;
+}
+
+html[data-theme='dark'] .booking-back-button {
+  border-color: var(--border) !important;
+  background: var(--card) !important;
+  color: var(--foreground) !important;
+}
+
+html[data-theme='dark'] .booking-back-button:hover:not(:disabled),
+html[data-theme='dark'] .booking-back-button:focus-visible {
+  border-color: var(--gold) !important;
+  background: color-mix(in oklch, var(--gold) 8%, var(--card)) !important;
+  color: var(--foreground) !important;
+}
+
+html[data-theme='dark'] .booking-next-button:disabled {
+  border-color: var(--button-primary-disabled-border) !important;
+  background: var(--button-primary-disabled-bg) !important;
+  color: var(--button-primary-disabled-text) !important;
+  opacity: 1 !important;
+}
+html[data-theme='dark'] .booking-next-button:not(:disabled),
+html[data-theme='dark'] .booking-next-button:not(:disabled):hover,
+html[data-theme='dark'] .booking-next-button:not(:disabled):focus-visible,
+html[data-theme='dark'] .booking-next-button:not(:disabled):active {
+  border-color: var(--gold) !important;
+  background: var(--gold) !important;
+  color: #191919 !important;
+}
+
+html[data-theme='dark'] .admin-section-nav-link.is-active,
+html[data-theme='dark'] .admin-section-nav-link.is-active:hover,
+html[data-theme='dark'] .admin-section-nav-link.is-active:active {
+  background: var(--primary);
+  color: var(--primary-foreground);
 }

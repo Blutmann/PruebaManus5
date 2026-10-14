@@ -1,6 +1,6 @@
 export const services = [
   { id: 'corte', name: 'Corte', price: 25000, duration: 45, description: 'Tu estilo, con precisión.', number: '01' },
-  { id: 'corte-barba', name: 'Corte + barba', price: 30000, duration: 60, description: 'Una experiencia completa.', number: '02' },
+  { id: 'corte-barba', name: 'Corte + barba', price: 30000, duration: 45, description: 'Una experiencia completa.', number: '02' },
   { id: 'barba', name: 'Barba', price: 10000, duration: 30, description: 'Los detalles hacen la diferencia.', number: '03' },
 ] as const;
 export const barbers = ['Lautaro', 'Gonzalo', 'Valentín'] as const;
@@ -16,6 +16,7 @@ export const money = (value: number) => '$' + value.toLocaleString('es-AR');
 export const serviceFor = (id: ServiceId) => services.find(s => s.id === id) ?? services[0];
 export const minutes = (time: string) => { const [h = 0, m = 0] = time.split(':').map(Number); return h * 60 + m; };
 export const timeFor = (value: number) => `${Math.floor(value / 60).toString().padStart(2, '0')}:${(value % 60).toString().padStart(2, '0')}`;
+export const bookingStartTimes = Array.from({ length: 13 }, (_, index) => timeFor(10 * 60 + index * 45)) as string[];
 export const parseDate = (date: string) => new Date(date + 'T12:00:00');
 export const dateLabel = (date: string) => parseDate(date).toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' });
 export const isoDate = (date: Date) => `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
@@ -44,11 +45,10 @@ export function availableSlots(service: ServiceId, barber: Barber, date: string,
   const hours = availability[barber][parseDate(date).getDay()];
   if (!hours || !hours.enabled || date < demoToday) return [];
   const duration = serviceFor(service).duration;
-  const slots: string[] = [];
-  for (let start = Math.max(600, Math.ceil(minutes(hours.start) / 60) * 60); start <= 1140 && start + duration <= Math.min(1200, minutes(hours.end)); start += 60) {
-    if (overrides[slotKey(barber, date, timeFor(start))]?.available === false) continue;
-    const overlaps = appointments.some(a => a.barber === barber && a.date === date && a.status !== 'Cancelado' && start < minutes(a.time) + serviceFor(a.service).duration && start + duration > minutes(a.time));
-    if (!overlaps) slots.push(timeFor(start));
-  }
-  return slots;
+  return bookingStartTimes.filter(startTime => {
+    const start = minutes(startTime);
+    if (start < minutes(hours.start) || start + duration > Math.min(1200, minutes(hours.end))) return false;
+    if (overrides[slotKey(barber, date, startTime)]?.available === false) return false;
+    return !appointments.some(a => a.barber === barber && a.date === date && a.status !== 'Cancelado' && start < minutes(a.time) + serviceFor(a.service).duration && start + duration > minutes(a.time));
+  });
 }
