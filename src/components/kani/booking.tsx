@@ -289,7 +289,10 @@ export function Booking() {
   );
   const titles = ['Elegí un servicio', 'Elegí un barbero', 'Elegí una fecha', 'Elegí un horario', 'Completá tus datos', 'Solicitá tu turno'];
   const subtitles = ['', '', '', '', '', ''];
-  const canNext = [Boolean(service), Boolean(barber || barberDeferred), Boolean(date), Boolean(time && barber), true, true][step];
+  const contactReady = contact.name.trim().length >= 3
+    && Boolean(normalizePhone(contact.phone, phoneCountry))
+    && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.email.trim());
+  const canNext = [Boolean(service), Boolean(barber || barberDeferred), Boolean(date), Boolean(time && barber), contactReady, true][step];
   const today = parseDate(todayValue);
   const lastBookingDay = parseDate(bookingEndValue);
   const candidateBarbers = service && date && time && barberDeferred ? eligibleBarbersForAvailabilityStart(availabilityStartsByDate.get(date) ?? [], date, time, serviceName, clock) : [];
