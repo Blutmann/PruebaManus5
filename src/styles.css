@@ -546,8 +546,8 @@ html[data-theme="light"] .booking-option.selected .option-icon img { filter: bri
  .studio-note > a { margin-left: 45px; }
  .booking-page { padding-top: 8px; min-height: 0; padding-bottom: 120px; }
  .booking-summary-page { padding-top: 0; padding-bottom: calc(104px + env(safe-area-inset-bottom)); }
- .booking-summary-page .booking-progress { margin-bottom: 8px; }
- .booking-summary-page .section-title { margin-bottom: 4px; font-size: 22px; }
+ .booking-summary-page .booking-progress { margin-bottom: 12px; }
+ .booking-summary-page .section-title { font-size: 22px; }
  .booking-summary-page .review-line { gap: 8px; padding-block: 8px; }
  .booking-summary-page .review-line h2 { font-size: 15px; line-height: 1.2; }
  .booking-summary-page .review-line p { margin-top: 2px; font-size: 11px; line-height: 1.25; }
@@ -563,10 +563,15 @@ html[data-theme="light"] .booking-option.selected .option-icon img { filter: bri
  .booking-progress small { font-size: 10px; }
  .booking-layout { display: block; }
  .booking-aside { display: none; }
+ .booking-service-heading { margin-top: 0; }
+ .booking-service-options > :not([hidden]) ~ :not([hidden]) { margin-top: 12px; }
+ .booking-barber-heading { margin-top: 0; padding-bottom: 0; }
+ .booking-barber-options > :not([hidden]) ~ :not([hidden]) { margin-top: 12px; }
  .section-title { font-size: 24px; line-height: 1.2; margin-top: 2px; }
- .booking-page .section-title { font-size: 22px; }
+ .booking-page .section-title { margin-top: 0; margin-bottom: 0; font-size: 22px; }
+ .booking-page .booking-title-row { margin-top: 0; margin-bottom: 16px; padding-top: 4px; }
  .booking-time-heading { display: flex; align-items: baseline; justify-content: flex-start; gap: 9px; min-width: 0; white-space: nowrap; }
- .booking-time-heading .section-title { min-width: 0; flex: 0 1 auto; margin-bottom: 12px; }
+ .booking-time-heading .section-title { min-width: 0; flex: 0 1 auto; margin-bottom: 0; }
  .booking-time-heading-date { min-width: 0; flex: 0 1 auto; gap: 5px; margin-top: 0; overflow: hidden; font-size: clamp(10px, 2.8vw, 13px); white-space: nowrap; text-overflow: ellipsis; }
  .booking-time-heading-date svg { width: 14px; height: 14px; }
  .booking-option { gap: 14px; padding: 14px 16px; height: 70px; min-height: 70px; }
@@ -596,7 +601,7 @@ html[data-theme="light"] .booking-option.selected .option-icon img { filter: bri
  .booking-option .option-icon, .booking-option .barber-avatar { flex-basis: 40px; }
  .booking-option .barber-avatar { font-size: 21px; }
  .booking-option .text-lg { font-size: 1rem; }
- .calendar-panel { margin-top: 16px; padding: 12px; }
+ .calendar-panel { margin-top: 0; padding: 12px; }
  .calendar-header { margin-bottom: 12px !important; }
  .calendar-header h2 { font-size: 16px; line-height: 1.1; }
  .calendar-header .flex { gap: 4px; }
@@ -605,6 +610,15 @@ html[data-theme="light"] .booking-option.selected .option-icon img { filter: bri
  .calendar-weekday { margin-bottom: 3px; font-size: 10px; }
  .calendar-day { height: 40px; min-height: 40px; }
  .calendar-note { margin-top: 10px !important; line-height: 1.25; }
+ .booking-date-heading { margin-top: 0; }
+ .booking-date-heading .section-title { margin-top: 0; margin-bottom: 0; }
+ .booking-date-heading + .calendar-panel { margin-top: 0; }
+ .booking-time-grid { row-gap: 12px; column-gap: .45rem; }
+ .barber-choice-list { gap: 12px; }
+ .booking-page form.space-y-6 > :not([hidden]) ~ :not([hidden]) { margin-top: 12px; }
+ .booking-summary-page .review-line { margin-bottom: 12px; }
+ .booking-summary-page .summary-list { gap: 12px; }
+ .booking-summary-page .summary-list + div { margin-top: 12px !important; }
  .confirmation { padding-top: 32px; padding-bottom: 48px; }
  .confirmation h1 { font-size: 30px; }
  .confirmation-details { padding: 16px; font-size: 12px; }
@@ -1210,26 +1224,26 @@ html[data-theme='light'] .admin-schedule-card.is-unavailable .admin-schedule-sta
 /* Stepper móvil compacto: conserva los seis estados sin alterar desktop. */
 @media (max-width: 767px) {
   .booking-page .booking-progress {
-    margin-top: 4px;
-    margin-bottom: 10px;
+    margin-top: 12px;
+    margin-bottom: 12px;
     gap: 4px;
   }
   .booking-page .booking-progress > button {
-    gap: 4px;
-    padding-bottom: 8px;
+    gap: 6px;
+    padding-bottom: 10px;
   }
   .booking-page .booking-progress > button > span {
-    width: 20px;
-    height: 20px;
-    font-size: 8px;
+    width: 28px;
+    height: 28px;
+    font-size: 9px;
   }
   .booking-page .booking-progress > button > span svg {
-    width: 11px;
-    height: 11px;
+    width: 13px;
+    height: 13px;
   }
   .booking-page .booking-progress small {
     min-height: 20px;
-    font-size: 8px;
+    font-size: 12px;
     line-height: 1.05;
   }
   html[data-theme='light'] .booking-page .booking-progress .complete > span {
@@ -1683,4 +1697,9 @@ html[data-theme='dark'] .admin-section-nav-link.is-active:hover,
 html[data-theme='dark'] .admin-section-nav-link.is-active:active {
   background: var(--primary);
   color: var(--primary-foreground);
+}
+
+/* Las cards de barberos comparten el mismo eje textual en desktop y mobile. */
+.booking-page .booking-barber-options .booking-option-copy {
+  text-align: left !important;
 }
