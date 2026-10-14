@@ -1462,13 +1462,13 @@ html[data-theme='light'] .booking-back-button svg {
 }
 html[data-theme='light'] .booking-next-button:disabled {
   border-color: var(--border) !important;
-  background: color-mix(in srgb, var(--border) 18%, transparent) !important;
+  background: var(--card) !important;
   color: var(--muted-foreground) !important;
-  opacity: 1 !important;
+  opacity: 0.5 !important;
 }
 html[data-theme='light'] .booking-next-button:not(:disabled) {
-  border-color: color-mix(in srgb, var(--primary) 84%, var(--border)) !important;
-  background: color-mix(in srgb, var(--primary) 84%, var(--card)) !important;
+  border-color: var(--button-primary-border) !important;
+  background: var(--button-primary-bg) !important;
   color: var(--button-primary-text) !important;
 }
 
