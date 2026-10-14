@@ -212,3 +212,12 @@ En modo oscuro, mobile utiliza el fondo vertical suministrado y desktop desde 10
 - No modificar autenticación, sesiones, roles, Supabase, reservas ni navegación.
 - Verificar el login visualmente en desktop y mobile, ejecutar TypeScript, tests y build, y mantener los cuatro fondos WEBP ya publicados en Production.
 - Dejar el símbolo en Preview hasta contar con autorización específica para publicar este cambio.
+
+
+## Fondos del menú desplegable y corrección de altura mobile — Preview
+- Incorporar los cuatro WEBP suministrados exclusivamente como fondo del menú desplegable: claro mobile, claro desktop, oscuro mobile y oscuro desktop.
+- Mantener la selección por tema `light`/`dark` y por breakpoint responsive, sin modificar la navegación ni los destinos existentes.
+- En mobile, extender la superficie visual del menú hasta el borde inferior del viewport (`bottom: 0`), evitando que el fondo sólido se detenga antes del final.
+- Mantener `Volver a la solicitud` por encima del fondo del menú mediante una capa superior, sin modificar su acción ni el flujo de reservas.
+- Reservar espacio de scroll dentro del menú para que los últimos enlaces no queden debajo del botón de regreso ni del área segura del dispositivo.
+- Verificar los cuatro assets en Preview, desktop/mobile y claro/oscuro; ejecutar TypeScript, tests y build; publicar solo la versión validada según la autorización vigente.
