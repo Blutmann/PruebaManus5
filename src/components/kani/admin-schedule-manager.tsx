@@ -381,7 +381,7 @@ export function AdminScheduleManager() {
               </div>
               <div className="admin-schedule-cards admin-schedule-cards-empty">
                 <Button
-                  className="action-positive admin-schedule-add"
+                  className="action-positive admin-schedule-add admin-schedule-card admin-schedule-capsule"
                   onClick={() => openManualDialog(specificDate, selectedRows[0]?.id)}
                 >
                   <Plus size={17} />
@@ -444,7 +444,7 @@ export function AdminScheduleManager() {
                     );
                   })}
                   <Button
-                    className="action-positive admin-schedule-add"
+                    className="action-positive admin-schedule-add admin-schedule-card admin-schedule-capsule"
                     onClick={() => openManualDialog(date, dateSlots[0]?.barber_id)}
                   >
                     <Plus size={17} />

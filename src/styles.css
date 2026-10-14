@@ -202,7 +202,7 @@ html[data-theme="light"] {
   }
 
   html[data-theme="light"] body::before {
-    background: var(--page-background) url('/kani-fondo-claro-mobile.webp') center top / cover fixed no-repeat;
+    background: var(--page-background) url('/kani-fondo-claro-mobile-blanco.webp') center top / cover fixed no-repeat;
   }
 
   html[data-theme="dark"] body::before {
@@ -211,7 +211,7 @@ html[data-theme="light"] {
 
   @media (min-width: 1024px) {
     html[data-theme="light"] body::before {
-      background-image: url('/kani-fondo-claro-desktop.webp');
+      background-image: url('/kani-fondo-claro-desktop-blanco.webp');
     }
 
     html[data-theme="dark"] body::before {
@@ -440,7 +440,8 @@ html[data-theme="light"] input[type=date], html[data-theme="light"] input[type=t
 .admin-menu-trigger { display: inline-flex; }
 .theme-toggle { color: var(--gold); }
 .mobile-menu-cta { display: none; }
-.mobile-menu { position: fixed; inset: 98px 0 0; z-index: 130; display: grid; align-content: start; gap: 0; overflow-y: auto; padding: 14px max(20px, calc((100vw - 1184px) / 2)) 32px; border-top: 1px solid color-mix(in oklch, var(--gold) 28%, var(--border)); background-color: var(--chrome); background-image: url('/kani-menu-oscuro-desktop.webp'); background-position: center top; background-repeat: no-repeat; background-size: cover; box-shadow: none; }
+.mobile-menu { position: fixed; inset: 98px 0 0; z-index: 130; display: grid; align-content: start; gap: 0; overflow-y: auto; padding: 14px max(20px, calc((100vw - 1184px) / 2)) 32px; border-top: 1px solid color-mix(in oklch, var(--gold) 28%, var(--border)); background: var(--chrome); background-image: url('/kani-menu-oscuro-desktop.webp'); background-position: center top; background-repeat: no-repeat; background-size: cover; box-shadow: none; }
+html[data-theme="light"] .mobile-menu { background-image: url('/kani-menu-claro-desktop-blanco.webp'); }
 .mobile-menu a { display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 0 8px; border-bottom: 1px solid color-mix(in oklch, var(--gold) 28%, var(--border)); color: var(--foreground); font-size: 15px; }
 .mobile-menu a:hover, .mobile-menu a:focus-visible { background: color-mix(in oklch, var(--gold) 12%, transparent); color: var(--gold); outline: none; }
 .mobile-menu svg { width: 17px; height: 17px; color: var(--gold); }
@@ -536,8 +537,8 @@ html[data-theme="dark"] .booking-time-slot.selected, html:not([data-theme="light
  .header-controls { margin-left: auto; }
  .desktop-primary-nav, .admin-public-cta { display: none !important; }
  .mobile-menu-trigger { display: inline-flex; }
- .mobile-menu { inset: 72px 0 0; z-index: 130; padding: 14px 20px calc(132px + env(safe-area-inset-bottom)); background-position: center top; }
- html[data-theme="light"] .mobile-menu { background-image: url('/kani-menu-claro-mobile.webp'); }
+ .mobile-menu { position: fixed; inset: 72px 0 0; z-index: 130; padding: 14px 20px calc(132px + env(safe-area-inset-bottom)); background-position: center top; }
+ html[data-theme="light"] .mobile-menu { background-image: url('/kani-menu-claro-mobile-blanco.webp'); }
  html[data-theme="dark"] .mobile-menu { background-image: url('/kani-menu-oscuro-mobile.webp'); }
  .mobile-menu a { display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 0 8px; border-bottom: 1px solid color-mix(in oklch, var(--gold) 28%, var(--border)); color: var(--foreground); font-size: 15px; }
  .mobile-menu a:hover, .mobile-menu a:focus-visible { background: color-mix(in oklch, var(--gold) 12%, transparent); color: var(--gold); outline: none; }
@@ -1080,6 +1081,24 @@ html[data-theme='light'] .admin-schedule-status.occupied { color: var(--foregrou
 html[data-theme='light'] .admin-schedule-capsule.is-unavailable { border-color: color-mix(in srgb, var(--foreground) 40%, var(--border)); background: color-mix(in srgb, var(--foreground) 4%, var(--surface)); }
 html[data-theme='light'] .admin-schedule-capsule.is-occupied { border-color: color-mix(in srgb, var(--foreground) 42%, var(--border)); background: color-mix(in srgb, var(--foreground) 5%, var(--surface)); }
 
+/* «Agregar horario» comparte la geometría de las cápsulas, con identidad bordó. */
+.admin-schedule-cards > .admin-schedule-add.admin-schedule-capsule {
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #702b3a;
+  border-radius: .8rem;
+  background: #702b3a;
+  color: #fff;
+  text-align: center;
+  box-shadow: 0 5px 14px rgb(0 0 0 / .12);
+}
+.admin-schedule-cards > .admin-schedule-add.admin-schedule-capsule:hover,
+.admin-schedule-cards > .admin-schedule-add.admin-schedule-capsule:focus-visible {
+  border-color: #702b3a;
+  background: #702b3a;
+  color: #fff;
+}
+
 /* Keep each control usable by keyboard and touch without changing behavior. */
 button,
 a,
@@ -1182,29 +1201,6 @@ textarea:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
   .booking-time-heading-date { font-size: 10px; }
 }
 
-/* Encabezado de horarios: título a la izquierda y fecha a la derecha en desktop. */
-@media (min-width: 768px) {
-  .booking-time-heading {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 16px;
-    min-width: 0;
-    white-space: nowrap;
-  }
-  .booking-time-heading .section-title {
-    min-width: 0;
-    flex: 1 1 auto;
-  }
-  .booking-time-heading-date {
-    min-width: 0;
-    flex: 0 0 auto;
-    margin-top: 0;
-    text-align: right;
-    white-space: nowrap;
-  }
-}
-
 /* Corrección puntual: espacio vertical móvil y no disponible claro. */
 @media (max-width: 767px) {
   .admin-schedule-card {
@@ -1257,4 +1253,269 @@ html[data-theme='light'] .admin-schedule-card.is-unavailable .admin-schedule-sta
     background: #702B3A;
     color: #FFFFFF;
   }
+}
+
+
+/* Ajustes visuales de /reservar en Preview. La lógica y el tema oscuro permanecen intactos. */
+.booking-option .option-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0 !important;
+  background: transparent !important;
+  overflow: visible;
+}
+.booking-option .option-icon img {
+  width: 44px;
+  height: 44px;
+  max-width: none;
+  object-fit: contain;
+  border: 0 !important;
+  border-radius: 0 !important;
+}
+.service-icon-light { display: none; }
+.service-icon-dark { display: block; }
+html[data-theme='light'] .service-icon-light { display: block; }
+html[data-theme='light'] .service-icon-dark { display: none; }
+html[data-theme='light'] .booking-option .option-icon img,
+html[data-theme='light'] .booking-option.selected .option-icon img {
+  filter: none !important;
+}
+
+html[data-theme='light'] .booking-option,
+html[data-theme='light'] .booking-defer-option,
+html[data-theme='light'] .barber-choice-list > button {
+  border-color: var(--border) !important;
+  background: var(--card) !important;
+  color: var(--foreground) !important;
+}
+html[data-theme='light'] .booking-option.selected,
+html[data-theme='light'] .booking-option.selected:hover:not(:disabled),
+html[data-theme='light'] .booking-option.selected:focus-visible,
+html[data-theme='light'] .booking-option.selected:active,
+html[data-theme='light'] .booking-defer-option.selected,
+html[data-theme='light'] .booking-defer-option.selected:hover:not(:disabled),
+html[data-theme='light'] .booking-defer-option.selected:focus-visible,
+html[data-theme='light'] .booking-defer-option.selected:active,
+html[data-theme='light'] .barber-choice-list .selected,
+html[data-theme='light'] .barber-choice-list .selected:hover:not(:disabled),
+html[data-theme='light'] .barber-choice-list .selected:focus-visible,
+html[data-theme='light'] .barber-choice-list .selected:active {
+  border: 2px solid var(--primary) !important;
+  background: color-mix(in srgb, var(--primary) 8%, var(--card)) !important;
+  color: var(--foreground) !important;
+}
+html[data-theme='light'] .booking-option.selected .selection-circle,
+html[data-theme='light'] .booking-defer-option.selected .selection-circle {
+  border-color: var(--primary) !important;
+  background: var(--primary) !important;
+  color: var(--primary-foreground) !important;
+}
+
+/* Servicios: dos filas compactas; nombre arriba, duración y precio abajo. */
+html[data-theme='light'] .service-option .booking-option-copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  text-align: left;
+}
+html[data-theme='light'] .service-option .booking-option-name {
+  display: block;
+  margin: 0;
+  line-height: 1.15;
+  text-align: left;
+}
+html[data-theme='light'] .service-option .booking-option-meta {
+  display: flex;
+  width: 100%;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+html[data-theme='light'] .service-option .booking-option-duration,
+html[data-theme='light'] .service-option .booking-option-price {
+  margin-top: 0 !important;
+  white-space: nowrap;
+}
+html[data-theme='light'] .service-option .booking-option-price {
+  flex-shrink: 0;
+  text-align: right;
+}
+html[data-theme='light'] .booking-option:not(.service-option) .booking-option-copy,
+html[data-theme='light'] .booking-defer-option .booking-option-copy {
+  text-align: center;
+}
+
+/* La selección mantiene el texto principal oscuro y el secundario gris legible. */
+html[data-theme='light'] .booking-option .booking-option-name,
+html[data-theme='light'] .booking-option .booking-option-duration,
+html[data-theme='light'] .booking-option .booking-option-price,
+html[data-theme='light'] .booking-option .booking-barber-name,
+html[data-theme='light'] .booking-option .booking-barber-handle,
+html[data-theme='light'] .booking-defer-option .booking-defer-copy,
+html[data-theme='light'] .booking-option.selected .booking-option-name,
+html[data-theme='light'] .booking-option.selected .booking-barber-name {
+  color: var(--foreground) !important;
+}
+html[data-theme='light'] .booking-option .booking-option-duration,
+html[data-theme='light'] .booking-option .booking-barber-handle,
+html[data-theme='light'] .booking-defer-option .text-muted-foreground,
+html[data-theme='light'] .booking-option.selected .text-muted-foreground,
+html[data-theme='light'] .booking-defer-option.selected .text-muted-foreground {
+  color: var(--muted-foreground) !important;
+}
+html[data-theme='light'] .booking-option.selected .option-icon,
+html[data-theme='light'] .booking-option.selected .barber-avatar,
+html[data-theme='light'] .booking-defer-option.selected .barber-defer-mark {
+  border-color: var(--primary) !important;
+  color: var(--primary) !important;
+  background: transparent !important;
+}
+
+/* Calendario y horarios comparten el mismo tratamiento sutil de selección. */
+html[data-theme='light'] .calendar-day.selected,
+html[data-theme='light'] .calendar-day.selected:hover:not(:disabled),
+html[data-theme='light'] .calendar-day.selected:focus-visible,
+html[data-theme='light'] .calendar-day.selected:active,
+html[data-theme='light'] .booking-time-slot.selected,
+html[data-theme='light'] .booking-time-slot.selected:hover:not(:disabled),
+html[data-theme='light'] .booking-time-slot.selected:focus-visible,
+html[data-theme='light'] .booking-time-slot.selected:active {
+  border-color: var(--primary) !important;
+  background: color-mix(in srgb, var(--primary) 8%, var(--card)) !important;
+  color: var(--foreground) !important;
+}
+html[data-theme='light'] .booking-time-slot:not(.selected):not(:disabled) {
+  border-color: var(--border) !important;
+  background: var(--card) !important;
+  color: var(--foreground) !important;
+}
+html[data-theme='light'] .booking-time-slot.time-unavailable,
+html[data-theme='light'] .booking-time-slot:disabled:not(.selected) {
+  border-color: color-mix(in srgb, var(--primary) 45%, var(--border)) !important;
+  background: color-mix(in srgb, var(--border) 18%, var(--card)) !important;
+  color: var(--muted-foreground) !important;
+}
+
+/* Stepper medido: recorrido gris entre centros y progreso hasta el separador activo. */
+html[data-theme='light'] .booking-page .booking-progress {
+  position: relative;
+  gap: 0 !important;
+  border-bottom: 0 !important;
+  background: transparent !important;
+}
+html[data-theme='light'] .booking-page .booking-progress::before,
+html[data-theme='light'] .booking-page .booking-progress::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: var(--progress-start, 0px);
+  border-radius: 999px;
+  pointer-events: none;
+}
+html[data-theme='light'] .booking-page .booking-progress::before {
+  right: var(--progress-start, 0px);
+  height: 1px;
+  background: var(--border);
+  z-index: 0;
+}
+html[data-theme='light'] .booking-page .booking-progress::after {
+  width: var(--progress-width, 0px);
+  height: 3px;
+  background: var(--primary);
+  z-index: 1;
+}
+html[data-theme='light'] .booking-page .booking-progress > button {
+  position: relative;
+  z-index: 2;
+  border-bottom-color: transparent !important;
+}
+
+/* Misma altura que h-12 del botón Volver a la solicitud del menú. */
+html[data-theme='light'] {
+  --booking-action-height: 3rem;
+}
+html[data-theme='light'] .booking-menu-return,
+html[data-theme='light'] .booking-back-button,
+html[data-theme='light'] .booking-next-button {
+  min-height: var(--booking-action-height) !important;
+  height: var(--booking-action-height) !important;
+}
+html[data-theme='light'] .booking-cta-inner .booking-back-button {
+  flex: 0 0 30%;
+  width: 30%;
+}
+html[data-theme='light'] .booking-cta-inner .booking-next-button {
+  flex: 1 1 70%;
+  width: auto;
+  margin-left: 0;
+}
+html[data-theme='light'] .booking-back-button {
+  border-color: var(--border) !important;
+  background: var(--card) !important;
+  color: var(--foreground) !important;
+}
+html[data-theme='light'] .booking-back-button svg {
+  color: inherit !important;
+}
+html[data-theme='light'] .booking-next-button:disabled {
+  border-color: var(--border) !important;
+  background: color-mix(in srgb, var(--border) 18%, transparent) !important;
+  color: var(--muted-foreground) !important;
+  opacity: 1 !important;
+}
+html[data-theme='light'] .booking-next-button:not(:disabled) {
+  border-color: color-mix(in srgb, var(--primary) 84%, var(--border)) !important;
+  background: color-mix(in srgb, var(--primary) 84%, var(--card)) !important;
+  color: var(--button-primary-text) !important;
+}
+
+/* Fondos del header iguales a las cards inactivas en modo claro. */
+html[data-theme='light'] .header-control-button { background: var(--card) !important; }
+
+/* Alineación final: el precio queda centrado con la tarjeta y su selector. */
+.service-option .booking-option-price {
+  position: relative;
+  top: -12px;
+}
+
+html[data-theme='dark'] .service-option .booking-option-price {
+  top: -12px;
+}
+
+html[data-theme='dark'] .service-option .booking-option-copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  text-align: left;
+}
+
+html[data-theme='dark'] .service-option .booking-option-name {
+  display: block;
+  margin: 0;
+  line-height: 1.15;
+  text-align: left;
+}
+
+html[data-theme='dark'] .service-option .booking-option-meta {
+  display: flex;
+  width: 100%;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+html[data-theme='dark'] .service-option .booking-option-duration,
+html[data-theme='dark'] .service-option .booking-option-price {
+  margin-top: 0 !important;
+  white-space: nowrap;
+}
+
+html[data-theme='dark'] .service-option .booking-option-price {
+  flex-shrink: 0;
+  text-align: right;
 }

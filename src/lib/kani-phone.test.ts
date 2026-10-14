@@ -1,9 +1,29 @@
 import { describe, expect, it } from "vitest";
-import { formatPhoneInput, normalizeCountrySearch, normalizePhone, otherPhoneCountries, phoneCountries, phonePlaceholder, primaryPhoneCountries } from "./kani-phone";
+import { formatPhoneDisplay, formatPhoneInput, normalizeCountrySearch, normalizePhone, otherPhoneCountries, phoneCountries, phonePlaceholder, primaryPhoneCountries } from "./kani-phone";
 
 describe("phone normalization", () => {
   it("normalizes an Argentine mobile number to E.164", () => {
     expect(normalizePhone("9 11 0000-0000", "AR")?.e164).toBe("+5491100000000");
+  });
+
+  it("adds Argentina's mobile access code to national Buenos Aires input", () => {
+    expect(normalizePhone("1128436014", "AR")?.e164).toBe("+5491128436014");
+  });
+
+  it("adds Argentina's mobile access code to a valid interior input", () => {
+    expect(normalizePhone("2923444395", "AR")?.e164).toBe("+5492923444395");
+  });
+
+  it("does not duplicate the country or mobile access code", () => {
+    expect(normalizePhone("+54 9 11 2843-6014", "AR")?.e164).toBe("+5491128436014");
+  });
+
+  it("formats stored E.164 Argentine mobiles with international spacing", () => {
+    expect(formatPhoneDisplay("+5491128436014")).toBe("+54 9 11 2843 6014");
+  });
+
+  it("keeps an Argentine fixed line without adding 9", () => {
+    expect(normalizePhone("011 4444-1234", "AR")?.e164).toBe("+541144441234");
   });
 
   it("normalizes a Brazilian mobile number to E.164", () => {
@@ -13,6 +33,7 @@ describe("phone normalization", () => {
   it("formats while typing and rejects letters through the input helper", () => {
     expect(formatPhoneInput("9 11 ab0000-0000", "AR")).toBe("91100000000");
     expect(normalizePhone("123", "AR")).toBeNull();
+    expect(normalizePhone("4444-1234", "AR")).toBeNull();
   });
 });
 

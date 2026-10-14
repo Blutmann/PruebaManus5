@@ -2,9 +2,9 @@ import {
   AsYouType,
   getCountries,
   getCountryCallingCode,
-  parsePhoneNumberFromString,
   type CountryCode,
 } from "libphonenumber-js";
+import { parsePhoneNumberFromString } from "libphonenumber-js/max";
 
 export type PhoneCountry = CountryCode;
 export type PhoneCountryOption = {
@@ -312,13 +312,27 @@ export function formatPhoneInput(value: string, country: PhoneCountry) {
 }
 
 export function normalizePhone(value: string, country: PhoneCountry) {
-  const parsed = parsePhoneNumberFromString(value, country);
+  const trimmed = value.trim();
+  const compact = trimmed.replace(/\D/g, '');
+  let parsed = parsePhoneNumberFromString(trimmed, country);
+
+  if (country === 'AR' && trimmed && !trimmed.startsWith('+') && !compact.startsWith('0')) {
+    const mobileCandidate = parsePhoneNumberFromString(`+549${compact}`);
+    if (mobileCandidate?.isValid() && mobileCandidate.getType() === 'MOBILE') parsed = mobileCandidate;
+    else if (parsed?.getType() !== 'MOBILE') return null;
+  }
+
   if (!parsed || !parsed.isValid()) return null;
   return {
     e164: parsed.number,
     display: parsed.formatInternational(),
     country: parsed.country ?? country,
   };
+}
+
+export function formatPhoneDisplay(value: string) {
+  const parsed = parsePhoneNumberFromString(value);
+  return parsed?.isValid() ? parsed.formatInternational() : value;
 }
 
 export function phonePlaceholder(country: PhoneCountry) {

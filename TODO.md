@@ -221,3 +221,67 @@ En modo oscuro, mobile utiliza el fondo vertical suministrado y desktop desde 10
 - Mantener `Volver a la solicitud` por encima del fondo del menú mediante una capa superior, sin modificar su acción ni el flujo de reservas.
 - Reservar espacio de scroll dentro del menú para que los últimos enlaces no queden debajo del botón de regreso ni del área segura del dispositivo.
 - Verificar los cuatro assets en Preview, desktop/mobile y claro/oscuro; ejecutar TypeScript, tests y build; publicar solo la versión validada según la autorización vigente.
+
+
+## Correcciones visuales y de interacción — Preview
+
+Trabajar únicamente en Preview. No publicar en Production, no crear checkpoint, no modificar la base de datos ni la lógica de reservas.
+
+- Aumentar los íconos actuales de servicios de 34×34 px a 44×44 px, manteniendo los archivos y diseño existentes, sin deformaciones ni recortes; comprobar legibilidad en 360 px.
+- En modo claro, las tarjetas no seleccionadas de servicios y barberos deben tener fondo blanco (`var(--card)`), borde gris existente (`var(--border)`), sin dorado ni crema y tipografía regular/medium. Las seleccionadas deben tener fondo bordó muy sutil y translúcido, borde bordó visible, círculo bordó con tilde blanca y sin relleno bordó intenso. Mantener jerarquía moderada entre nombre, duración y precio. No alterar datos ni lógica.
+- En modo claro, restaurar el stepper con una línea gris fina de recorrido completo y una línea de progreso bordó más gruesa superpuesta, iniciada en el primer indicador y terminada exactamente en el indicador del paso activo, sin invadir el siguiente ni crear una segunda línea blanca.
+- En modo claro, igualar exactamente la altura de Volver y Continuar con el botón `Volver a la solicitud` del menú, reutilizando el valor de 48 px (`h-12`), distribuir aproximadamente 30/70, conservar flecha dorada y estados habilitado/deshabilitado. No alterar el comportamiento.
+- No modificar el modo oscuro ni estilos fuera de este alcance. Validar a 360×800 y desktop: íconos, tarjetas activas/inactivas, stepper en distintos pasos, alturas, Continuar habilitado/deshabilitado. Ejecutar TypeScript, tests y build; adjuntar capturas reales de Preview.
+
+
+## Reparación prioritaria de regresiones visuales — Preview
+
+Trabajar únicamente en Preview, sin publicar, crear checkpoint, modificar Supabase ni modificar datos. Reparar exclusivamente la estructura de tarjetas, colores tipográficos, botones y cálculo visual del stepper.
+
+- Tarjetas de servicios: dos filas; nombre alineado a la izquierda en la primera; duración a la izquierda y precio a la derecha en la segunda, centrados verticalmente; mantener ícono a la izquierda e indicador de selección a la derecha; no usar tres columnas ni apilar el precio debajo de la duración; conservar altura compacta.
+- Tarjetas activas de servicios y barberos: nombres, duraciones, precios, Instagram y textos secundarios oscuros/grises legibles; nunca aplicar blanco a todos los descendientes. Mantener fondo bordó muy sutil y translúcido, borde bordó visible y círculo bordó con tilde blanca.
+- Volver: fondo blanco, borde gris, color de texto actual y flecha del mismo color; no bordó. Continuar habilitado: bordó suave, borde bordó y texto blanco. Continuar deshabilitado: apagado/translúcido, borde gris y texto gris. Ambos deben medir 48 px, conservar radio y distribución aproximada 30/70; no cambiar Volver a la solicitud.
+- Stepper: medir la geometría real de sus seis pasos y hacer que el progreso bordó termine en el separador correspondiente al paso activo; mantener línea base gris fina y progreso bordó grueso visible desde Servicio, sin sobrepasar el paso siguiente.
+- Conservar íconos 44×44, modo oscuro, tarjetas compactas, textos, precios, duraciones, disponibilidad y persistencia. No reescribir styles.css completo ni sobrescribir cambios ajenos. Validar 360×800 y desktop, estados Servicio/Fecha/Resumen, modo oscuro, TypeScript, tests, build y `git diff --check`.
+
+## Ajustes finales puntuales — Preview
+
+No modificar la estructura actual de las tarjetas ni rehacerla. No publicar, no crear checkpoint, no modificar Supabase ni datos.
+
+- Centrar verticalmente el precio del servicio respecto del indicador de selección/checkmark, manteniendo posiciones horizontales, ícono, bloque de texto y altura general; validar tarjetas activas e inactivas.
+- Corregir únicamente el origen geométrico del progreso del stepper: la línea gris fina y el progreso bordó deben comenzar en el borde izquierdo común del contenido, tarjetas y botón Volver; el progreso debe seguir terminando en el separador exacto del paso activo sin invadir el siguiente.
+- Hacer que las tarjetas de servicios inactivas reutilicen exactamente el mismo token de fondo blanco de botones, menú y calendario no seleccionado, conservando bordes grises y selección bordó translúcida.
+- No modificar modo oscuro, textos, íconos, disposición de tarjetas, botones, menú ni comportamiento de reservas. Validar Preview a 360×800 y desktop; ejecutar verificaciones técnicas y revisar el diff limitado a estos puntos.
+
+## Fondos claros cercanos al blanco — Preview
+
+Aplicar exclusivamente en modo claro, sin publicar ni modificar la lógica:
+
+- Fondo de la aplicación: `WEBPDesktopClaroBlanco3840x2160.webp` en desktop y `WEBPMobileClaroBlanco1440x3200.webp` en mobile.
+- Fondo del menú desplegable: `WEBPMenuDesktopClaroBlanco3840x2160.webp` en desktop y `WEBPMenuMobileClaroBlanco1440x3200.webp` en mobile.
+- Mantener intactos los fondos oscuros y la estructura responsive existente.
+- Mantener continuidad visual durante el scroll, sin superposiciones que oculten el contenido ni alterar botones, reservas, Supabase o Production.
+- Validar Preview en desktop/mobile y ambos fondos claros; ejecutar TypeScript, tests y build. No crear checkpoint ni publicar sin autorización posterior.
+
+## Fondos claros casi blancos — Preview
+
+Reemplazar exclusivamente en modo claro los fondos existentes por los cuatro WEBP suministrados: aplicación desktop `WEBPDesktopClaroBlanco3840x2160.webp`, aplicación mobile `WEBPMobileClaroBlanco1440x3200.webp`, menú desktop `WEBPMenuDesktopClaroBlanco3840x2160.webp` y menú mobile `WEBPMenuMobileClaroBlanco1440x3200.webp`. Mantener intactos los fondos oscuros, la lógica, rutas, Supabase, Resend y Production. Validar continuidad responsive, menú desplegable, formato/HTTP, TypeScript, tests y build; no crear checkpoint ni publicar.
+
+## Fondos claros casi blancos — Preview
+
+Reemplazar exclusivamente en modo claro los cuatro WEBP suministrados para aplicación y menú; mantener intactos los fondos oscuros, lógica, rutas, Supabase, Resend y Production. Validar responsive, HTTP, TypeScript, tests y build; no crear checkpoint ni publicar.
+
+## Fondos de controles del header — Preview
+
+En modo claro, aplicar exclusivamente a los dos controles del header —hamburguesa y alternancia claro/oscuro— el mismo token de fondo que las cards de servicios y barberos no seleccionadas (`var(--card)`). No modificar iconos, textos, funcionalidad, bordes, radios, dimensiones, sombras, otros elementos del header ni el modo oscuro. Validar visualmente ambos fondos contra una card inactiva en Preview, sin checkpoint, publicación, Supabase ni datos.
+
+## Rediseño cromático del modo oscuro — Preview
+
+Trabajar exclusivamente en Preview. No crear checkpoint, no publicar en Production, no modificar Supabase, datos, lógica, componentes estructurales ni fondos oscuros existentes.
+
+- Mantener exactamente la estructura, distribución, dimensiones, espaciados, tipografías, jerarquías, comportamiento, flujo de reservas, navegación, formularios, calendario, horarios y panel administrativo del modo claro actual.
+- No cambiar bajo ninguna circunstancia los fondos oscuros: colores, imágenes, posiciones, tamaños, escalas, efectos ni responsive.
+- Adaptar únicamente los colores de componentes del modo oscuro con la paleta negro, bordó principal, dorado acento, blanco para textos principales y grises para secundarios, bordes, separadores, disabled y errores.
+- Usar bordó para acciones principales, progreso y activos; dorado solo como acento moderado; texto oscuro únicamente sobre fondos dorados cuando corresponda.
+- Revisar header, menú, tarjetas, botones, calendario, horarios, stepper, formularios, mensajes, resumen y panel administrativo, conservando diferencias entre activo, inactivo, hover, focus, disabled y error.
+- No modificar la apariencia del modo claro. Ejecutar TypeScript, tests y build; revisar el flujo completo, panel ADMIN/BARBER y capturas reales desktop/mobile; detenerse ante cualquier regresión.

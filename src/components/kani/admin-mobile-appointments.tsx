@@ -3,6 +3,7 @@ import { ArrowUp, Check, CircleDot, Clock3, RefreshCw, X, XCircle } from 'lucide
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle } from '@/components/ui/dialog';
 import { dateLabel, money, serviceFor } from '@/lib/kani-model';
+import { formatPhoneDisplay } from '@/lib/kani-phone';
 import { useAdminStaff } from '@/lib/kani-admin-context';
 import { appointmentErrorMessage, readRealAppointments, retryRealAppointmentNotification, updateRealAppointmentStatus, type RealAppointment, type RealAppointmentStatus } from '@/lib/kani-appointments';
 import { addCalendarDays, businessDateToday, dateRangeForMobilePreset, filterMobileAppointments, mobileDatePresetLabels, type MobileDatePreset, type MobileStatusFilter } from '@/lib/kani-mobile-appointments';
@@ -189,12 +190,13 @@ export function AdminMobileAppointments() {
           const serviceName = appointment.serviceName ?? fallbackService.name;
           const serviceDuration = appointment.serviceDuration ?? fallbackService.duration;
           const phoneHref = appointment.phone.replace(/[^\d+]/g, '');
+          const phoneLabel = formatPhoneDisplay(appointment.phone);
           return <article className="admin-mobile-appointment" key={appointment.id}>
             <div className="admin-mobile-appointment-top"><div className="admin-mobile-time"><strong>{appointment.time}</strong><span>hasta {appointment.endTime?.slice(0, 5) ?? '—'} · {dateLabel(appointment.date)}</span></div>{renderStatus(appointment.statusCode)}</div>
             <div className="admin-mobile-appointment-main"><h3>{appointment.name}</h3><div className="admin-mobile-appointment-details">
               <div><span>Servicio</span><strong>{serviceName} · {serviceDuration} min</strong></div>
               <div><span>Barbero</span><strong>{appointment.barber}</strong></div>
-              <div><span>Celular</span><a href={`tel:${phoneHref}`}>{appointment.phone}</a></div>
+              <div><span>Celular</span><a href={`tel:${phoneHref}`}>{phoneLabel}</a></div>
               <div><span>Email</span><a href={`mailto:${appointment.email}`}>{appointment.email}</a></div>
               {appointment.servicePrice !== undefined && <div><span>Importe total</span><strong>{money(appointment.servicePrice)}</strong></div>}
               {appointment.notes?.trim() && <div className="admin-mobile-detail-notes"><span>Observaciones</span><p>{appointment.notes.trim()}</p></div>}
